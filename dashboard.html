@@ -1,112 +1,78 @@
- <h1 id="pendientes">0</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Órdenes CCP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+
+<div class="min-h-screen flex">
+  <!-- Sidebar -->
+  <div class="w-64 bg-gray-900 text-white p-6">
+    <h2 class="text-2xl font-bold mb-8">CCP Sistema</h2>
+    <nav class="space-y-3">
+      <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-gray-800 rounded-xl"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="tecnico.html" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800 rounded-xl"><i class="fas fa-tools"></i> Técnico</a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800 rounded-xl"><i class="fas fa-list"></i> Órdenes</a>
+    </nav>
   </div>
 
-  <div class="card">
-    <h3>Completadas</h3>
-    <h1 id="completadas">0</h1>
+  <!-- Contenido Principal -->
+  <div class="flex-1 p-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-8">Dashboard de Órdenes de Servicio</h1>
+
+    <!-- Tarjetas de Resumen -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <p class="text-gray-500">Total de Órdenes</p>
+        <p id="totalOrdenes" class="text-5xl font-bold text-blue-600 mt-2">0</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <p class="text-gray-500">Pendientes</p>
+        <p id="pendientes" class="text-5xl font-bold text-yellow-500 mt-2">0</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <p class="text-gray-500">Completadas</p>
+        <p id="completadas" class="text-5xl font-bold text-green-600 mt-2">0</p>
+      </div>
+    </div>
+
+    <!-- Nueva Orden Rápida -->
+    <div class="bg-white p-6 rounded-2xl shadow-lg mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Nueva Orden Rápida</h2>
+      <!-- Aquí puedes poner tu formulario reducido -->
+    </div>
+
+    <!-- Tabla de Órdenes -->
+    <div class="bg-white rounded-2xl shadow-lg">
+      <div class="p-6 border-b">
+        <h2 class="text-2xl font-semibold">Órdenes Registradas</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-4 text-left">Equipo</th>
+              <th class="px-6 py-4 text-left">Técnico</th>
+              <th class="px-6 py-4 text-left">Tipo</th>
+              <th class="px-6 py-4 text-left">Prioridad</th>
+              <th class="px-6 py-4 text-left">Estado</th>
+              <th class="px-6 py-4 text-left">Fecha</th>
+              <th class="px-6 py-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaOrdenes" class="divide-y">
+            <!-- Se llena con JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-
 </div>
 
-<div class="form-container">
-
-  <h2 style="margin-bottom:20px;">
-    Nueva Orden
-  </h2>
-
-  <form id="ordenForm">
-
-    <div class="form-grid">
-
-      <div class="form-group">
-        <label>Equipo</label>
-        <input type="text" id="equipo" required>
-      </div>
-
-      <div class="form-group">
-        <label>Técnico</label>
-        <input type="text" id="tecnico" required>
-      </div>
-
-      <div class="form-group">
-        <label>Prioridad</label>
-
-        <select id="prioridad">
-
-          <option value="Baja">Baja</option>
-          <option value="Media">Media</option>
-          <option value="Alta">Alta</option>
-          <option value="Urgente">Urgente</option>
-
-        </select>
-
-      </div>
-
-      <div class="form-group">
-        <label>Tipo Mantenimiento</label>
-
-        <select id="tipo">
-
-          <option value="Preventivo">
-            Preventivo
-          </option>
-
-          <option value="Correctivo">
-            Correctivo
-          </option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-    <div class="form-group">
-
-      <label>Descripción</label>
-
-      <textarea id="descripcion" required></textarea>
-
-    </div>
-
-    <button class="submit-btn" type="submit">
-      Crear Orden
-    </button>
-
-  </form>
-
-</div>
-
-<div class="table-container">
-
-  <h2 style="margin-bottom:20px;">
-    Órdenes Registradas
-  </h2>
-
-  <table>
-
-    <thead>
-
-      <tr>
-        <th>Equipo</th>
-        <th>Técnico</th>
-        <th>Tipo</th>
-        <th>Prioridad</th>
-        <th>Estado</th>
-      </tr>
-
-    </thead>
-
-    <tbody id="tablaOrdenes">
-
-    </tbody>
-
-  </table>
-
-</div>
-
-<script src="js/firebase.js"></script>
 <script src="js/dashboard.js"></script>
-
 </body>
 </html>
