@@ -1,39 +1,112 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-</head>
-<body>
+ <h1 id="pendientes">0</h1>
+  </div>
 
-<h1>Bienvenido al Dashboard</h1>
+  <div class="card">
+    <h3>Completadas</h3>
+    <h1 id="completadas">0</h1>
+  </div>
 
-<button onclick="logout()">
-  Cerrar sesión
-</button>
+</div>
 
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<div class="form-container">
+
+  <h2 style="margin-bottom:20px;">
+    Nueva Orden
+  </h2>
+
+  <form id="ordenForm">
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Equipo</label>
+        <input type="text" id="equipo" required>
+      </div>
+
+      <div class="form-group">
+        <label>Técnico</label>
+        <input type="text" id="tecnico" required>
+      </div>
+
+      <div class="form-group">
+        <label>Prioridad</label>
+
+        <select id="prioridad">
+
+          <option value="Baja">Baja</option>
+          <option value="Media">Media</option>
+          <option value="Alta">Alta</option>
+          <option value="Urgente">Urgente</option>
+
+        </select>
+
+      </div>
+
+      <div class="form-group">
+        <label>Tipo Mantenimiento</label>
+
+        <select id="tipo">
+
+          <option value="Preventivo">
+            Preventivo
+          </option>
+
+          <option value="Correctivo">
+            Correctivo
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Descripción</label>
+
+      <textarea id="descripcion" required></textarea>
+
+    </div>
+
+    <button class="submit-btn" type="submit">
+      Crear Orden
+    </button>
+
+  </form>
+
+</div>
+
+<div class="table-container">
+
+  <h2 style="margin-bottom:20px;">
+    Órdenes Registradas
+  </h2>
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>Equipo</th>
+        <th>Técnico</th>
+        <th>Tipo</th>
+        <th>Prioridad</th>
+        <th>Estado</th>
+      </tr>
+
+    </thead>
+
+    <tbody id="tablaOrdenes">
+
+    </tbody>
+
+  </table>
+
+</div>
 
 <script src="js/firebase.js"></script>
-
-<script>
-
-auth.onAuthStateChanged((user)=>{
-
-  if(!user){
-    window.location.href = "login.html";
-  }
-
-});
-
-function logout(){
-
-  auth.signOut();
-
-}
-
-</script>
+<script src="js/dashboard.js"></script>
 
 </body>
 </html>
