@@ -1,78 +1,97 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Órdenes CCP</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Órdenes CCP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+    </style>
 </head>
 <body class="bg-gray-100">
 
-<div class="min-h-screen flex">
-  <!-- Sidebar -->
-  <div class="w-64 bg-gray-900 text-white p-6">
-    <h2 class="text-2xl font-bold mb-8">CCP Sistema</h2>
-    <nav class="space-y-3">
-      <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-gray-800 rounded-xl"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-      <a href="tecnico.html" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800 rounded-xl"><i class="fas fa-tools"></i> Técnico</a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800 rounded-xl"><i class="fas fa-list"></i> Órdenes</a>
-    </nav>
-  </div>
+<div class="flex h-screen">
 
-  <!-- Contenido Principal -->
-  <div class="flex-1 p-8">
-    <h1 class="text-4xl font-bold text-gray-800 mb-8">Dashboard de Órdenes de Servicio</h1>
+    <!-- Sidebar -->
+    <div class="w-72 bg-gray-900 text-white p-6 flex flex-col">
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold">CCP</h1>
+            <p class="text-gray-400 text-sm">Sistema de Órdenes</p>
+        </div>
+        
+        <nav class="flex-1 space-y-2">
+            <a href="dashboard.html" class="flex items-center gap-4 px-5 py-4 bg-gray-800 rounded-2xl text-white">
+                <i class="fas fa-tachometer-alt"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="tecnico.html" class="flex items-center gap-4 px-5 py-4 hover:bg-gray-800 rounded-2xl transition-colors">
+                <i class="fas fa-tools"></i>
+                <span class="font-medium">Técnico</span>
+            </a>
+        </nav>
 
-    <!-- Tarjetas de Resumen -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <div class="bg-white p-6 rounded-2xl shadow-lg">
-        <p class="text-gray-500">Total de Órdenes</p>
-        <p id="totalOrdenes" class="text-5xl font-bold text-blue-600 mt-2">0</p>
-      </div>
-      <div class="bg-white p-6 rounded-2xl shadow-lg">
-        <p class="text-gray-500">Pendientes</p>
-        <p id="pendientes" class="text-5xl font-bold text-yellow-500 mt-2">0</p>
-      </div>
-      <div class="bg-white p-6 rounded-2xl shadow-lg">
-        <p class="text-gray-500">Completadas</p>
-        <p id="completadas" class="text-5xl font-bold text-green-600 mt-2">0</p>
-      </div>
+        <div class="pt-6 border-t border-gray-700">
+            <button onclick="cerrarSesion()" 
+                    class="flex items-center gap-3 text-red-400 hover:text-red-500 w-full px-5 py-3 rounded-2xl hover:bg-gray-800 transition-colors">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
     </div>
 
-    <!-- Nueva Orden Rápida -->
-    <div class="bg-white p-6 rounded-2xl shadow-lg mb-10">
-      <h2 class="text-2xl font-semibold mb-4">Nueva Orden Rápida</h2>
-      <!-- Aquí puedes poner tu formulario reducido -->
-    </div>
+    <!-- Contenido Principal -->
+    <div class="flex-1 overflow-auto">
+        <div class="p-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
+            <p class="text-gray-600 mb-8">Bienvenido al Sistema de Órdenes de Servicio</p>
 
-    <!-- Tabla de Órdenes -->
-    <div class="bg-white rounded-2xl shadow-lg">
-      <div class="p-6 border-b">
-        <h2 class="text-2xl font-semibold">Órdenes Registradas</h2>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-4 text-left">Equipo</th>
-              <th class="px-6 py-4 text-left">Técnico</th>
-              <th class="px-6 py-4 text-left">Tipo</th>
-              <th class="px-6 py-4 text-left">Prioridad</th>
-              <th class="px-6 py-4 text-left">Estado</th>
-              <th class="px-6 py-4 text-left">Fecha</th>
-              <th class="px-6 py-4">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaOrdenes" class="divide-y">
-            <!-- Se llena con JavaScript -->
-          </tbody>
-        </table>
-      </div>
+            <!-- Tarjetas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-white rounded-3xl shadow p-6">
+                    <p class="text-gray-500 text-sm">Total de Órdenes</p>
+                    <p id="totalOrdenes" class="text-6xl font-bold text-blue-600 mt-3">0</p>
+                </div>
+                <div class="bg-white rounded-3xl shadow p-6">
+                    <p class="text-gray-500 text-sm">Pendientes</p>
+                    <p id="pendientes" class="text-6xl font-bold text-yellow-500 mt-3">0</p>
+                </div>
+                <div class="bg-white rounded-3xl shadow p-6">
+                    <p class="text-gray-500 text-sm">Completadas</p>
+                    <p id="completadas" class="text-6xl font-bold text-green-600 mt-3">0</p>
+                </div>
+            </div>
+
+            <!-- Tabla de Órdenes -->
+            <div class="bg-white rounded-3xl shadow overflow-hidden">
+                <div class="px-8 py-6 border-b flex justify-between items-center">
+                    <h2 class="text-2xl font-semibold">Órdenes Registradas</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-8 py-5 text-left">Equipo</th>
+                                <th class="px-8 py-5 text-left">Técnico</th>
+                                <th class="px-8 py-5 text-left">Tipo</th>
+                                <th class="px-8 py-5 text-left">Prioridad</th>
+                                <th class="px-8 py-5 text-left">Estado</th>
+                                <th class="px-8 py-5 text-left">Fecha</th>
+                                <th class="px-8 py-5 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaOrdenes" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
+<!-- Scripts -->
+<script src="js/config.js"></script>
 <script src="js/dashboard.js"></script>
+
 </body>
 </html>
