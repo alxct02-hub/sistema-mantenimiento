@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sistema Mantenimiento</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#f0f2f5;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .login-container{
+      width:100%;
+      max-width:400px;
+      background:white;
+      padding:40px;
+      border-radius:15px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .logo{
+      text-align:center;
+      margin-bottom:25px;
+    }
+
+    .logo h1{
+      color:#2c3e50;
+      font-size:28px;
+    }
+
+    .form-group{
+      margin-bottom:20px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:bold;
+      color:#34495e;
+    }
+
+    input{
+      width:100%;
+      padding:14px;
+      border:1px solid #dcdde1;
+      border-radius:10px;
+      font-size:16px;
+    }
+
+    button{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:10px;
+      background:#27ae60;
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#219150;
+    }
+
+    .error{
+      background:#e74c3c;
+      color:white;
+      padding:10px;
+      border-radius:8px;
+      margin-bottom:15px;
+      display:none;
+    }
+
+    .loading{
+      text-align:center;
+      margin-top:15px;
+      color:#7f8c8d;
+      display:none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+
+  <div class="logo">
+    <h1>Sistema Mantenimiento</h1>
+    <p>Concretera del Sureste</p>
+  </div>
+
+  <div class="error" id="errorBox"></div>
+
+  <form id="loginForm">
+
+    <div class="form-group">
+      <label>Correo</label>
+      <input type="email" id="correo" required>
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="password" required>
+    </div>
+
+    <button type="submit">
+      Iniciar Sesión
+    </button>
+
+    <div class="loading" id="loadingText">
+      Ingresando...
+    </div>
+
+  </form>
+
+</div>
+
+<script src="js/firebase.js"></script>
+<script src="js/auth.js"></script>
+
+</body>
+</html>
