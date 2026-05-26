@@ -9,43 +9,58 @@
 
     <title>Dashboard</title>
 
-    <link rel="stylesheet" href="../css/panel.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
-<body>
+<body class="bg-gray-100">
 
-<div class="layout">
+<div class="flex min-h-screen">
 
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="w-72 bg-gray-900 text-white flex flex-col">
 
-        <div class="logo-area">
+        <!-- Logo -->
+        <div class="p-6 border-b border-gray-700">
 
-            <img
-                src="../img/logo.png"
-                alt="Logo"
-            >
+            <div class="flex items-center gap-4">
 
-            <div>
+                <img
+                    src="../img/logo.png"
+                    alt="Logo"
+                    class="w-16 h-16 object-contain bg-white rounded-lg p-1"
+                >
 
-                <h1>Sistema Mantenimiento</h1>
+                <div>
 
-                <p>Concretera del Sureste</p>
+                    <h1 class="font-bold text-lg">
+
+                        Sistema Mantenimiento
+
+                    </h1>
+
+                    <p class="text-gray-400 text-sm">
+
+                        Concretera del Sureste
+
+                    </p>
+
+                </div>
 
             </div>
 
         </div>
 
-        <nav class="menu">
+        <!-- Menú -->
+        <nav class="flex-1 p-4">
 
-            <ul>
+            <ul class="space-y-3">
 
                 <li>
 
                     <a
                         href="./dashboard.html"
-                        class="activo"
+                        class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold"
                     >
 
                         📊 Dashboard
@@ -56,7 +71,10 @@
 
                 <li>
 
-                    <a href="./nueva-orden.html">
+                    <a
+                        href="./nueva-orden.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
+                    >
 
                         🛠 Nueva Orden
 
@@ -66,7 +84,10 @@
 
                 <li>
 
-                    <a href="./historial.html">
+                    <a
+                        href="./historial.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
+                    >
 
                         📁 Historial
 
@@ -76,7 +97,10 @@
 
                 <li>
 
-                    <a href="./tecnicos.html">
+                    <a
+                        href="./tecnicos.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
+                    >
 
                         👷 Técnicos
 
@@ -86,7 +110,10 @@
 
                 <li>
 
-                    <a href="./reportes.html">
+                    <a
+                        href="./reportes.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
+                    >
 
                         📑 Reportes
 
@@ -98,9 +125,13 @@
 
         </nav>
 
-        <div class="logout">
+        <!-- Salir -->
+        <div class="p-4 border-t border-gray-700">
 
-            <a href="../login.html">
+            <a
+                href="../login.html"
+                class="block bg-red-500 hover:bg-red-600 text-center py-3 rounded-lg font-bold transition"
+            >
 
                 Cerrar Sesión
 
@@ -111,21 +142,30 @@
     </aside>
 
     <!-- Contenido -->
-    <main class="main-content">
+    <main class="flex-1 p-8">
 
-        <div class="page-header">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
 
             <div>
 
-                <h2>Dashboard General</h2>
+                <h2 class="text-3xl font-bold text-gray-800">
 
-                <p>Resumen operativo del sistema</p>
+                    Dashboard General
+
+                </h2>
+
+                <p class="text-gray-500 mt-1">
+
+                    Resumen operativo del sistema
+
+                </p>
 
             </div>
 
             <a
                 href="./nueva-orden.html"
-                class="btn"
+                class="bg-yellow-500 hover:bg-yellow-400 text-black px-5 py-3 rounded-lg font-bold transition"
             >
 
                 + Nueva Orden
@@ -135,27 +175,19 @@
         </div>
 
         <!-- Tarjetas -->
-        <div class="cards">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-            <div class="card">
+            <div class="bg-white rounded-xl shadow p-6">
 
-                <p>Total Órdenes</p>
+                <p class="text-gray-500">
 
-                <h3 id="totalOrdenes">
+                    Total Órdenes
 
-                    0
-
-                </h3>
-
-            </div>
-
-            <div class="card">
-
-                <p>Pendientes</p>
+                </p>
 
                 <h3
-                    id="pendientes"
-                    style="color:#f59e0b;"
+                    id="totalOrdenes"
+                    class="text-5xl font-bold mt-3"
                 >
 
                     0
@@ -164,13 +196,36 @@
 
             </div>
 
-            <div class="card">
+            <div class="bg-white rounded-xl shadow p-6">
 
-                <p>Completadas</p>
+                <p class="text-gray-500">
+
+                    Pendientes
+
+                </p>
+
+                <h3
+                    id="pendientes"
+                    class="text-5xl font-bold text-yellow-500 mt-3"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+
+                <p class="text-gray-500">
+
+                    Completadas
+
+                </p>
 
                 <h3
                     id="completadas"
-                    style="color:#10b981;"
+                    class="text-5xl font-bold text-green-500 mt-3"
                 >
 
                     0
@@ -182,43 +237,79 @@
         </div>
 
         <!-- Tabla -->
-        <div class="table-container">
+        <div class="bg-white rounded-xl shadow overflow-hidden">
 
-            <div class="table-header">
+            <div class="p-5 border-b">
 
-                <h3>Órdenes recientes</h3>
+                <h3 class="font-bold text-lg">
+
+                    Órdenes recientes
+
+                </h3>
 
             </div>
 
-            <table>
+            <div class="overflow-auto">
 
-                <thead>
+                <table class="min-w-full">
 
-                    <tr>
+                    <thead class="bg-gray-800 text-white">
 
-                        <th>Folio</th>
+                        <tr>
 
-                        <th>Equipo</th>
+                            <th class="px-6 py-4 text-left">
 
-                        <th>Técnico</th>
+                                Folio
 
-                        <th>Tipo</th>
+                            </th>
 
-                        <th>Prioridad</th>
+                            <th class="px-6 py-4 text-left">
 
-                        <th>Estado</th>
+                                Equipo
 
-                        <th>Fecha</th>
+                            </th>
 
-                    </tr>
+                            <th class="px-6 py-4 text-left">
 
-                </thead>
+                                Técnico
 
-                <tbody id="tablaOrdenes">
+                            </th>
 
-                </tbody>
+                            <th class="px-6 py-4 text-left">
 
-            </table>
+                                Tipo
+
+                            </th>
+
+                            <th class="px-6 py-4 text-left">
+
+                                Prioridad
+
+                            </th>
+
+                            <th class="px-6 py-4 text-left">
+
+                                Estado
+
+                            </th>
+
+                            <th class="px-6 py-4 text-left">
+
+                                Fecha
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaOrdenes">
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
