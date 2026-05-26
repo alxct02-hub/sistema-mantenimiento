@@ -1,0 +1,21 @@
+{
+  "name": "App Técnico",
+  "short_name": "Tecnico",
+  "start_url": "/sistema-mantenimiento/pages/app-tecnico.html",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "img/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

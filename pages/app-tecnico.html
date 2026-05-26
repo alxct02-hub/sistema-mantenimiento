@@ -5,78 +5,137 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>App Técnico</title>
 
+    <!-- PWA -->
+    <link
+        rel="manifest"
+        href="../manifest-tecnico.json"
+    >
+
+    <meta
+        name="theme-color"
+        content="#111827"
+    >
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen">
 
-<!-- Header -->
-<header class="bg-gray-900 text-white p-5 shadow-lg">
+    <!-- HEADER -->
+    <header class="bg-gray-900 text-white p-4 shadow-lg">
 
-    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4">
 
-        <img
-            src="../img/logo.png"
-            alt="Logo"
-            class="w-14 h-14 object-contain bg-white rounded-lg p-1"
-        >
+            <!-- LOGO -->
+            <img
+                src="../img/logo.png"
+                alt="Logo"
+                class="w-14 h-14 object-contain bg-white rounded-lg p-1"
+            >
 
-        <div>
+            <!-- TITULOS -->
+            <div>
 
-            <h1 class="text-xl font-bold">
+                <h1 class="text-2xl font-bold">
 
-                App Técnico
+                    App Técnico
 
-            </h1>
+                </h1>
 
-            <p class="text-sm text-gray-300">
+                <p class="text-gray-400 text-sm">
 
-                Concretera del Sureste
+                    Sistema de Mantenimiento
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="p-4">
+
+        <!-- TITULO -->
+        <div class="mb-6">
+
+            <h2 class="text-3xl font-bold text-gray-800">
+
+                Órdenes Asignadas
+
+            </h2>
+
+            <p class="text-gray-500 mt-1">
+
+                Gestión operativa de mantenimiento
 
             </p>
 
         </div>
 
-    </div>
+        <!-- CONTENEDOR ÓRDENES -->
+        <div
+            id="contenedorOrdenes"
+            class="space-y-5"
+        >
 
-</header>
+            <!-- JS -->
 
-<!-- Contenido -->
-<main class="p-4">
+        </div>
 
-    <!-- Título -->
-    <div class="mb-6">
+    </main>
 
-        <h2 class="text-2xl font-bold text-gray-800">
+    <!-- FIREBASE -->
+    <script type="module" src="../js/app-tecnico.js"></script>
 
-            Órdenes Asignadas
+    <!-- PWA -->
+    <script>
 
-        </h2>
+        // ======================================
+        // REGISTRAR SERVICE WORKER
+        // ======================================
 
-        <p class="text-gray-500">
+        if('serviceWorker' in navigator){
 
-            Visualización operativa de mantenimiento
+            navigator.serviceWorker
 
-        </p>
+            .register('../service-worker-tecnico.js')
 
-    </div>
+            .then(() => {
 
-    <!-- Contenedor -->
-    <div
-        id="contenedorOrdenes"
-        class="space-y-5"
-    >
+                console.log(
 
-    </div>
+                    '✅ PWA Técnico instalada'
 
-</main>
+                );
 
-<script type="module" src="../js/app-tecnico.js"></script>
+            })
+
+            .catch((error) => {
+
+                console.error(
+
+                    '❌ Error PWA:',
+                    error
+
+                );
+
+            });
+
+        }
+
+    </script>
 
 </body>
+
 </html>
