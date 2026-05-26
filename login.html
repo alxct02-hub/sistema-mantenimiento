@@ -35,7 +35,7 @@
     .login-container{
 
       width:100%;
-      max-width:400px;
+      max-width:420px;
 
       background:#1f1f1f;
 
@@ -43,39 +43,43 @@
 
       border-radius:15px;
 
-      box-shadow:0 5px 20px rgba(0,0,0,0.3);
+      box-shadow:0 5px 20px rgba(0,0,0,0.4);
 
       color:white;
+
+      text-align:center;
 
     }
 
     .logo{
 
-      text-align:center;
+      width:140px;
 
-      margin-bottom:25px;
+      margin-bottom:20px;
 
     }
 
-    .logo h1{
+    h1{
 
       color:#f5b400;
-
-      font-size:28px;
 
       margin-bottom:10px;
 
     }
 
-    .logo p{
+    p{
 
       color:#ccc;
+
+      margin-bottom:30px;
 
     }
 
     .form-group{
 
       margin-bottom:20px;
+
+      text-align:left;
 
     }
 
@@ -133,34 +137,6 @@
 
     }
 
-    .error{
-
-      background:#e74c3c;
-
-      color:white;
-
-      padding:10px;
-
-      border-radius:8px;
-
-      margin-bottom:15px;
-
-      display:none;
-
-    }
-
-    .loading{
-
-      text-align:center;
-
-      margin-top:15px;
-
-      color:#ccc;
-
-      display:none;
-
-    }
-
   </style>
 
 </head>
@@ -169,15 +145,15 @@
 
 <div class="login-container">
 
-  <div class="logo">
+  <img
+    src="./img/logo.png"
+    alt="Logo"
+    class="logo"
+  >
 
-    <h1>Sistema Mantenimiento</h1>
+  <h1>Sistema Mantenimiento</h1>
 
-    <p>Concretera del Sureste</p>
-
-  </div>
-
-  <div class="error" id="errorBox"></div>
+  <p>Concretera del Sureste</p>
 
   <form id="loginForm">
 
@@ -185,7 +161,11 @@
 
       <label>Correo</label>
 
-      <input type="email" id="email" required>
+      <input
+        type="email"
+        id="email"
+        required
+      >
 
     </div>
 
@@ -193,7 +173,11 @@
 
       <label>Contraseña</label>
 
-      <input type="password" id="password" required>
+      <input
+        type="password"
+        id="password"
+        required
+      >
 
     </div>
 
@@ -202,12 +186,6 @@
       Iniciar Sesión
 
     </button>
-
-    <div class="loading" id="loadingText">
-
-      Ingresando...
-
-    </div>
 
   </form>
 

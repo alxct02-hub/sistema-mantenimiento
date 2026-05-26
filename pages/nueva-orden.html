@@ -15,103 +15,137 @@
 
 <body>
 
-    <div class="contenedor">
+<div class="contenedor">
 
-        <h1>CONCRETERA DEL SURESTE</h1>
+    <!-- Encabezado -->
+    <div class="encabezado">
 
-        <h2>Nueva Orden de Servicio</h2>
+        <img
+            src="../img/logo.png"
+            alt="Logo"
+            class="logo"
+        >
 
-        <form id="ordenForm">
+        <div>
 
-            <label>Folio</label>
-            <input
-                type="text"
-                id="folio"
-                readonly
-            >
+            <h1>CONCRETERA DEL SURESTE</h1>
 
-            <label>Área</label>
-            <input
-                type="text"
-                id="area"
-                required
-            >
+            <h2>Nueva Orden de Servicio</h2>
 
-            <label>Equipo</label>
-            <input
-                type="text"
-                id="equipo"
-                required
-            >
-
-            <label>Técnico</label>
-            <input
-                type="text"
-                id="tecnico"
-                required
-            >
-
-            <label>Tipo de mantenimiento</label>
-
-            <select id="tipo" required>
-
-                <option value="">
-                    Seleccionar
-                </option>
-
-                <option value="Preventivo">
-                    Preventivo
-                </option>
-
-                <option value="Correctivo">
-                    Correctivo
-                </option>
-
-            </select>
-
-            <label>Prioridad</label>
-
-            <select id="prioridad" required>
-
-                <option value="">
-                    Seleccionar
-                </option>
-
-                <option value="Alta">
-                    Alta
-                </option>
-
-                <option value="Media">
-                    Media
-                </option>
-
-                <option value="Baja">
-                    Baja
-                </option>
-
-            </select>
-
-            <label>Descripción</label>
-
-            <textarea
-                id="descripcion"
-                rows="5"
-                required
-            ></textarea>
-
-            <button type="submit">
-
-                Guardar Orden
-
-            </button>
-
-        </form>
-
-        <div id="mensaje"></div>
+        </div>
 
     </div>
 
-    <script type="module" src="../js/ordenes.js"></script>
+    <!-- Formulario -->
+    <form id="ordenForm">
+
+        <label>Folio</label>
+
+        <input
+            type="text"
+            id="folio"
+            readonly
+        >
+
+        <label>Área</label>
+
+        <input
+            type="text"
+            id="area"
+            required
+        >
+
+        <label>Equipo</label>
+
+        <input
+            type="text"
+            id="equipo"
+            required
+        >
+
+        <label>Técnico</label>
+
+        <input
+            type="text"
+            id="tecnico"
+            required
+        >
+
+        <label>Tipo de mantenimiento</label>
+
+        <select id="tipo" required>
+
+            <option value="">
+
+                Seleccionar
+
+            </option>
+
+            <option value="Preventivo">
+
+                Preventivo
+
+            </option>
+
+            <option value="Correctivo">
+
+                Correctivo
+
+            </option>
+
+        </select>
+
+        <label>Prioridad</label>
+
+        <select id="prioridad" required>
+
+            <option value="">
+
+                Seleccionar
+
+            </option>
+
+            <option value="Alta">
+
+                Alta
+
+            </option>
+
+            <option value="Media">
+
+                Media
+
+            </option>
+
+            <option value="Baja">
+
+                Baja
+
+            </option>
+
+        </select>
+
+        <label>Descripción</label>
+
+        <textarea
+            id="descripcion"
+            rows="5"
+            required
+        ></textarea>
+
+        <button type="submit">
+
+            Guardar Orden
+
+        </button>
+
+    </form>
+
+    <div id="mensaje"></div>
+
+</div>
+
+<script type="module" src="../js/ordenes.js"></script>
 
 </body>
 </html>
