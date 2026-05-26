@@ -9,17 +9,31 @@ import {
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Contenedor
+// ======================================
+// API IMGBB
+// ======================================
+
+const API_KEY =
+
+    '666f2e6d2f71a9117e585dd3ec86aa60';
+
+// ======================================
+// CONTENEDOR
+// ======================================
+
 const contenedor =
 
     document.getElementById('contenedorOrdenes');
 
-// Inicializar
+// ======================================
+// INICIALIZAR
+// ======================================
+
 cargarOrdenes();
 
-// =======================================
+// ======================================
 // CARGAR ÓRDENES
-// =======================================
+// ======================================
 
 async function cargarOrdenes(){
 
@@ -39,14 +53,10 @@ async function cargarOrdenes(){
 
             const id = documento.id;
 
-            // Crear tarjeta
-            const card = document.createElement('div');
+            // ======================================
+            // COLORES
+            // ======================================
 
-            card.className =
-
-                'bg-white rounded-xl shadow p-5';
-
-            // Color prioridad
             let colorPrioridad = '';
 
             if(orden.prioridad === 'Alta'){
@@ -70,7 +80,6 @@ async function cargarOrdenes(){
 
             }
 
-            // Estado color
             let colorEstado = '';
 
             if(orden.estado === 'Pendiente'){
@@ -94,10 +103,19 @@ async function cargarOrdenes(){
 
             }
 
-            // HTML tarjeta
+            // ======================================
+            // TARJETA
+            // ======================================
+
+            const card = document.createElement('div');
+
+            card.className =
+
+                'bg-white rounded-xl shadow p-5';
+
             card.innerHTML = `
 
-                <!-- Header -->
+                <!-- HEADER -->
                 <div class="flex justify-between items-start mb-4">
 
                     <div>
@@ -124,7 +142,7 @@ async function cargarOrdenes(){
 
                 </div>
 
-                <!-- Datos -->
+                <!-- DATOS -->
                 <div class="space-y-2 text-sm">
 
                     <p>
@@ -163,27 +181,13 @@ async function cargarOrdenes(){
                     <p>
 
                         <strong>Tipo:</strong>
-                        ${orden.tipo}
-
-                    </p>
-
-                    <p>
-
-                        <strong>Kilometraje:</strong>
-                        ${orden.kilometraje || '-'}
-
-                    </p>
-
-                    <p>
-
-                        <strong>Horómetro:</strong>
-                        ${orden.horometro || '-'}
+                        ${orden.tipo || '-'}
 
                     </p>
 
                 </div>
 
-                <!-- Descripción -->
+                <!-- DESCRIPCIÓN -->
                 <div class="mt-4">
 
                     <p class="font-bold mb-1">
@@ -194,13 +198,13 @@ async function cargarOrdenes(){
 
                     <p class="text-gray-600">
 
-                        ${orden.descripcion}
+                        ${orden.descripcion || '-'}
 
                     </p>
 
                 </div>
 
-                <!-- Horas -->
+                <!-- HORAS -->
                 <div class="mt-4 bg-gray-100 rounded-lg p-3 text-sm">
 
                     <p>
@@ -219,7 +223,7 @@ async function cargarOrdenes(){
 
                 </div>
 
-                <!-- Observaciones -->
+                <!-- OBSERVACIONES -->
                 <div class="mt-4">
 
                     <label class="block mb-2 font-bold">
@@ -236,7 +240,46 @@ async function cargarOrdenes(){
 
                 </div>
 
-                <!-- Botones -->
+                <!-- EVIDENCIA -->
+                <div class="mt-4">
+
+                    <label class="block mb-2 font-bold">
+
+                        Evidencia fotográfica
+
+                    </label>
+
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        id="file-${id}"
+                        class="w-full border rounded-lg p-2"
+                    >
+
+                </div>
+
+                <!-- IMAGEN -->
+                <div class="mt-4">
+
+                    ${
+                        orden.evidencia
+                        ?
+
+                        `<img
+                            src="${orden.evidencia}"
+                            class="w-full rounded-lg shadow"
+                        >`
+
+                        :
+
+                        ''
+
+                    }
+
+                </div>
+
+                <!-- BOTONES -->
                 <div class="grid grid-cols-2 gap-3 mt-5">
 
                     <button
@@ -261,7 +304,6 @@ async function cargarOrdenes(){
 
             `;
 
-            // Agregar
             contenedor.appendChild(card);
 
         });
@@ -274,25 +316,22 @@ async function cargarOrdenes(){
 
 }
 
-// =======================================
+// ======================================
 // INICIAR ORDEN
-// =======================================
+// ======================================
 
 window.iniciarOrden = async function(id){
 
     try{
 
-        // Hora actual
         const horaInicio =
 
             new Date().toLocaleString();
 
-        // Referencia
         const ordenRef =
 
             doc(db, 'ordenes', id);
 
-        // Actualizar
         await updateDoc(
 
             ordenRef,
@@ -306,11 +345,9 @@ window.iniciarOrden = async function(id){
 
         );
 
-        // Recargar
-        cargarOrdenes();
-
-        // Mensaje
         alert('✅ Orden iniciada');
+
+        cargarOrdenes();
 
     }catch(error){
 
@@ -322,30 +359,85 @@ window.iniciarOrden = async function(id){
 
 }
 
-// =======================================
+// ======================================
 // FINALIZAR ORDEN
-// =======================================
+// ======================================
 
 window.finalizarOrden = async function(id){
 
     try{
 
-        // Hora final
-        const horaFin =
+        // ======================================
+        // OBSERVACIONES
+        // ======================================
 
-            new Date().toLocaleString();
-
-        // Observaciones
         const observaciones =
 
             document.getElementById(`obs-${id}`).value;
 
-        // Referencia
+        // ======================================
+        // IMAGEN
+        // ======================================
+
+        const archivo =
+
+            document.getElementById(`file-${id}`).files[0];
+
+        let imagenURL = '';
+
+        // ======================================
+        // SUBIR IMAGEN A IMGBB
+        // ======================================
+
+        if(archivo){
+
+            const formData = new FormData();
+
+            formData.append(
+
+                'image',
+                archivo
+
+            );
+
+            const response = await fetch(
+
+                `https://api.imgbb.com/1/upload?key=${API_KEY}`,
+
+                {
+
+                    method: 'POST',
+
+                    body: formData
+
+                }
+
+            );
+
+            const data = await response.json();
+
+            imagenURL =
+
+                data.data.url;
+
+        }
+
+        // ======================================
+        // HORA FINAL
+        // ======================================
+
+        const horaFin =
+
+            new Date().toLocaleString();
+
+        // ======================================
+        // ACTUALIZAR FIREBASE
+        // ======================================
+
         const ordenRef =
 
             doc(db, 'ordenes', id);
 
-        // Actualizar
         await updateDoc(
 
             ordenRef,
@@ -353,18 +445,20 @@ window.finalizarOrden = async function(id){
             {
 
                 estado: 'Completada',
+
                 horaFin,
-                observaciones
+
+                observaciones,
+
+                evidencia: imagenURL
 
             }
 
         );
 
-        // Recargar
-        cargarOrdenes();
-
-        // Mensaje
         alert('✅ Orden finalizada');
+
+        cargarOrdenes();
 
     }catch(error){
 
