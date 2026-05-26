@@ -3,204 +3,58 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-            <title>Nueva Orden</title>
-            
-                <link rel="stylesheet" href="../css/ordenes.css">
-                
-                </head>
-                
-                <body>
-                
-                    <div class="contenedor">
-                    
-                            <h1>CONCRETERA DEL SURESTE</h1>
-                            
-                                    <h2>Nueva Orden de Servicio</h2>
-                                    
-                                            <form id="ordenForm">
-                                            
-                                                        <label>Equipo</label>
-                                                                    <input type="text" id="equipo" required>
-                                                                    
-                                                                                <label>Técnico</label>
-                                                                                            <input type="text" id="tecnico" required>
-                                                                                            
-                                                                                                        <label>Tipo de mantenimiento</label>
-                                                                                                                    <select id="tipo" required>
-                                                                                                                    
-                                                                                                                                    <option value="">Seleccionar</option>
-                                                                                                                                    
-                                                                                                                                                    <option value="Preventivo">Preventivo</option>
-                                                                                                                                                    
-                                                                                                                                                                    <option value="Correctivo">Correctivo</option>
-                                                                                                                                                                    
-                                                                                                                                                                                </select>
-                                                                                                                                                                                
-                                                                                                                                                                                            <label>Prioridad</label>
-                                                                                                                                                                                                        <select id="prioridad" required>
-                                                                                                                                                                                                        
-                                                                                                                                                                                                                        <option value="">Seleccionar</option>
-                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                        <option value="Alta">Alta</option>
-                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                        <option value="Media">Media</option>
-                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                        <option value="Baja">Baja</option>
-                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                    </select>
-                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                <label>Descripción</label>
-                                                                                                                                                                                                                                                                                                            <textarea id="descripcion" rows="5"></textarea>
-                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                        <button type="submit">
-                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                        Guardar Orden
-                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                            </form>
-                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                    <div id="mensaje"></div>
-                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                            <script type="module" src="../js/ordenes.js"></script>
-                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                            </body>
-                                                                                                                                                                                                                                                                                                                                                                            </html>!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-    <meta charset="UTF-8">
-    
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-            <title>Nueva Orden</title>
-            
-                <link rel="stylesheet" href="../css/ordenes.css">
-                
-                </head>
-                
-                <body>
-                
-                    <div class="contenedor">
-                    
-                            <h1>CONCRETERA DEL SURESTE</h1>
-                            
-                                    <h2>Nueva Orden de Servicio</h2>
-                                    
-                                            <form id="ordenForm">
-                                            
-                                                        <label>Equipo</label>
-                                                                    <input type="text" id="equipo" required>
-                                                                    
-                                                                                <label>Técnico</label>
-                                                                                            <input type="text" id="tecnico" required>
-                                                                                            
-                                                                                                        <label>Tipo de mantenimiento</label>
-                                                                                                                    <select id="tipo" required>
-                                                                                                                    
-                                                                                                                                    <option value="">Seleccionar</option>
-                                                                                                                                    
-                                                                                                                                                    <option value="Preventivo">Preventivo</option>
-                                                                                                                                                    
-                                                                                                                                                                    <option value="Correctivo">Correctivo</option>
-                                                                                                                                                                    
-                                                                                                                                                                                </select>
-                                                                                                                                                                                
-                                                                                                                                                                                            <label>Prioridad</label>
-                                                                                                                                                                                                        <select id="prioridad" required>
-                                                                                                                                                                                                        
-                                                                                                                                                                                                                        <option value="">Seleccionar</option>
-                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                        <option value="Alta">Alta</option>
-                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                        <option value="Media">Media</option>
-                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                        <option value="Baja">Baja</option>
-                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                    </select>
-                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                <label>Descripción</label>
-                                                                                                                                                                                                                                                                                                            <textarea id="descripcion" rows="5"></textarea>
-                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                        <button type="submit">
-                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                        Guardar Orden
-                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                            </form>
-                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                    <div id="mensaje"></div>
-                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                            <script type="module" src="../js/ordenes.js"></script>
-                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                            </body>
-                                                                                                                                                                                                                                                                                                                                                                            </html>ih!DOCTYPE html>
-<html lang="es">
-
-<head>
-
   <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      <title>Nueva Orden</title>
+  <title>Nueva Orden</title>
 
-        <link rel="stylesheet" href="../css/ordenes.css">
+  <link rel="stylesheet" href="../css/ordenes.css">
 
-        </head>
+</head>
 
-        <body>
+<body>
 
-          <div class="contenedor">
+  <div class="contenedor">
 
-              <h1>CONCRETERA DEL SURESTE</h1>
+    <h1>CONCRETERA DEL SURESTE</h1>
 
-                  <h2>Nueva Orden de Servicio</h2>
+    <h2>Nueva Orden de Servicio</h2>
 
-                      <form id="ordenForm">
+    <form id="ordenForm">
 
-                            <input type="text" id="folio" placeholder="Folio" readonly>
+      <input type="text" id="folio" placeholder="Folio" readonly>
 
-                                  <input type="text" id="area" placeholder="Área">
+      <input type="text" id="area" placeholder="Área">
 
-                                        <input type="text" id="equipo" placeholder="Equipo">
+      <input type="text" id="equipo" placeholder="Equipo">
 
-                                              <select id="prioridad">
+      <select id="prioridad">
 
-                                                      <option value="">Prioridad</option>
+        <option value="">Prioridad</option>
 
-                                                              <option>Alta</option>
+        <option>Alta</option>
 
-                                                                      <option>Media</option>
+        <option>Media</option>
 
-                                                                              <option>Baja</option>
+        <option>Baja</option>
 
-                                                                                    </select>
+      </select>
 
-                                                                                          <textarea id="descripcion"
-                                                                                                placeholder="Descripción de falla"></textarea>
+      <textarea id="descripcion"
+      placeholder="Descripción de falla"></textarea>
 
-                                                                                                      <button type="submit">
+      <button type="submit">
 
-                                                                                                              Guardar Orden
+        Guardar Orden
 
-                                                                                                                    </button>
+      </button>
 
-                                                                                                                        </form>
+    </form>
 
-                                                                                                                          </div>
+  </div>
 
-                                                                                                                            <script type="module" src="../js/ordenes.js"></script>
+  <script type="module" src="../js/ordenes.js"></script>
 
-                                                                                                                            </body>
-                                                                                                                            </html>
+</body>
+</html>
