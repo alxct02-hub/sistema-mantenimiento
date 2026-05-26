@@ -1,10 +1,10 @@
-// Importar Firestore
 import { db } from './firebase-config.js';
 
 import {
 
     collection,
-    addDoc
+    addDoc,
+    getDocs
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -17,20 +17,32 @@ const mensaje = document.getElementById('mensaje');
 // Input folio
 const folioInput = document.getElementById('folio');
 
-// Generar folio único
-function generarFolio(){
-
-    const numero = Date.now();
-
-    return `OS-${numero}`;
-
-}
-
-// Asignar folio inicial
-folioInput.value = generarFolio();
+// Inicializar
+generarFolio();
 
 // Evento guardar
 form.addEventListener('submit', guardarOrden);
+
+// Generar folio profesional
+async function generarFolio(){
+
+    try{
+
+        const querySnapshot = await getDocs(collection(db, 'ordenes'));
+
+        const total = querySnapshot.size + 1;
+
+        const numero = String(total).padStart(4, '0');
+
+        folioInput.value = `OS-26${numero}`;
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
 
 // Guardar orden
 async function guardarOrden(e){
@@ -39,7 +51,7 @@ async function guardarOrden(e){
 
     try{
 
-        // Capturar datos
+        // Datos
         const folio = document.getElementById('folio').value;
 
         const area = document.getElementById('area').value;
@@ -54,10 +66,10 @@ async function guardarOrden(e){
 
         const descripcion = document.getElementById('descripcion').value;
 
-        // Fecha automática
+        // Fecha
         const fecha = new Date().toLocaleString();
 
-        // Estado inicial
+        // Estado
         const estado = "Pendiente";
 
         // Guardar Firestore
@@ -75,20 +87,24 @@ async function guardarOrden(e){
 
         });
 
-        // Mensaje éxito
+        // Mensaje
         mensaje.innerHTML = "✅ Orden guardada correctamente";
 
-        // Limpiar formulario
+        mensaje.className = "mt-6 text-center font-bold text-green-600";
+
+        // Reset
         form.reset();
 
         // Nuevo folio
-        folioInput.value = generarFolio();
+        generarFolio();
 
     }catch(error){
 
         console.error(error);
 
         mensaje.innerHTML = "❌ Error al guardar orden";
+
+        mensaje.className = "mt-6 text-center font-bold text-red-600";
 
     }
 
