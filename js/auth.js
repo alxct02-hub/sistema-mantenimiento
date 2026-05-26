@@ -1,9 +1,9 @@
-// Importar auth
+// Importar Auth
 import { auth } from './firebase-config.js';
 
 import {
 
-  signInWithEmailAndPassword
+    signInWithEmailAndPassword
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -25,26 +25,21 @@ async function iniciarSesion(e){
 
     try{
 
-        // Mostrar en consola
-        console.log("Intentando iniciar sesión...");
-
-        // Login Firebase
-        const userCredential = await signInWithEmailAndPassword(
+        // Iniciar sesión
+        await signInWithEmailAndPassword(
             auth,
             email,
             password
         );
-
-        console.log("Login correcto:", userCredential.user);
 
         // Redireccionar
         window.location.href = "./pages/dashboard.html";
 
     }catch(error){
 
-        console.error("ERROR FIREBASE:", error);
+        console.error(error);
 
-        alert(error.message);
+        alert("Error al iniciar sesión");
 
     }
 
