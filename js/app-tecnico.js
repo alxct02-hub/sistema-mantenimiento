@@ -3,7 +3,9 @@ import { db } from './firebase-config.js';
 import {
 
     collection,
-    getDocs
+    getDocs,
+    doc,
+    updateDoc
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -23,20 +25,19 @@ async function cargarOrdenes(){
 
     try{
 
-        // Limpiar
         contenedor.innerHTML = '';
 
-        // Obtener órdenes
         const snapshot = await getDocs(
 
             collection(db, 'ordenes')
 
         );
 
-        // Recorrer órdenes
-        snapshot.forEach((doc) => {
+        snapshot.forEach((documento) => {
 
-            const orden = doc.data();
+            const orden = documento.data();
+
+            const id = documento.id;
 
             // Crear tarjeta
             const card = document.createElement('div');
@@ -93,7 +94,7 @@ async function cargarOrdenes(){
 
             }
 
-            // Tarjeta HTML
+            // HTML tarjeta
             card.innerHTML = `
 
                 <!-- Header -->
@@ -199,10 +200,47 @@ async function cargarOrdenes(){
 
                 </div>
 
+                <!-- Horas -->
+                <div class="mt-4 bg-gray-100 rounded-lg p-3 text-sm">
+
+                    <p>
+
+                        <strong>Hora inicio:</strong>
+                        ${orden.horaInicio || '-'}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Hora final:</strong>
+                        ${orden.horaFin || '-'}
+
+                    </p>
+
+                </div>
+
+                <!-- Observaciones -->
+                <div class="mt-4">
+
+                    <label class="block mb-2 font-bold">
+
+                        Observaciones
+
+                    </label>
+
+                    <textarea
+                        id="obs-${id}"
+                        class="w-full border rounded-lg p-3"
+                        rows="3"
+                    >${orden.observaciones || ''}</textarea>
+
+                </div>
+
                 <!-- Botones -->
                 <div class="grid grid-cols-2 gap-3 mt-5">
 
                     <button
+                        onclick="iniciarOrden('${id}')"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition"
                     >
 
@@ -211,6 +249,7 @@ async function cargarOrdenes(){
                     </button>
 
                     <button
+                        onclick="finalizarOrden('${id}')"
                         class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition"
                     >
 
@@ -222,19 +261,116 @@ async function cargarOrdenes(){
 
             `;
 
-            // Agregar tarjeta
+            // Agregar
             contenedor.appendChild(card);
 
         });
 
     }catch(error){
 
-        console.error(
+        console.error(error);
 
-            'Error cargando órdenes:',
-            error
+    }
+
+}
+
+// =======================================
+// INICIAR ORDEN
+// =======================================
+
+window.iniciarOrden = async function(id){
+
+    try{
+
+        // Hora actual
+        const horaInicio =
+
+            new Date().toLocaleString();
+
+        // Referencia
+        const ordenRef =
+
+            doc(db, 'ordenes', id);
+
+        // Actualizar
+        await updateDoc(
+
+            ordenRef,
+
+            {
+
+                estado: 'En proceso',
+                horaInicio
+
+            }
 
         );
+
+        // Recargar
+        cargarOrdenes();
+
+        // Mensaje
+        alert('✅ Orden iniciada');
+
+    }catch(error){
+
+        console.error(error);
+
+        alert('❌ Error al iniciar');
+
+    }
+
+}
+
+// =======================================
+// FINALIZAR ORDEN
+// =======================================
+
+window.finalizarOrden = async function(id){
+
+    try{
+
+        // Hora final
+        const horaFin =
+
+            new Date().toLocaleString();
+
+        // Observaciones
+        const observaciones =
+
+            document.getElementById(`obs-${id}`).value;
+
+        // Referencia
+        const ordenRef =
+
+            doc(db, 'ordenes', id);
+
+        // Actualizar
+        await updateDoc(
+
+            ordenRef,
+
+            {
+
+                estado: 'Completada',
+                horaFin,
+                observaciones
+
+            }
+
+        );
+
+        // Recargar
+        cargarOrdenes();
+
+        // Mensaje
+        alert('✅ Orden finalizada');
+
+    }catch(error){
+
+        console.error(error);
+
+        alert('❌ Error al finalizar');
 
     }
 
