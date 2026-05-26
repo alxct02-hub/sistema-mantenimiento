@@ -5,11 +5,18 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Reportes</title>
+    <title>Reportes Ejecutivos</title>
 
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
 
@@ -17,7 +24,7 @@
 
 <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <aside class="w-72 bg-gray-900 text-white flex flex-col">
 
         <!-- Logo -->
@@ -27,7 +34,6 @@
 
                 <img
                     src="../img/logo.png"
-                    alt="Logo"
                     class="w-16 h-16 object-contain bg-white rounded-lg p-1"
                 >
 
@@ -57,261 +63,93 @@
             <ul class="space-y-3">
 
                 <li>
-
-                    <a
-                        href="./dashboard.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./dashboard.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         📊 Dashboard
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./nueva-orden.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./nueva-orden.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         🛠 Nueva Orden
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./historial.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./historial.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         📁 Historial
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./tecnicos.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./tecnicos.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         👷 Técnicos
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./reportes.html"
-                        class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold"
-                    >
-
+                    <a href="./reportes.html" class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold">
                         📑 Reportes
-
                     </a>
+                </li>
 
+                <li>
+                    <a href="./app-tecnico.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
+                        📱 App Técnico
+                    </a>
                 </li>
 
             </ul>
 
         </nav>
 
-        <!-- Salir -->
-        <div class="p-4 border-t border-gray-700">
-
-            <a
-                href="../login.html"
-                class="block bg-red-500 hover:bg-red-600 text-center py-3 rounded-lg font-bold transition"
-            >
-
-                Cerrar Sesión
-
-            </a>
-
-        </div>
-
     </aside>
 
-    <!-- Contenido -->
+    <!-- CONTENIDO -->
     <main class="flex-1 p-8">
 
-        <!-- Header -->
+        <!-- HEADER -->
         <div class="mb-8">
 
             <h2 class="text-3xl font-bold text-gray-800">
 
-                Reportes Operativos
+                Reportes Ejecutivos
 
             </h2>
 
-            <p class="text-gray-500 mt-1">
+            <p class="text-gray-500 mt-2">
 
-                Indicadores generales de mantenimiento
+                Generación automática de reportes gerenciales
 
             </p>
 
         </div>
 
-        <!-- Tarjetas -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- TARJETAS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-            <!-- Total -->
+            <!-- REPORTE GENERAL -->
             <div class="bg-white rounded-xl shadow p-6">
 
-                <p class="text-gray-500">
+                <h3 class="text-2xl font-bold mb-3">
 
-                    Total Órdenes
+                    Reporte General
+
+                </h3>
+
+                <p class="text-gray-500 mb-6">
+
+                    Genera reporte ejecutivo completo del sistema.
 
                 </p>
 
-                <h3
-                    id="totalOrdenes"
-                    class="text-5xl font-bold mt-3"
+                <button
+                    onclick="generarReporte()"
+                    class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-bold transition"
                 >
 
-                    0
+                    Generar PDF
 
-                </h3>
-
-            </div>
-
-            <!-- Pendientes -->
-            <div class="bg-white rounded-xl shadow p-6">
-
-                <p class="text-gray-500">
-
-                    Pendientes
-
-                </p>
-
-                <h3
-                    id="pendientes"
-                    class="text-5xl font-bold text-yellow-500 mt-3"
-                >
-
-                    0
-
-                </h3>
-
-            </div>
-
-            <!-- Completadas -->
-            <div class="bg-white rounded-xl shadow p-6">
-
-                <p class="text-gray-500">
-
-                    Completadas
-
-                </p>
-
-                <h3
-                    id="completadas"
-                    class="text-5xl font-bold text-green-600 mt-3"
-                >
-
-                    0
-
-                </h3>
-
-            </div>
-
-            <!-- Prioridad Alta -->
-            <div class="bg-white rounded-xl shadow p-6">
-
-                <p class="text-gray-500">
-
-                    Prioridad Alta
-
-                </p>
-
-                <h3
-                    id="prioridadAlta"
-                    class="text-5xl font-bold text-red-600 mt-3"
-                >
-
-                    0
-
-                </h3>
-
-            </div>
-
-        </div>
-
-        <!-- Tabla -->
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-
-            <div class="p-5 border-b">
-
-                <h3 class="font-bold text-lg">
-
-                    Resumen de Órdenes
-
-                </h3>
-
-            </div>
-
-            <div class="overflow-auto">
-
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-800 text-white">
-
-                        <tr>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Folio
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Equipo
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Técnico
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Prioridad
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Estado
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Fecha
-
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="tablaReportes">
-
-                    </tbody>
-
-                </table>
+                </button>
 
             </div>
 

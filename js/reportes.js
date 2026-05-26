@@ -7,190 +7,358 @@ import {
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Elementos
-const totalOrdenes =
-    document.getElementById('totalOrdenes');
+// ======================================
+// GENERAR REPORTE
+// ======================================
 
-const pendientes =
-    document.getElementById('pendientes');
-
-const completadas =
-    document.getElementById('completadas');
-
-const prioridadAlta =
-    document.getElementById('prioridadAlta');
-
-const tabla =
-    document.getElementById('tablaReportes');
-
-// Inicializar
-cargarReportes();
-
-// ====================================
-// CARGAR REPORTES
-// ====================================
-
-async function cargarReportes(){
+window.generarReporte = async function(){
 
     try{
 
-        // Obtener órdenes
+        // ======================================
+        // OBTENER ÓRDENES
+        // ======================================
+
         const snapshot = await getDocs(
 
             collection(db, 'ordenes')
 
         );
 
-        // Variables
         let total = 0;
 
-        let pendientesCount = 0;
+        let pendientes = 0;
 
-        let completadasCount = 0;
+        let proceso = 0;
 
-        let prioridadAltaCount = 0;
+        let completadas = 0;
 
-        // Limpiar tabla
-        tabla.innerHTML = '';
+        let equipos = {};
 
-        // Recorrer órdenes
+        let tecnicos = {};
+
         snapshot.forEach((doc) => {
 
             const orden = doc.data();
 
             total++;
 
-            // Pendientes
+            // Estados
             if(orden.estado === 'Pendiente'){
 
-                pendientesCount++;
+                pendientes++;
 
             }
 
-            // Completadas
-            if(orden.estado === 'Completada'){
+            else if(orden.estado === 'En proceso'){
 
-                completadasCount++;
-
-            }
-
-            // Prioridad alta
-            if(orden.prioridad === 'Alta'){
-
-                prioridadAltaCount++;
+                proceso++;
 
             }
 
-            // Crear fila
-            const fila = document.createElement('tr');
+            else if(orden.estado === 'Completada'){
 
-            fila.className =
-                'border-b hover:bg-gray-50';
-
-            // Colores prioridad
-            let colorPrioridad = '';
-
-            if(orden.prioridad === 'Alta'){
-
-                colorPrioridad =
-                    'text-red-600 font-bold';
+                completadas++;
 
             }
 
-            else if(orden.prioridad === 'Media'){
+            // Equipos
+            if(orden.equipo){
 
-                colorPrioridad =
-                    'text-yellow-600 font-bold';
+                if(!equipos[orden.equipo]){
 
-            }
+                    equipos[orden.equipo] = 0;
 
-            else{
+                }
 
-                colorPrioridad =
-                    'text-green-600 font-bold';
-
-            }
-
-            // Estado color
-            let colorEstado = '';
-
-            if(orden.estado === 'Pendiente'){
-
-                colorEstado =
-                    'text-yellow-600 font-bold';
+                equipos[orden.equipo]++;
 
             }
 
-            else{
+            // Técnicos
+            if(orden.tecnico){
 
-                colorEstado =
-                    'text-green-600 font-bold';
+                if(!tecnicos[orden.tecnico]){
+
+                    tecnicos[orden.tecnico] = 0;
+
+                }
+
+                tecnicos[orden.tecnico]++;
 
             }
-
-            // Fila HTML
-            fila.innerHTML = `
-
-                <td class="px-6 py-4 font-bold">
-
-                    ${orden.folio || '-'}
-
-                </td>
-
-                <td class="px-6 py-4">
-
-                    ${orden.equipo || '-'}
-
-                </td>
-
-                <td class="px-6 py-4">
-
-                    ${orden.tecnico || '-'}
-
-                </td>
-
-                <td class="px-6 py-4 ${colorPrioridad}">
-
-                    ${orden.prioridad || '-'}
-
-                </td>
-
-                <td class="px-6 py-4 ${colorEstado}">
-
-                    ${orden.estado || '-'}
-
-                </td>
-
-                <td class="px-6 py-4">
-
-                    ${orden.fecha || '-'}
-
-                </td>
-
-            `;
-
-            // Agregar fila
-            tabla.appendChild(fila);
 
         });
 
-        // Actualizar tarjetas
-        totalOrdenes.innerText = total;
+        // ======================================
+        // EQUIPO TOP
+        // ======================================
 
-        pendientes.innerText = pendientesCount;
+        let equipoTop = '-';
 
-        completadas.innerText = completadasCount;
+        let maxEquipo = 0;
 
-        prioridadAlta.innerText = prioridadAltaCount;
+        for(const equipo in equipos){
+
+            if(equipos[equipo] > maxEquipo){
+
+                maxEquipo = equipos[equipo];
+
+                equipoTop = equipo;
+
+            }
+
+        }
+
+        // ======================================
+        // TÉCNICO TOP
+        // ======================================
+
+        let tecnicoTop = '-';
+
+        let maxTecnico = 0;
+
+        for(const tecnico in tecnicos){
+
+            if(tecnicos[tecnico] > maxTecnico){
+
+                maxTecnico = tecnicos[tecnico];
+
+                tecnicoTop = tecnico;
+
+            }
+
+        }
+
+        // ======================================
+        // PDF
+        // ======================================
+
+        const { jsPDF } = window.jspdf;
+
+        const pdf = new jsPDF();
+
+        // HEADER
+        pdf.setFillColor(31,41,55);
+
+        pdf.rect(
+
+            0,
+            0,
+            210,
+            35,
+            'F'
+
+        );
+
+        pdf.setTextColor(255,255,255);
+
+        pdf.setFontSize(24);
+
+        pdf.text(
+
+            'REPORTE EJECUTIVO',
+
+            20,
+
+            20
+
+        );
+
+        pdf.setFontSize(12);
+
+        pdf.text(
+
+            'Sistema de Mantenimiento',
+
+            20,
+
+            28
+
+        );
+
+        // RESET
+        pdf.setTextColor(0,0,0);
+
+        // FECHA
+        pdf.setFontSize(11);
+
+        pdf.text(
+
+            `Fecha: ${new Date().toLocaleDateString()}`,
+
+            20,
+
+            50
+
+        );
+
+        // KPI
+        pdf.setFontSize(18);
+
+        pdf.text(
+
+            'INDICADORES OPERATIVOS',
+
+            20,
+
+            70
+
+        );
+
+        pdf.line(
+
+            20,
+            74,
+            190,
+            74
+
+        );
+
+        pdf.setFontSize(13);
+
+        pdf.text(
+
+            `Órdenes Totales: ${total}`,
+
+            25,
+
+            90
+
+        );
+
+        pdf.text(
+
+            `Pendientes: ${pendientes}`,
+
+            25,
+
+            102
+
+        );
+
+        pdf.text(
+
+            `En Proceso: ${proceso}`,
+
+            25,
+
+            114
+
+        );
+
+        pdf.text(
+
+            `Completadas: ${completadas}`,
+
+            25,
+
+            126
+
+        );
+
+        pdf.text(
+
+            `Equipo con más fallas: ${equipoTop}`,
+
+            25,
+
+            138
+
+        );
+
+        pdf.text(
+
+            `Técnico con más órdenes: ${tecnicoTop}`,
+
+            25,
+
+            150
+
+        );
+
+        // CONCLUSIÓN
+        pdf.setFontSize(18);
+
+        pdf.text(
+
+            'RESUMEN EJECUTIVO',
+
+            20,
+
+            180
+
+        );
+
+        pdf.line(
+
+            20,
+            184,
+            190,
+            184
+
+        );
+
+        pdf.setFontSize(12);
+
+        const resumen = `
+
+El sistema registra actualmente ${total} órdenes de servicio.
+
+Se identifican ${pendientes} órdenes pendientes,
+${proceso} en proceso y ${completadas} completadas.
+
+El equipo con mayor recurrencia de fallas es:
+${equipoTop}.
+
+El técnico con mayor participación operativa es:
+${tecnicoTop}.
+
+        `;
+
+        const texto = pdf.splitTextToSize(
+
+            resumen,
+
+            165
+
+        );
+
+        pdf.text(
+
+            texto,
+
+            20,
+
+            200
+
+        );
+
+        // FOOTER
+        pdf.setFontSize(10);
+
+        pdf.text(
+
+            'Concretera del Sureste - Sistema de mantenimiento',
+
+            20,
+
+            285
+
+        );
+
+        // DESCARGAR
+        pdf.save(
+
+            'Reporte-Ejecutivo.pdf'
+
+        );
 
     }catch(error){
 
-        console.error(
+        console.error(error);
 
-            'Error cargando reportes:',
-            error
-
-        );
+        alert('❌ Error generando reporte');
 
     }
 
