@@ -8,198 +8,114 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ======================================
-// ELEMENTOS
+// VARIABLES
 // ======================================
 
-const tabla = document.getElementById('tablaHistorial');
+let ordenes = [];
+
+let ordenesFiltradas = [];
 
 // ======================================
-// INICIALIZAR
+// CARGAR ÓRDENES
 // ======================================
 
-cargarHistorial();
-
-// ======================================
-// CARGAR HISTORIAL
-// ======================================
-
-async function cargarHistorial(){
+async function cargarOrdenes(){
 
     try{
 
-        // Limpiar tabla
-        tabla.innerHTML = '';
-
-        // Obtener órdenes
         const snapshot = await getDocs(
 
             collection(db, 'ordenes')
 
         );
 
-        // Recorrer documentos
-        snapshot.forEach((documento) => {
+        ordenes = [];
 
-            // Datos
-            const orden = documento.data();
+        snapshot.forEach((doc) => {
 
-            // Crear fila
-            const fila = document.createElement('tr');
+            ordenes.push({
 
-            fila.className =
+                id: doc.id,
 
-                'border-b hover:bg-gray-50 transition';
+                ...doc.data()
 
-            // ======================================
-            // COLOR PRIORIDAD
-            // ======================================
+            });
 
-            let colorPrioridad = '';
+        });
 
-            if(orden.prioridad === 'Alta'){
+        ordenesFiltradas = [...ordenes];
 
-                colorPrioridad =
-                    'bg-red-100 text-red-700';
+        renderizarTabla();
 
-            }
+    }catch(error){
 
-            else if(orden.prioridad === 'Media'){
+        console.error(error);
 
-                colorPrioridad =
-                    'bg-yellow-100 text-yellow-700';
+        alert('❌ Error cargando historial');
 
-            }
+    }
 
-            else{
+}
 
-                colorPrioridad =
-                    'bg-green-100 text-green-700';
+// ======================================
+// RENDERIZAR TABLA
+// ======================================
 
-            }
+function renderizarTabla(){
 
-            // ======================================
-            // COLOR ESTADO
-            // ======================================
+    const tabla = document.getElementById(
 
-            let colorEstado = '';
+        'tablaHistorial'
 
-            if(orden.estado === 'Pendiente'){
+    );
 
-                colorEstado =
-                    'bg-yellow-100 text-yellow-700';
+    tabla.innerHTML = '';
 
-            }
+    ordenesFiltradas.forEach((orden) => {
 
-            else if(orden.estado === 'En proceso'){
+        tabla.innerHTML += `
 
-                colorEstado =
-                    'bg-blue-100 text-blue-700';
+            <tr class="hover:bg-gray-50">
 
-            }
-
-            else{
-
-                colorEstado =
-                    'bg-green-100 text-green-700';
-
-            }
-
-            // ======================================
-            // HTML FILA
-            // ======================================
-
-            fila.innerHTML = `
-
-                <!-- Folio -->
-                <td class="px-6 py-4 font-bold">
+                <td class="px-4 py-4">
 
                     ${orden.folio || '-'}
 
                 </td>
 
-                <!-- Equipo -->
-                <td class="px-6 py-4">
+                <td class="px-4 py-4">
 
                     ${orden.equipo || '-'}
 
                 </td>
 
-                <!-- Técnico -->
-                <td class="px-6 py-4">
+                <td class="px-4 py-4">
 
                     ${orden.tecnico || '-'}
 
                 </td>
 
-                <!-- Prioridad -->
-                <td class="px-6 py-4">
+                <td class="px-4 py-4">
 
-                    <span class="px-3 py-1 rounded-full text-xs font-bold ${colorPrioridad}">
-
-                        ${orden.prioridad || '-'}
-
-                    </span>
+                    ${orden.tipo || '-'}
 
                 </td>
 
-                <!-- Estado -->
-                <td class="px-6 py-4">
+                <td class="px-4 py-4">
 
-                    <span class="px-3 py-1 rounded-full text-xs font-bold ${colorEstado}">
-
-                        ${orden.estado || '-'}
-
-                    </span>
+                    ${orden.prioridad || '-'}
 
                 </td>
 
-                <!-- Fecha -->
-                <td class="px-6 py-4">
+                <td class="px-4 py-4">
+
+                    ${orden.estado || '-'}
+
+                </td>
+
+                <td class="px-4 py-4">
 
                     ${orden.fecha || '-'}
-
-                </td>
-
-                <!-- PDF -->
-                <td class="px-6 py-4 text-center">
-
-                    <button
-                        onclick="generarPDF('${orden.folio}')"
-                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition"
-                    >
-
-                        PDF
-
-                    </button>
-
-                </td>
-
-            `;
-
-            // Agregar fila
-            tabla.appendChild(fila);
-
-        });
-
-    }catch(error){
-
-        console.error(
-
-            'Error cargando historial:',
-            error
-
-        );
-
-        tabla.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="7"
-                    class="text-center py-10 text-red-600 font-bold"
-                >
-
-                    Error cargando historial
 
                 </td>
 
@@ -207,6 +123,182 @@ async function cargarHistorial(){
 
         `;
 
-    }
+    });
 
 }
+
+// ======================================
+// FILTROS
+// ======================================
+
+window.aplicarFiltros = function(){
+
+    const fechaInicio = document.getElementById(
+
+        'fechaInicio'
+
+    ).value;
+
+    const fechaFin = document.getElementById(
+
+        'fechaFin'
+
+    ).value;
+
+    const equipo = document.getElementById(
+
+        'filtroEquipo'
+
+    ).value.toLowerCase();
+
+    const tecnico = document.getElementById(
+
+        'filtroTecnico'
+
+    ).value.toLowerCase();
+
+    const estado = document.getElementById(
+
+        'filtroEstado'
+
+    ).value;
+
+    ordenesFiltradas = ordenes.filter((orden) => {
+
+        let cumple = true;
+
+        // EQUIPO
+        if(equipo){
+
+            cumple = cumple &&
+
+            orden.equipo?.toLowerCase()
+
+            .includes(equipo);
+
+        }
+
+        // TÉCNICO
+        if(tecnico){
+
+            cumple = cumple &&
+
+            orden.tecnico?.toLowerCase()
+
+            .includes(tecnico);
+
+        }
+
+        // ESTADO
+        if(estado){
+
+            cumple = cumple &&
+
+            orden.estado === estado;
+
+        }
+
+        // FECHA
+        if(fechaInicio){
+
+            cumple = cumple &&
+
+            orden.fecha >= fechaInicio;
+
+        }
+
+        if(fechaFin){
+
+            cumple = cumple &&
+
+            orden.fecha <= fechaFin;
+
+        }
+
+        return cumple;
+
+    });
+
+    renderizarTabla();
+
+}
+
+// ======================================
+// LIMPIAR
+// ======================================
+
+window.limpiarFiltros = function(){
+
+    document.getElementById('fechaInicio').value = '';
+
+    document.getElementById('fechaFin').value = '';
+
+    document.getElementById('filtroEquipo').value = '';
+
+    document.getElementById('filtroTecnico').value = '';
+
+    document.getElementById('filtroEstado').value = '';
+
+    ordenesFiltradas = [...ordenes];
+
+    renderizarTabla();
+
+}
+
+// ======================================
+// EXPORTAR EXCEL
+// ======================================
+
+window.exportarExcel = function(){
+
+    const datos = ordenesFiltradas.map((orden) => ({
+
+        Folio: orden.folio || '',
+
+        Equipo: orden.equipo || '',
+
+        Tecnico: orden.tecnico || '',
+
+        Tipo: orden.tipo || '',
+
+        Prioridad: orden.prioridad || '',
+
+        Estado: orden.estado || '',
+
+        Fecha: orden.fecha || ''
+
+    }));
+
+    const hoja = XLSX.utils.json_to_sheet(
+
+        datos
+
+    );
+
+    const libro = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+
+        libro,
+
+        hoja,
+
+        'Historial'
+
+    );
+
+    XLSX.writeFile(
+
+        libro,
+
+        'Historial-Ordenes.xlsx'
+
+    );
+
+}
+
+// ======================================
+// INICIAR
+// ======================================
+
+cargarOrdenes();

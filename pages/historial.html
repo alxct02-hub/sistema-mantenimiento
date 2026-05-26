@@ -10,13 +10,13 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Historial de Órdenes</title>
+    <title>Historial</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
 
@@ -27,14 +27,13 @@
     <!-- SIDEBAR -->
     <aside class="w-72 bg-gray-900 text-white flex flex-col">
 
-        <!-- Logo -->
+        <!-- LOGO -->
         <div class="p-6 border-b border-gray-700">
 
             <div class="flex items-center gap-4">
 
                 <img
                     src="../img/logo.png"
-                    alt="Logo"
                     class="w-16 h-16 object-contain bg-white rounded-lg p-1"
                 >
 
@@ -58,113 +57,51 @@
 
         </div>
 
-        <!-- Menú -->
+        <!-- MENU -->
         <nav class="flex-1 p-4">
 
             <ul class="space-y-3">
 
                 <li>
-
-                    <a
-                        href="./dashboard.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./dashboard.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         📊 Dashboard
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./nueva-orden.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./nueva-orden.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         🛠 Nueva Orden
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./historial.html"
-                        class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold"
-                    >
-
+                    <a href="./historial.html" class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold">
                         📁 Historial
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./tecnicos.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./tecnicos.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         👷 Técnicos
-
                     </a>
-
                 </li>
 
                 <li>
-
-                    <a
-                        href="./reportes.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
+                    <a href="./reportes.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
                         📑 Reportes
-
                     </a>
-
-                </li>
-
-                <li>
-
-                    <a
-                        href="./app-tecnico.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
-                        📱 App Técnico
-
-                    </a>
-
                 </li>
 
             </ul>
 
         </nav>
 
-        <!-- Cerrar sesión -->
-        <div class="p-4 border-t border-gray-700">
-
-            <a
-                href="../login.html"
-                class="block bg-red-500 hover:bg-red-600 text-center py-3 rounded-lg font-bold transition"
-            >
-
-                Cerrar Sesión
-
-            </a>
-
-        </div>
-
     </aside>
 
     <!-- CONTENIDO -->
     <main class="flex-1 p-8">
 
-        <!-- Header -->
+        <!-- TITULO -->
         <div class="mb-8">
 
             <h2 class="text-3xl font-bold text-gray-800">
@@ -173,83 +110,230 @@
 
             </h2>
 
-            <p class="text-gray-500 mt-1">
+            <p class="text-gray-500 mt-2">
 
-                Consulta histórica de órdenes de servicio
+                Consulta y exportación de información operativa
 
             </p>
 
         </div>
 
-        <!-- Tabla -->
-        <div class="bg-white rounded-xl shadow overflow-hidden">
+        <!-- FILTROS -->
+        <div class="bg-white rounded-xl shadow p-6 mb-8">
 
-            <div class="overflow-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
 
-                <table class="min-w-full">
+                <!-- FECHA INICIO -->
+                <div>
 
-                    <!-- Encabezados -->
-                    <thead class="bg-gray-800 text-white">
+                    <label class="block mb-2 font-semibold">
 
-                        <tr>
+                        Fecha inicio
 
-                            <th class="px-6 py-4 text-left">
+                    </label>
 
-                                Folio
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Equipo
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Técnico
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Prioridad
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Estado
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Fecha
-
-                            </th>
-
-                            <th class="px-6 py-4 text-center">
-
-                                PDF
-
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <!-- Body -->
-                    <tbody
-                        id="tablaHistorial"
-                        class="bg-white"
+                    <input
+                        type="date"
+                        id="fechaInicio"
+                        class="w-full border rounded-lg p-3"
                     >
 
-                    </tbody>
+                </div>
 
-                </table>
+                <!-- FECHA FIN -->
+                <div>
+
+                    <label class="block mb-2 font-semibold">
+
+                        Fecha fin
+
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaFin"
+                        class="w-full border rounded-lg p-3"
+                    >
+
+                </div>
+
+                <!-- EQUIPO -->
+                <div>
+
+                    <label class="block mb-2 font-semibold">
+
+                        Equipo
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="filtroEquipo"
+                        placeholder="Buscar equipo"
+                        class="w-full border rounded-lg p-3"
+                    >
+
+                </div>
+
+                <!-- TÉCNICO -->
+                <div>
+
+                    <label class="block mb-2 font-semibold">
+
+                        Técnico
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="filtroTecnico"
+                        placeholder="Buscar técnico"
+                        class="w-full border rounded-lg p-3"
+                    >
+
+                </div>
+
+                <!-- ESTADO -->
+                <div>
+
+                    <label class="block mb-2 font-semibold">
+
+                        Estado
+
+                    </label>
+
+                    <select
+                        id="filtroEstado"
+                        class="w-full border rounded-lg p-3"
+                    >
+
+                        <option value="">
+
+                            Todos
+
+                        </option>
+
+                        <option value="Pendiente">
+
+                            Pendiente
+
+                        </option>
+
+                        <option value="En proceso">
+
+                            En proceso
+
+                        </option>
+
+                        <option value="Completada">
+
+                            Completada
+
+                        </option>
+
+                    </select>
+
+                </div>
 
             </div>
+
+            <!-- BOTONES -->
+            <div class="flex flex-wrap gap-4 mt-6">
+
+                <button
+                    onclick="aplicarFiltros()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-bold"
+                >
+
+                    Filtrar
+
+                </button>
+
+                <button
+                    onclick="limpiarFiltros()"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold"
+                >
+
+                    Limpiar
+
+                </button>
+
+                <button
+                    onclick="exportarExcel()"
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold"
+                >
+
+                    Descargar Excel
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- TABLA -->
+        <div class="bg-white rounded-xl shadow overflow-auto">
+
+            <table class="w-full">
+
+                <thead class="bg-gray-900 text-white">
+
+                    <tr>
+
+                        <th class="px-4 py-4 text-left">
+
+                            Folio
+
+                        </th>
+
+                        <th class="px-4 py-4 text-left">
+
+                            Equipo
+
+                        </th>
+
+                        <th class="px-4 py-4 text-left">
+
+                            Técnico
+
+                        </th>
+
+                        <th class="px-4 py-4 text-left">
+
+                            Tipo
+
+                        </th>
+
+                        <th class="px-4 py-4 text-left">
+
+                            Prioridad
+
+                        </th>
+
+                        <th class="px-4 py-4 text-left">
+
+                            Estado
+
+                        </th>
+
+                        <th class="px-4 py-4 text-left">
+
+                            Fecha
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody
+                    id="tablaHistorial"
+                    class="divide-y"
+                >
+
+                </tbody>
+
+            </table>
 
         </div>
 
@@ -257,10 +341,7 @@
 
 </div>
 
-<!-- Scripts -->
 <script type="module" src="../js/historial.js"></script>
-
-<script type="module" src="../js/pdf-orden.js"></script>
 
 </body>
 </html>
