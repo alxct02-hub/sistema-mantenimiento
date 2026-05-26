@@ -3,58 +3,72 @@
 
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Nueva Orden</title>
+    <title>Nueva Orden</title>
 
-  <link rel="stylesheet" href="../css/ordenes.css">
+    <link rel="stylesheet" href="../css/ordenes.css">
 
 </head>
 
 <body>
 
-  <div class="contenedor">
+    <div class="contenedor">
 
-    <h1>CONCRETERA DEL SURESTE</h1>
+        <h1>CONCRETERA DEL SURESTE</h1>
 
-    <h2>Nueva Orden de Servicio</h2>
+        <h2>Nueva Orden de Servicio</h2>
 
-    <form id="ordenForm">
+        <form id="ordenForm">
 
-      <input type="text" id="folio" placeholder="Folio" readonly>
+            <label>Equipo</label>
+            <input type="text" id="equipo" required>
 
-      <input type="text" id="area" placeholder="Área">
+            <label>Técnico</label>
+            <input type="text" id="tecnico" required>
 
-      <input type="text" id="equipo" placeholder="Equipo">
+            <label>Tipo de mantenimiento</label>
+            <select id="tipo" required>
 
-      <select id="prioridad">
+                <option value="">Seleccionar</option>
 
-        <option value="">Prioridad</option>
+                <option value="Preventivo">Preventivo</option>
 
-        <option>Alta</option>
+                <option value="Correctivo">Correctivo</option>
 
-        <option>Media</option>
+            </select>
 
-        <option>Baja</option>
+            <label>Prioridad</label>
+            <select id="prioridad" required>
 
-      </select>
+                <option value="">Seleccionar</option>
 
-      <textarea id="descripcion"
-      placeholder="Descripción de falla"></textarea>
+                <option value="Alta">Alta</option>
 
-      <button type="submit">
+                <option value="Media">Media</option>
 
-        Guardar Orden
+                <option value="Baja">Baja</option>
 
-      </button>
+            </select>
 
-    </form>
+            <label>Descripción</label>
+            <textarea id="descripcion" rows="5"></textarea>
 
-  </div>
+            <button type="submit">
 
-  <script type="module" src="../js/ordenes.js"></script>
+                Guardar Orden
+
+            </button>
+
+        </form>
+
+        <div id="mensaje"></div>
+
+    </div>
+
+    <script type="module" src="../js/ordenes.js"></script>
 
 </body>
 </html>

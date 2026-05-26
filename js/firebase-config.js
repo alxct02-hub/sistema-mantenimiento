@@ -1,159 +1,79 @@
+// Importar Firebase App
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 // Importar Firestore
-import { db } from './firebase-config.js';
-
 import {
-
-    collection,
-    onSnapshot
-
+  getFirestore,
+  enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Array órdenes
-let ordenesData = [];
+// Importar Auth
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Cargar órdenes en tiempo real
-async function cargarOrdenes() {
+// Importar Storage
+import {
+  getStorage
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    try {
+// Configuración Firebase
+const firebaseConfig = {
 
-        // Referencia colección
-        const ordenesRef = collection(db, 'ordenes');
+  apiKey: "AIzaSyDR4D1IyOqAYOE3JZzsqBhlfpwGwmT4m-A",
 
-        // Escuchar cambios en tiempo real
-        onSnapshot(ordenesRef, (snapshot) => {
+  authDomain: "mantenimiento-planta-adbfc.firebaseapp.com",
 
-            ordenesData = [];
+  projectId: "mantenimiento-planta-adbfc",
 
-            let total = 0;
-            let pendientes = 0;
-            let completadas = 0;
+  storageBucket: "mantenimiento-planta-adbfc.firebasestorage.app",
 
-            snapshot.forEach((doc) => {
+  messagingSenderId: "182924583347",
 
-                const orden = doc.data();
+  appId: "1:182924583347:web:96531f94bc101af2a12bc6",
 
-                orden.id = doc.id;
+  measurementId: "G-HZ8W5B6ZG3"
 
-                ordenesData.push(orden);
+};
 
-                total++;
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
 
-                if (
-                    orden.estado === "Completada" ||
-                    orden.estado === "Finalizada"
-                ) {
+// Inicializar Firestore
+const db = getFirestore(app);
 
-                    completadas++;
+// Activar persistencia offline
+enableIndexedDbPersistence(db)
+  .then(() => {
 
-                } else {
+    console.log("Modo offline activado correctamente");
 
-                    pendientes++;
+  })
+  .catch((err) => {
 
-                }
+    if (err.code === 'failed-precondition') {
 
-            });
+      console.log("Varias pestañas abiertas");
 
-            // Actualizar contadores
-            document.getElementById('totalOrdenes').innerText = total;
+    } else if (err.code === 'unimplemented') {
 
-            document.getElementById('pendientes').innerText = pendientes;
-
-            document.getElementById('completadas').innerText = completadas;
-
-            // Renderizar tabla
-            renderizarTabla();
-
-        });
-
-    } catch (error) {
-
-        console.error("Error al cargar órdenes:", error);
+      console.log("Navegador no compatible");
 
     }
 
-}
+  });
 
-// Renderizar tabla
-function renderizarTabla() {
+// Inicializar Auth
+const auth = getAuth(app);
 
-    const tbody = document.getElementById('tablaOrdenes');
+// Inicializar Storage
+const storage = getStorage(app);
 
-    tbody.innerHTML = '';
+// Exportar servicios
+export {
 
-    ordenesData.forEach(orden => {
+  db,
+  auth,
+  storage
 
-        const fila = document.createElement('tr');
-
-        fila.innerHTML = `
-
-            <td class="px-6 py-4">${orden.equipo || '-'}</td>
-
-            <td class="px-6 py-4">${orden.tecnico || '-'}</td>
-
-            <td class="px-6 py-4">${orden.tipo || '-'}</td>
-
-            <td class="px-6 py-4">
-
-                <span class="
-                    px-3 py-1 rounded-full text-xs font-medium
-
-                    ${orden.prioridad === 'Alta'
-                        ? 'bg-red-100 text-red-700'
-                        : orden.prioridad === 'Media'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-green-100 text-green-700'
-                    }
-                ">
-
-                    ${orden.prioridad || 'Baja'}
-
-                </span>
-
-            </td>
-
-            <td class="px-6 py-4">
-
-                <span class="
-                    px-3 py-1 rounded-full text-xs font-medium
-
-                    ${orden.estado === 'Completada'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                    }
-                ">
-
-                    ${orden.estado || 'Pendiente'}
-
-                </span>
-
-            </td>
-
-            <td class="px-6 py-4">
-
-                ${orden.fecha || '-'}
-
-            </td>
-
-            <td class="px-6 py-4 text-center">
-
-                <button
-                    onclick="editarOrden('${orden.id}')"
-                    class="text-blue-600 hover:text-blue-800 mr-3"
-                >
-
-                    ✏️
-
-                </button>
-
-            </td>
-
-        `;
-
-        tbody.appendChild(fila);
-
-    });
-
-}
-
-// Iniciar dashboard
-document.addEventListener('DOMContentLoaded', cargarOrdenes);
+};
