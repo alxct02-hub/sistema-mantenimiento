@@ -1,4 +1,112 @@
 body{
+  
+      margin:0;
+          padding:0;
+          
+              background:#121212;
+              
+                  font-family:Arial, sans-serif;
+                  
+                      color:white;
+                      
+                      }
+                      
+                      .contenedor{
+                      
+                          width:90%;
+                              max-width:700px;
+                              
+                                  margin:auto;
+                                  
+                                      margin-top:40px;
+                                      
+                                          background:#1f1f1f;
+                                          
+                                              padding:30px;
+                                              
+                                                  border-radius:10px;
+                                                  
+                                                  }
+                                                  
+                                                  h1{
+                                                  
+                                                      color:#f5b400;
+                                                      
+                                                          margin-bottom:5px;
+                                                          
+                                                          }
+                                                          
+                                                          h2{
+                                                          
+                                                              margin-bottom:30px;
+                                                              
+                                                              }
+                                                              
+                                                              form{
+                                                              
+                                                                  display:flex;
+                                                                  
+                                                                      flex-direction:column;
+                                                                      
+                                                                          gap:15px;
+                                                                          
+                                                                          }
+                                                                          
+                                                                          label{
+                                                                          
+                                                                              font-weight:bold;
+                                                                              
+                                                                              }
+                                                                              
+                                                                              input,
+                                                                              select,
+                                                                              textarea{
+                                                                              
+                                                                                  padding:12px;
+                                                                                  
+                                                                                      border:none;
+                                                                                      
+                                                                                          border-radius:5px;
+                                                                                          
+                                                                                              font-size:16px;
+                                                                                              
+                                                                                              }
+                                                                                              
+                                                                                              button{
+                                                                                              
+                                                                                                  background:#f5b400;
+                                                                                                  
+                                                                                                      color:black;
+                                                                                                      
+                                                                                                          padding:15px;
+                                                                                                          
+                                                                                                              border:none;
+                                                                                                              
+                                                                                                                  border-radius:5px;
+                                                                                                                  
+                                                                                                                      font-weight:bold;
+                                                                                                                      
+                                                                                                                          cursor:pointer;
+                                                                                                                          
+                                                                                                                              transition:0.3s;
+                                                                                                                              
+                                                                                                                              }
+                                                                                                                              
+                                                                                                                              button:hover{
+                                                                                                                              
+                                                                                                                                  opacity:0.8;
+                                                                                                                                  
+                                                                                                                                  }
+                                                                                                                                  
+                                                                                                                                  #mensaje{
+                                                                                                                                  
+                                                                                                                                      margin-top:20px;
+                                                                                                                                      
+                                                                                                                                          font-weight:bold;
+                                                                                                                                          
+                                                                                                                                              color:#00ff88;
+                                                                                                                                              
+                                                                                                                                              }dy{
 
       margin:0;
         padding:0;
