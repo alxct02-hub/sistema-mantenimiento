@@ -9,139 +9,245 @@
 
     <title>Nueva Orden</title>
 
-    <link rel="stylesheet" href="../css/ordenes.css">
+    <link rel="stylesheet" href="../css/panel.css">
 
 </head>
 
 <body>
 
-<div class="contenedor">
+<div class="layout">
 
-    <!-- Encabezado -->
-    <div class="encabezado">
+    <!-- Sidebar -->
+    <aside class="sidebar">
 
-        <img
-            src="../img/logo.png"
-            alt="Logo"
-            class="logo"
-        >
+        <div class="logo-area">
 
-        <div>
+            <img
+                src="../img/logo.png"
+                alt="Logo"
+            >
 
-            <h1>CONCRETERA DEL SURESTE</h1>
+            <div>
 
-            <h2>Nueva Orden de Servicio</h2>
+                <h1>Sistema Mantenimiento</h1>
+
+                <p>Concretera del Sureste</p>
+
+            </div>
 
         </div>
 
-    </div>
+        <nav class="menu">
 
-    <!-- Formulario -->
-    <form id="ordenForm">
+            <ul>
 
-        <label>Folio</label>
+                <li>
 
-        <input
-            type="text"
-            id="folio"
-            readonly
-        >
+                    <a href="./dashboard.html">
 
-        <label>Área</label>
+                        📊 Dashboard
 
-        <input
-            type="text"
-            id="area"
-            required
-        >
+                    </a>
 
-        <label>Equipo</label>
+                </li>
 
-        <input
-            type="text"
-            id="equipo"
-            required
-        >
+                <li>
 
-        <label>Técnico</label>
+                    <a
+                        href="./nueva-orden.html"
+                        class="activo"
+                    >
 
-        <input
-            type="text"
-            id="tecnico"
-            required
-        >
+                        🛠 Nueva Orden
 
-        <label>Tipo de mantenimiento</label>
+                    </a>
 
-        <select id="tipo" required>
+                </li>
 
-            <option value="">
+                <li>
 
-                Seleccionar
+                    <a href="./historial.html">
 
-            </option>
+                        📁 Historial
 
-            <option value="Preventivo">
+                    </a>
 
-                Preventivo
+                </li>
 
-            </option>
+                <li>
 
-            <option value="Correctivo">
+                    <a href="./tecnicos.html">
 
-                Correctivo
+                        👷 Técnicos
 
-            </option>
+                    </a>
 
-        </select>
+                </li>
 
-        <label>Prioridad</label>
+                <li>
 
-        <select id="prioridad" required>
+                    <a href="./reportes.html">
 
-            <option value="">
+                        📑 Reportes
 
-                Seleccionar
+                    </a>
 
-            </option>
+                </li>
 
-            <option value="Alta">
+            </ul>
 
-                Alta
+        </nav>
 
-            </option>
+        <div class="logout">
 
-            <option value="Media">
+            <a href="../login.html">
 
-                Media
+                Cerrar Sesión
 
-            </option>
+            </a>
 
-            <option value="Baja">
+        </div>
 
-                Baja
+    </aside>
 
-            </option>
+    <!-- Contenido -->
+    <main class="main-content">
 
-        </select>
+        <div class="page-header">
 
-        <label>Descripción</label>
+            <div>
 
-        <textarea
-            id="descripcion"
-            rows="5"
-            required
-        ></textarea>
+                <h2>Nueva Orden</h2>
 
-        <button type="submit">
+                <p>Registro de orden de servicio</p>
 
-            Guardar Orden
+            </div>
 
-        </button>
+        </div>
 
-    </form>
+        <!-- Formulario -->
+        <div class="form-container">
 
-    <div id="mensaje"></div>
+            <form id="ordenForm">
+
+                <label>Folio</label>
+
+                <input
+                    type="text"
+                    id="folio"
+                    readonly
+                >
+
+                <label>Área</label>
+
+                <input
+                    type="text"
+                    id="area"
+                    required
+                >
+
+                <label>Equipo</label>
+
+                <input
+                    type="text"
+                    id="equipo"
+                    required
+                >
+
+                <label>Técnico</label>
+
+                <input
+                    type="text"
+                    id="tecnico"
+                    required
+                >
+
+                <label>Tipo</label>
+
+                <select id="tipo" required>
+
+                    <option value="">
+
+                        Seleccionar
+
+                    </option>
+
+                    <option value="Preventivo">
+
+                        Preventivo
+
+                    </option>
+
+                    <option value="Correctivo">
+
+                        Correctivo
+
+                    </option>
+
+                </select>
+
+                <label>Prioridad</label>
+
+                <select id="prioridad" required>
+
+                    <option value="">
+
+                        Seleccionar
+
+                    </option>
+
+                    <option value="Alta">
+
+                        Alta
+
+                    </option>
+
+                    <option value="Media">
+
+                        Media
+
+                    </option>
+
+                    <option value="Baja">
+
+                        Baja
+
+                    </option>
+
+                </select>
+
+                <label>Descripción</label>
+
+                <textarea
+                    id="descripcion"
+                    rows="5"
+                    required
+                ></textarea>
+
+                <button
+                    type="submit"
+                    class="btn"
+                    style="margin-top:25px;"
+                >
+
+                    Guardar Orden
+
+                </button>
+
+            </form>
+
+            <div
+                id="mensaje"
+                style="
+                    margin-top:20px;
+                    font-weight:bold;
+                    text-align:center;
+                "
+            ></div>
+
+        </div>
+
+    </main>
 
 </div>
 
