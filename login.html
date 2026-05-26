@@ -5,29 +5,25 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login</title>
+    <title>Login Sistema</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
-<body class="bg-gray-900 min-h-screen flex items-center justify-center">
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
 
-    <!-- LOGIN -->
-    <div class="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-md">
+    <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
 
         <!-- LOGO -->
         <div class="text-center mb-8">
 
             <img
                 src="./img/logo.png"
-                class="w-28 h-28 mx-auto object-contain mb-4"
+                class="w-28 mx-auto mb-4"
             >
 
             <h1 class="text-3xl font-bold text-gray-800">
@@ -48,9 +44,7 @@
         <div
             id="error"
             class="hidden bg-red-500 text-white p-3 rounded-lg mb-5 text-center"
-        >
-
-        </div>
+        ></div>
 
         <!-- FORM -->
         <form id="loginForm">
@@ -94,7 +88,7 @@
             <!-- BOTÓN -->
             <button
                 type="submit"
-                class="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-lg font-bold text-lg"
+                class="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-lg font-bold"
             >
 
                 Ingresar
@@ -105,7 +99,7 @@
 
     </div>
 
-    <!-- AUTH -->
+    <!-- LOGIN JS -->
     <script type="module" src="./js/auth.js"></script>
 
 </body>

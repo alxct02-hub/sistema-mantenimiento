@@ -7,113 +7,118 @@ import {
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ======================================
 // LOGIN
-// ======================================
+document.getElementById(
 
-const form = document.getElementById('loginForm');
+    'loginForm'
 
-form.addEventListener('submit', async (e) => {
+)
 
-    e.preventDefault();
+.addEventListener(
 
-    const usuario = document.getElementById(
+    'submit',
 
-        'usuario'
+    async (e) => {
 
-    ).value.trim();
+        e.preventDefault();
 
-    const password = document.getElementById(
+        const usuario = document.getElementById(
 
-        'password'
+            'usuario'
 
-    ).value.trim();
+        ).value.trim();
 
-    try{
+        const password = document.getElementById(
 
-        const snapshot = await getDocs(
+            'password'
 
-            collection(db, 'usuarios')
+        ).value.trim();
 
-        );
+        try {
 
-        let acceso = false;
+            const snapshot = await getDocs(
 
-        snapshot.forEach((doc) => {
+                collection(db, 'usuarios')
 
-            const user = doc.data();
+            );
 
-            // VALIDAR USUARIO
-            if(
+            let acceso = false;
 
-                user.usuario === usuario &&
+            snapshot.forEach((doc) => {
 
-                user.password === password
+                const user = doc.data();
 
-            ){
+                if (
 
-                acceso = true;
+                    user.usuario === usuario &&
 
-                // GUARDAR SESIÓN
-                localStorage.setItem(
+                    user.password === password
 
-                    'usuarioLogueado',
+                ) {
 
-                    JSON.stringify(user)
+                    acceso = true;
+
+                    localStorage.setItem(
+
+                        'usuarioLogueado',
+
+                        JSON.stringify(user)
+
+                    );
+
+                    // REDIRECCIÓN
+                    if (user.rol === 'director') {
+
+                        window.location.href =
+
+                        './pages/dashboard.html';
+
+                    }
+
+                    else if (
+
+                        user.rol === 'supervisor'
+
+                    ) {
+
+                        window.location.href =
+
+                        './pages/nueva-orden.html';
+
+                    }
+
+                }
+
+            });
+
+            if (!acceso) {
+
+                mostrarError(
+
+                    'Usuario o contraseña incorrectos'
 
                 );
 
-                // REDIRECCIÓN
-                if(user.rol === 'director'){
-
-                    window.location.href =
-
-                    './pages/dashboard.html';
-
-                }
-
-                else if(user.rol === 'supervisor'){
-
-                    window.location.href =
-
-                    './pages/nueva-orden.html';
-
-                }
-
             }
 
-        });
+        } catch (error) {
 
-        // ERROR LOGIN
-        if(!acceso){
+            console.error(error);
 
             mostrarError(
 
-                'Usuario o contraseña incorrectos'
+                'Error al iniciar sesión'
 
             );
 
         }
 
-    }catch(error){
-
-        console.error(error);
-
-        mostrarError(
-
-            'Error al iniciar sesión'
-
-        );
-
     }
 
-});
+);
 
-// ======================================
-// MOSTRAR ERROR
-// ======================================
-
-function mostrarError(texto){
+// ERROR
+function mostrarError(texto) {
 
     const error = document.getElementById(
 
