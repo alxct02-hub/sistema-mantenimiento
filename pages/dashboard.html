@@ -5,11 +5,18 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Dashboard</title>
+    <title>Dashboard Gerencial</title>
 
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -17,7 +24,7 @@
 
 <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <aside class="w-72 bg-gray-900 text-white flex flex-col">
 
         <!-- Logo -->
@@ -121,11 +128,24 @@
 
                 </li>
 
+                <li>
+
+                    <a
+                        href="./app-tecnico.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
+                    >
+
+                        📱 App Técnico
+
+                    </a>
+
+                </li>
+
             </ul>
 
         </nav>
 
-        <!-- Salir -->
+        <!-- Footer -->
         <div class="p-4 border-t border-gray-700">
 
             <a
@@ -141,53 +161,41 @@
 
     </aside>
 
-    <!-- Contenido -->
+    <!-- CONTENIDO -->
     <main class="flex-1 p-8">
 
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-8">
+        <!-- HEADER -->
+        <div class="mb-8">
 
-            <div>
+            <h2 class="text-3xl font-bold text-gray-800">
 
-                <h2 class="text-3xl font-bold text-gray-800">
+                Dashboard Gerencial
 
-                    Dashboard General
+            </h2>
 
-                </h2>
+            <p class="text-gray-500 mt-1">
 
-                <p class="text-gray-500 mt-1">
+                Indicadores operativos de mantenimiento
 
-                    Resumen operativo del sistema
-
-                </p>
-
-            </div>
-
-            <a
-                href="./nueva-orden.html"
-                class="bg-yellow-500 hover:bg-yellow-400 text-black px-5 py-3 rounded-lg font-bold transition"
-            >
-
-                + Nueva Orden
-
-            </a>
+            </p>
 
         </div>
 
-        <!-- Tarjetas -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- KPI -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
 
+            <!-- Total -->
             <div class="bg-white rounded-xl shadow p-6">
 
                 <p class="text-gray-500">
 
-                    Total Órdenes
+                    Órdenes Totales
 
                 </p>
 
                 <h3
-                    id="totalOrdenes"
-                    class="text-5xl font-bold mt-3"
+                    id="kpiTotal"
+                    class="text-4xl font-bold mt-2"
                 >
 
                     0
@@ -196,17 +204,18 @@
 
             </div>
 
-            <div class="bg-white rounded-xl shadow p-6">
+            <!-- Pendientes -->
+            <div class="bg-yellow-500 text-white rounded-xl shadow p-6">
 
-                <p class="text-gray-500">
+                <p>
 
                     Pendientes
 
                 </p>
 
                 <h3
-                    id="pendientes"
-                    class="text-5xl font-bold text-yellow-500 mt-3"
+                    id="kpiPendientes"
+                    class="text-4xl font-bold mt-2"
                 >
 
                     0
@@ -215,17 +224,38 @@
 
             </div>
 
-            <div class="bg-white rounded-xl shadow p-6">
+            <!-- Proceso -->
+            <div class="bg-blue-500 text-white rounded-xl shadow p-6">
 
-                <p class="text-gray-500">
+                <p>
+
+                    En Proceso
+
+                </p>
+
+                <h3
+                    id="kpiProceso"
+                    class="text-4xl font-bold mt-2"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+            <!-- Completadas -->
+            <div class="bg-green-500 text-white rounded-xl shadow p-6">
+
+                <p>
 
                     Completadas
 
                 </p>
 
                 <h3
-                    id="completadas"
-                    class="text-5xl font-bold text-green-500 mt-3"
+                    id="kpiCompletadas"
+                    class="text-4xl font-bold mt-2"
                 >
 
                     0
@@ -236,80 +266,61 @@
 
         </div>
 
-        <!-- Tabla -->
-        <div class="bg-white rounded-xl shadow overflow-hidden">
+        <!-- SEGUNDA FILA -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
 
-            <div class="p-5 border-b">
+            <!-- Equipo -->
+            <div class="bg-white rounded-xl shadow p-6">
 
-                <h3 class="font-bold text-lg">
+                <h3 class="text-xl font-bold mb-4">
 
-                    Órdenes recientes
+                    Equipo con más fallas
 
                 </h3>
 
-            </div>
+                <p
+                    id="kpiEquipo"
+                    class="text-3xl font-bold text-red-600"
+                >
 
-            <div class="overflow-auto">
+                    -
 
-                <table class="min-w-full">
-
-                    <thead class="bg-gray-800 text-white">
-
-                        <tr>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Folio
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Equipo
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Técnico
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Tipo
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Prioridad
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Estado
-
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-
-                                Fecha
-
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="tablaOrdenes">
-
-                    </tbody>
-
-                </table>
+                </p>
 
             </div>
+
+            <!-- Técnico -->
+            <div class="bg-white rounded-xl shadow p-6">
+
+                <h3 class="text-xl font-bold mb-4">
+
+                    Técnico con más órdenes
+
+                </h3>
+
+                <p
+                    id="kpiTecnico"
+                    class="text-3xl font-bold text-blue-600"
+                >
+
+                    -
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- GRÁFICA -->
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <h3 class="text-2xl font-bold mb-6">
+
+                Distribución de Órdenes
+
+            </h3>
+
+            <canvas id="graficaOrdenes"></canvas>
 
         </div>
 
