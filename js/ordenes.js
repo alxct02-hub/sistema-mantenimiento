@@ -11,24 +11,27 @@ import {
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Formulario
+// ========================================
+// ELEMENTOS
+// ========================================
+
 const form = document.getElementById('ordenForm');
 
-// Mensaje
 const mensaje = document.getElementById('mensaje');
 
-// Campo folio
 const folioInput = document.getElementById('folio');
 
-// Inicializar
+// ========================================
+// INICIALIZAR
+// ========================================
+
 generarFolio();
 
-// Evento guardar
 form.addEventListener('submit', guardarOrden);
 
-// ======================================
-// GENERAR FOLIO CONSECUTIVO
-// ======================================
+// ========================================
+// GENERAR FOLIO
+// ========================================
 
 async function generarFolio(){
 
@@ -37,9 +40,11 @@ async function generarFolio(){
         const ordenesRef = collection(db, 'ordenes');
 
         const q = query(
+
             ordenesRef,
             orderBy('folio', 'desc'),
             limit(1)
+
         );
 
         const snapshot = await getDocs(q);
@@ -53,19 +58,22 @@ async function generarFolio(){
 
             const ultimoFolio = ultimaOrden.folio;
 
-            // Extraer número
+            // Obtener número
             const numeroActual = parseInt(
-                ultimoFolio.replace('OS-', '')
+
+                ultimoFolio.replace('OS-26', '')
+
             );
 
             nuevoNumero = numeroActual + 1;
 
         }
 
-        // Formato
+        // Generar nuevo folio
         const folioFinal =
-            'OS-' +
-           '26' + String(nuevoNumero).padStart(5, '0');
+
+            'OS-26' +
+            String(nuevoNumero).padStart(5, '0');
 
         // Mostrar
         folioInput.value = folioFinal;
@@ -73,19 +81,22 @@ async function generarFolio(){
     }catch(error){
 
         console.error(
+
             'Error generando folio:',
             error
+
         );
 
+        // Folio respaldo
         folioInput.value = 'OS-2600001';
 
     }
 
 }
 
-// ======================================
+// ========================================
 // GUARDAR ORDEN
-// ======================================
+// ========================================
 
 async function guardarOrden(e){
 
@@ -93,11 +104,21 @@ async function guardarOrden(e){
 
     try{
 
+        // =========================
+        // OBTENER DATOS
+        // =========================
+
         const folio = document.getElementById('folio').value;
 
         const area = document.getElementById('area').value;
 
         const equipo = document.getElementById('equipo').value;
+
+        const kilometraje = document.getElementById('kilometraje').value;
+
+        const horometro = document.getElementById('horometro').value;
+
+        const operador = document.getElementById('operador').value;
 
         const tecnico = document.getElementById('tecnico').value;
 
@@ -107,46 +128,79 @@ async function guardarOrden(e){
 
         const descripcion = document.getElementById('descripcion').value;
 
+        // =========================
+        // DATOS AUTOMÁTICOS
+        // =========================
+
         const fecha = new Date().toLocaleString();
 
         const estado = 'Pendiente';
 
-        // Guardar en Firestore
-        await addDoc(collection(db, 'ordenes'), {
+        // =========================
+        // GUARDAR FIRESTORE
+        // =========================
 
-            folio,
-            area,
-            equipo,
-            tecnico,
-            tipo,
-            prioridad,
-            descripcion,
-            fecha,
-            estado
+        await addDoc(
 
-        });
+            collection(db, 'ordenes'),
 
-        // Mensaje éxito
+            {
+
+                folio,
+                area,
+                equipo,
+                kilometraje,
+                horometro,
+                operador,
+                tecnico,
+                tipo,
+                prioridad,
+                descripcion,
+                fecha,
+                estado
+
+            }
+
+        );
+
+        // =========================
+        // MENSAJE ÉXITO
+        // =========================
+
         mensaje.innerHTML =
+
             '✅ Orden guardada correctamente';
 
         mensaje.className =
+
             'mt-6 text-center font-bold text-green-600';
 
-        // Limpiar formulario
+        // =========================
+        // LIMPIAR FORMULARIO
+        // =========================
+
         form.reset();
 
-        // Nuevo folio
+        // =========================
+        // NUEVO FOLIO
+        // =========================
+
         generarFolio();
 
     }catch(error){
 
         console.error(error);
 
+        // =========================
+        // MENSAJE ERROR
+        // =========================
+
         mensaje.innerHTML =
+
             '❌ Error al guardar orden';
 
         mensaje.className =
+
             'mt-6 text-center font-bold text-red-600';
 
     }
