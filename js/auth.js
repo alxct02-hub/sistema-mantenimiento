@@ -11,116 +11,106 @@ import {
 // LOGIN
 // ======================================
 
-document.getElementById(
+const form = document.getElementById('loginForm');
 
-    'loginForm'
+form.addEventListener('submit', async (e) => {
 
-)
+    e.preventDefault();
 
-.addEventListener(
+    const usuario = document.getElementById(
 
-    'submit',
+        'usuario'
 
-    async(e) => {
+    ).value.trim();
 
-        e.preventDefault();
+    const password = document.getElementById(
 
-        const usuario = document.getElementById(
+        'password'
 
-            'usuario'
+    ).value.trim();
 
-        ).value;
+    try{
 
-        const password = document.getElementById(
+        const snapshot = await getDocs(
 
-            'password'
+            collection(db, 'usuarios')
 
-        ).value;
+        );
 
-        try{
+        let acceso = false;
 
-            const snapshot = await getDocs(
+        snapshot.forEach((doc) => {
 
-                collection(db, 'usuarios')
+            const user = doc.data();
 
-            );
+            // VALIDAR USUARIO
+            if(
 
-            let acceso = false;
+                user.usuario === usuario &&
 
-            snapshot.forEach((doc) => {
+                user.password === password
 
-                const user = doc.data();
+            ){
 
-                // VALIDAR
-                if(
+                acceso = true;
 
-                    user.usuario === usuario &&
+                // GUARDAR SESIÓN
+                localStorage.setItem(
 
-                    user.password === password
+                    'usuarioLogueado',
 
-                ){
-
-                    acceso = true;
-
-                    // GUARDAR SESIÓN
-                    localStorage.setItem(
-
-                        'usuario',
-
-                        JSON.stringify(user)
-
-                    );
-
-                    // REDIRECCIÓN
-                    if(user.rol === 'director'){
-
-                        window.location.href =
-
-                        './pages/dashboard.html';
-
-                    }
-
-                    if(user.rol === 'supervisor'){
-
-                        window.location.href =
-
-                        './pages/nueva-orden.html';
-
-                    }
-
-                }
-
-            });
-
-            // ERROR
-            if(!acceso){
-
-                mostrarError(
-
-                    'Usuario o contraseña incorrectos'
+                    JSON.stringify(user)
 
                 );
 
+                // REDIRECCIÓN
+                if(user.rol === 'director'){
+
+                    window.location.href =
+
+                    './pages/dashboard.html';
+
+                }
+
+                else if(user.rol === 'supervisor'){
+
+                    window.location.href =
+
+                    './pages/nueva-orden.html';
+
+                }
+
             }
 
-        }catch(error){
+        });
 
-            console.error(error);
+        // ERROR LOGIN
+        if(!acceso){
 
             mostrarError(
 
-                'Error iniciando sesión'
+                'Usuario o contraseña incorrectos'
 
             );
 
         }
 
+    }catch(error){
+
+        console.error(error);
+
+        mostrarError(
+
+            'Error al iniciar sesión'
+
+        );
+
     }
 
-);
+});
 
 // ======================================
-// ERROR
+// MOSTRAR ERROR
 // ======================================
 
 function mostrarError(texto){
