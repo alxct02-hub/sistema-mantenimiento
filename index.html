@@ -1,10 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=login.html">
-  <title>Sistema Mantenimiento</title>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+
+        Sistema de Mantenimiento
+
+    </title>
+
+    <!-- PWA -->
+    <link
+        rel="manifest"
+        href="manifest.json"
+    >
+
+    <meta
+        name="theme-color"
+        content="#111827"
+    >
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body>
+
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+
+    <!-- CONTENEDOR -->
+    <div class="text-center px-6">
+
+        <!-- LOGO -->
+        <div class="mb-8 flex justify-center">
+
+            <img
+                src="./img/logo.png"
+                alt="Logo"
+                class="w-40 h-40 object-contain bg-white rounded-2xl p-4 shadow-2xl"
+            >
+
+        </div>
+
+        <!-- TITULO -->
+        <h1 class="text-5xl font-bold mb-4">
+
+            Sistema de Mantenimiento
+
+        </h1>
+
+        <!-- SUBTITULO -->
+        <p class="text-gray-400 text-xl mb-10">
+
+            Concretera del Sureste
+
+        </p>
+
+        <!-- BOTÓN -->
+        <a
+            href="./login.html"
+            class="bg-yellow-500 hover:bg-yellow-400 text-black px-10 py-4 rounded-xl text-xl font-bold transition shadow-lg"
+        >
+
+            Ingresar al Sistema
+
+        </a>
+
+    </div>
+
+    <!-- SERVICE WORKER -->
+    <script>
+
+        // ======================================
+        // REGISTRAR SERVICE WORKER
+        // ======================================
+
+        if('serviceWorker' in navigator){
+
+            navigator.serviceWorker
+
+            .register('./service-worker.js')
+
+            .then(() => {
+
+                console.log(
+
+                    '✅ Service Worker registrado'
+
+                );
+
+            })
+
+            .catch((error) => {
+
+                console.error(
+
+                    '❌ Error Service Worker:',
+                    error
+
+                );
+
+            });
+
+        }
+
+    </script>
+
 </body>
+
 </html>
