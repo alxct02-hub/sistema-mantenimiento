@@ -1,11 +1,5 @@
 // ======================================
-// VARIABLES
-// ======================================
-
-let ultimoFolio = 0;
-
-// ======================================
-// GENERAR FOLIO
+// GENERAR FOLIO AUTOMÁTICO
 // ======================================
 
 async function generarFolio() {
@@ -18,33 +12,38 @@ async function generarFolio() {
         .limit(1)
         .get();
 
+        let ultimoNumero = 0;
+
         if (!snapshot.empty) {
 
             const ultimaOrden =
             snapshot.docs[0].data();
 
-            ultimoFolio =
+            ultimoNumero =
             ultimaOrden.numeroFolio || 0;
 
         }
 
-        ultimoFolio++;
+        // NUEVO NÚMERO
+        ultimoNumero++;
 
-        const folio =
-        `OS-26${String(ultimoFolio).padStart(5, '0')}`;
+        // FORMATO
+        const nuevoFolio =
+        `OS-26${String(ultimoNumero).padStart(5, '0')}`;
 
+        // INPUT FOLIO
         const inputFolio =
         document.getElementById('folio');
 
-        if(inputFolio){
+        if (inputFolio) {
 
-            inputFolio.value = folio;
+            inputFolio.value = nuevoFolio;
 
         }
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(
             'Error generando folio:',
@@ -59,29 +58,43 @@ async function generarFolio() {
 // GUARDAR ORDEN
 // ======================================
 
-async function guardarOrden(event){
+async function guardarOrden(event) {
 
     event.preventDefault();
 
     try {
 
+        // ======================================
+        // CAMPOS EXISTENTES
+        // ======================================
+
         const folio =
-        document.getElementById('folio').value;
+        document.getElementById('folio')?.value || '';
 
         const equipo =
-        document.getElementById('equipo').value;
+        document.getElementById('equipo')?.value || '';
 
         const tecnico =
-        document.getElementById('tecnico').value;
+        document.getElementById('tecnico')?.value || '';
 
         const prioridad =
-        document.getElementById('prioridad').value;
+        document.getElementById('prioridad')?.value || '';
 
         const descripcion =
-        document.getElementById('descripcion').value;
+        document.getElementById('descripcion')?.value || '';
+
+        // ======================================
+        // NUMERO FOLIO
+        // ======================================
 
         const numeroFolio =
-        parseInt(folio.replace('OS-26', ''));
+        parseInt(
+            folio.replace('OS-26', '')
+        );
+
+        // ======================================
+        // OBJETO ORDEN
+        // ======================================
 
         const orden = {
 
@@ -98,24 +111,45 @@ async function guardarOrden(event){
             fecha:
             new Date().toLocaleString(),
 
-            fechaCreacion:
+            timestamp:
             firebase.firestore.FieldValue.serverTimestamp()
 
         };
+
+        // ======================================
+        // GUARDAR FIRESTORE
+        // ======================================
 
         await db
         .collection('ordenes')
         .add(orden);
 
-        alert('✅ Orden guardada correctamente');
+        alert(
+            '✅ Orden guardada correctamente'
+        );
 
-        document.getElementById('formOrden').reset();
+        // ======================================
+        // RESET FORMULARIO
+        // ======================================
+
+        const form =
+        document.getElementById('formOrden');
+
+        if(form){
+
+            form.reset();
+
+        }
+
+        // ======================================
+        // NUEVO FOLIO
+        // ======================================
 
         generarFolio();
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(
             'Error guardando orden:',
@@ -145,7 +179,7 @@ document.addEventListener(
         const form =
         document.getElementById('formOrden');
 
-        if(form){
+        if (form) {
 
             form.addEventListener(
                 'submit',
