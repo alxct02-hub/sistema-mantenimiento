@@ -21,13 +21,39 @@ async function cargarHistorial(){
 
         snapshot.forEach((doc) => {
 
-            const orden = doc.data();
+            const data = doc.data();
 
-            orden.id = doc.id;
+            ordenes.push({
 
-            ordenes.push(orden);
+                id: doc.id,
+
+                folio:
+                data.folio || '-',
+
+                equipo:
+                data.equipo || '-',
+
+                tecnico:
+                data.tecnico || '-',
+
+                estado:
+                data.estado || 'Pendiente',
+
+                fecha:
+                data.fecha || '-',
+
+                fechaInicio:
+                data.fechaInicio || '',
+
+                fechaFin:
+                data.fechaFin || ''
+
+            });
 
         });
+
+        // ORDENAR MÁS NUEVAS
+        ordenes.reverse();
 
         ordenesFiltradas = [...ordenes];
 
@@ -37,20 +63,25 @@ async function cargarHistorial(){
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            'Error historial:',
+            error
+        );
 
     }
 
 }
 
 // ======================================
-// RENDER TABLA
+// TABLA
 // ======================================
 
 function renderizarTabla(){
 
     const tbody =
     document.getElementById('tablaHistorial');
+
+    if(!tbody) return;
 
     tbody.innerHTML = '';
 
@@ -62,19 +93,19 @@ function renderizarTabla(){
         fila.innerHTML = `
 
             <td class="border px-4 py-3">
-                ${orden.folio || '-'}
+                ${orden.folio}
             </td>
 
             <td class="border px-4 py-3">
-                ${orden.equipo || '-'}
+                ${orden.equipo}
             </td>
 
             <td class="border px-4 py-3">
-                ${orden.tecnico || '-'}
+                ${orden.tecnico}
             </td>
 
             <td class="border px-4 py-3">
-                ${orden.estado || '-'}
+                ${orden.estado}
             </td>
 
             <td class="border px-4 py-3">
@@ -109,7 +140,7 @@ function renderizarTabla(){
 
                 <button
                     onclick="generarPDF('${orden.id}')"
-                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
                 >
 
                     PDF
@@ -132,19 +163,14 @@ function renderizarTabla(){
 
 function aplicarFiltros(){
 
-    const fechaInicio =
-    document.getElementById('fechaInicioFiltro').value;
-
-    const fechaFin =
-    document.getElementById('fechaFinFiltro').value;
-
     const equipo =
     document.getElementById('equipoFiltro')
-    .value
-    .toLowerCase();
+    ?.value
+    .toLowerCase() || '';
 
     const estado =
-    document.getElementById('estadoFiltro').value;
+    document.getElementById('estadoFiltro')
+    ?.value || '';
 
     ordenesFiltradas =
     ordenes.filter((orden) => {
@@ -154,9 +180,7 @@ function aplicarFiltros(){
         // EQUIPO
         if(
             equipo &&
-            !(
-                orden.equipo || ''
-            )
+            !orden.equipo
             .toLowerCase()
             .includes(equipo)
         ){
@@ -192,9 +216,11 @@ function calcularHorasLaborales(
     fechaFin
 ){
 
-    let inicio = new Date(fechaInicio);
+    let inicio =
+    new Date(fechaInicio);
 
-    let fin = new Date(fechaFin);
+    let fin =
+    new Date(fechaFin);
 
     let totalMinutos = 0;
 
@@ -216,7 +242,7 @@ function calcularHorasLaborales(
 
             }
 
-            const inicioLaboral =
+            let inicioLaboral =
             new Date(inicio);
 
             inicioLaboral.setHours(
@@ -226,7 +252,7 @@ function calcularHorasLaborales(
                 0
             );
 
-            const finLaboral =
+            let finLaboral =
             new Date(inicio);
 
             finLaboral.setHours(
@@ -236,12 +262,12 @@ function calcularHorasLaborales(
                 0
             );
 
-            const inicioReal =
+            let inicioReal =
             inicio > inicioLaboral
             ? inicio
             : inicioLaboral;
 
-            const finReal =
+            let finReal =
             fin < finLaboral
             ? fin
             : finLaboral;
@@ -362,6 +388,11 @@ function generarPDF(id){
                 </tr>
 
                 <tr>
+                    <td>Fecha</td>
+                    <td>${orden.fecha}</td>
+                </tr>
+
+                <tr>
                     <td>Tiempo laboral</td>
 
                     <td>
@@ -412,10 +443,19 @@ function generarPDF(id){
 
 function exportarExcel(){
 
+    const datos =
+    ordenesFiltradas.map((o) => ({
+
+        Folio: o.folio,
+        Equipo: o.equipo,
+        Tecnico: o.tecnico,
+        Estado: o.estado,
+        Fecha: o.fecha
+
+    }));
+
     const ws =
-    XLSX.utils.json_to_sheet(
-        ordenesFiltradas
-    );
+    XLSX.utils.json_to_sheet(datos);
 
     const wb =
     XLSX.utils.book_new();
