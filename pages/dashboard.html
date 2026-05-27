@@ -5,339 +5,171 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard</title>
 
-    <!-- FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
-
-    <!-- TAILWIND -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- FONT AWESOME -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
 
 </head>
 
 <body class="bg-gray-100">
 
-    <div class="flex min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-900 text-white p-5 flex justify-between items-center">
 
-        <!-- SIDEBAR -->
-        <aside class="w-72 bg-gray-900 text-white flex flex-col">
+        <h1 class="text-2xl font-bold">
 
-            <!-- LOGO -->
-            <div class="p-6 border-b border-gray-700">
+            Sistema de Mantenimiento
 
-                <div class="flex items-center gap-4">
+        </h1>
 
-                    <img
-                        src="../img/logo.png"
-                        class="w-16 h-16 bg-white rounded-xl p-2 object-contain"
-                    >
+        <a href="../login.html"
+           class="bg-red-500 px-4 py-2 rounded">
 
-                    <div>
+            Salir
 
-                        <h1 class="font-bold text-lg">
+        </a>
 
-                            Sistema Mantenimiento
+    </header>
 
-                        </h1>
+    <!-- Contenido -->
+    <main class="p-6">
 
-                        <p class="text-gray-400 text-sm">
+        <!-- Tarjetas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
-                            Concretera del Sureste
+            <div class="bg-white p-6 rounded shadow">
 
-                        </p>
+                <h2 class="text-gray-500">
 
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- MENÚ -->
-            <nav class="flex-1 p-4 space-y-2">
-
-                <a
-                    href="./dashboard.html"
-                    class="flex items-center gap-3 p-3 rounded-lg bg-yellow-500 text-black font-bold"
-                >
-
-                    <i class="fas fa-chart-line"></i>
-
-                    Dashboard
-
-                </a>
-
-                <a
-                    href="./nueva-orden.html"
-                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-                >
-
-                    <i class="fas fa-file-circle-plus"></i>
-
-                    Nueva Orden
-
-                </a>
-
-                <a
-                    href="./historial.html"
-                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-                >
-
-                    <i class="fas fa-clock-rotate-left"></i>
-
-                    Historial
-
-                </a>
-
-                <a
-                    href="./tecnicos.html"
-                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-                >
-
-                    <i class="fas fa-users"></i>
-
-                    Técnicos
-
-                </a>
-
-                <a
-                    href="./reportes.html"
-                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-                >
-
-                    <i class="fas fa-chart-pie"></i>
-
-                    Reportes
-
-                </a>
-
-                <a
-                    href="./app-tecnico.html"
-                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-                >
-
-                    <i class="fas fa-mobile-screen-button"></i>
-
-                    App Técnico
-
-                </a>
-
-            </nav>
-
-            <!-- FOOTER -->
-            <div class="p-4 border-t border-gray-700">
-
-                <a
-                    href="../login.html"
-                    class="flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 p-3 rounded-lg"
-                >
-
-                    <i class="fas fa-right-from-bracket"></i>
-
-                    Cerrar sesión
-
-                </a>
-
-            </div>
-
-        </aside>
-
-        <!-- CONTENIDO -->
-        <main class="flex-1 p-8">
-
-            <!-- TÍTULO -->
-            <div class="mb-8">
-
-                <h2 class="text-4xl font-bold text-gray-800">
-
-                    Dashboard General
+                    Total Órdenes
 
                 </h2>
 
-                <p class="text-gray-500 mt-2">
+                <p id="totalOrdenes"
+                   class="text-4xl font-bold mt-2">
 
-                    Control general de mantenimiento
+                    0
 
                 </p>
 
             </div>
 
-            <!-- KPI -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded shadow">
 
-                <!-- TOTAL -->
-                <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-gray-500">
 
-                    <p class="text-gray-500">
+                    Pendientes
 
-                        Total Órdenes
+                </h2>
 
-                    </p>
+                <p id="pendientes"
+                   class="text-4xl font-bold mt-2 text-yellow-500">
 
-                    <h3
-                        id="totalOrdenes"
-                        class="text-4xl font-bold mt-2"
-                    >
+                    0
 
-                        0
-
-                    </h3>
-
-                </div>
-
-                <!-- PENDIENTES -->
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-
-                    <p class="text-gray-500">
-
-                        Pendientes
-
-                    </p>
-
-                    <h3
-                        id="pendientes"
-                        class="text-4xl font-bold mt-2 text-yellow-500"
-                    >
-
-                        0
-
-                    </h3>
-
-                </div>
-
-                <!-- COMPLETADAS -->
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-
-                    <p class="text-gray-500">
-
-                        Completadas
-
-                    </p>
-
-                    <h3
-                        id="completadas"
-                        class="text-4xl font-bold mt-2 text-green-600"
-                    >
-
-                        0
-
-                    </h3>
-
-                </div>
-
-                <!-- PROCESO -->
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-
-                    <p class="text-gray-500">
-
-                        En Proceso
-
-                    </p>
-
-                    <h3
-                        id="enProceso"
-                        class="text-4xl font-bold mt-2 text-blue-600"
-                    >
-
-                        0
-
-                    </h3>
-
-                </div>
+                </p>
 
             </div>
 
-            <!-- TABLA -->
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="bg-white p-6 rounded shadow">
 
-                <div class="p-5 border-b">
+                <h2 class="text-gray-500">
 
-                    <h3 class="text-2xl font-bold">
+                    Completadas
 
-                        Órdenes de Servicio
+                </h2>
 
-                    </h3>
+                <p id="completadas"
+                   class="text-4xl font-bold mt-2 text-green-500">
 
-                </div>
+                    0
 
-                <div class="overflow-x-auto">
-
-                    <table class="w-full">
-
-                        <thead class="bg-gray-800 text-white">
-
-                            <tr>
-
-                                <th class="px-4 py-3 text-left">
-
-                                    Folio
-
-                                </th>
-
-                                <th class="px-4 py-3 text-left">
-
-                                    Equipo
-
-                                </th>
-
-                                <th class="px-4 py-3 text-left">
-
-                                    Técnico
-
-                                </th>
-
-                                <th class="px-4 py-3 text-left">
-
-                                    Estado
-
-                                </th>
-
-                                <th class="px-4 py-3 text-left">
-
-                                    Fecha
-
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="tablaOrdenes">
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                </p>
 
             </div>
 
-        </main>
+        </div>
 
-    </div>
+        <!-- Botón nueva orden -->
+        <div class="mb-6">
 
-    <!-- FIREBASE -->
-    <script src="../js/firebase-config.js?v=11"></script>
+            <a href="./nueva-orden.html"
+               class="bg-yellow-500 text-black px-5 py-3 rounded font-bold">
 
-    <!-- DASHBOARD -->
-    <script src="../js/dashboard.js?v=11"></script>
+                + Nueva Orden
+
+            </a>
+
+        </div>
+
+        <!-- Tabla -->
+        <div class="bg-white rounded shadow overflow-auto">
+
+            <table class="min-w-full">
+
+                <thead class="bg-gray-800 text-white">
+
+                    <tr>
+
+                        <th class="px-6 py-4 text-left">
+
+                            Equipo
+
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+
+                            Técnico
+
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+
+                            Tipo
+
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+
+                            Prioridad
+
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+
+                            Estado
+
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+
+                            Fecha
+
+                        </th>
+
+                        <th class="px-6 py-4 text-center">
+
+                            Acción
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tablaOrdenes">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+    <script type="module" src="../js/dashboard.js"></script>
 
 </body>
-
 </html>
