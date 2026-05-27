@@ -1,164 +1,150 @@
-// ======================================
-// VARIABLES
-// ======================================
+// Importar Firestore
+import { db } from './firebase-config.js';
 
+import {
+
+    collection,
+    onSnapshot
+
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Array órdenes
 let ordenesData = [];
 
-// ======================================
-// CARGAR ÓRDENES
-// ======================================
-
+// Cargar órdenes en tiempo real
 async function cargarOrdenes() {
 
     try {
 
-        const snapshot = await db
-        .collection('ordenes')
-        .get();
+        // Referencia colección
+        const ordenesRef = collection(db, 'ordenes');
 
-        ordenesData = [];
+        // Escuchar cambios en tiempo real
+        onSnapshot(ordenesRef, (snapshot) => {
 
-        let total = 0;
-        let pendientes = 0;
-        let completadas = 0;
-        let proceso = 0;
+            ordenesData = [];
 
-        snapshot.forEach((doc) => {
+            let total = 0;
+            let pendientes = 0;
+            let completadas = 0;
 
-            const orden = doc.data();
+            snapshot.forEach((doc) => {
 
-            orden.id = doc.id;
+                const orden = doc.data();
 
-            ordenesData.push(orden);
+                orden.id = doc.id;
 
-            total++;
+                ordenesData.push(orden);
 
-            if (
-                orden.estado === 'Completada' ||
-                orden.estado === 'Finalizada'
-            ) {
+                total++;
 
-                completadas++;
+                if (
+                    orden.estado === "Completada" ||
+                    orden.estado === "Finalizada"
+                ) {
 
-            }
+                    completadas++;
 
-            else if (
-                orden.estado === 'En Proceso'
-            ) {
+                } else {
 
-                proceso++;
+                    pendientes++;
 
-            }
+                }
 
-            else {
+            });
 
-                pendientes++;
+            // Actualizar contadores
+            document.getElementById('totalOrdenes').innerText = total;
 
-            }
+            document.getElementById('pendientes').innerText = pendientes;
+
+            document.getElementById('completadas').innerText = completadas;
+
+            // Renderizar tabla
+            renderizarTabla();
 
         });
 
-        actualizarKPIs(
-            total,
-            pendientes,
-            completadas,
-            proceso
-        );
+    } catch (error) {
 
-        renderizarTabla();
-
-    }
-
-    catch(error){
-
-        console.error(
-            'Error cargando órdenes:',
-            error
-        );
+        console.error("Error al cargar órdenes:", error);
 
     }
 
 }
 
-// ======================================
-// KPI
-// ======================================
+// Renderizar tabla
+function renderizarTabla() {
 
-function actualizarKPIs(
-    total,
-    pendientes,
-    completadas,
-    proceso
-){
-
-    const totalHTML =
-    document.getElementById('totalOrdenes');
-
-    const pendientesHTML =
-    document.getElementById('pendientes');
-
-    const completadasHTML =
-    document.getElementById('completadas');
-
-    const procesoHTML =
-    document.getElementById('enProceso');
-
-    if(totalHTML){
-        totalHTML.innerText = total;
-    }
-
-    if(pendientesHTML){
-        pendientesHTML.innerText = pendientes;
-    }
-
-    if(completadasHTML){
-        completadasHTML.innerText = completadas;
-    }
-
-    if(procesoHTML){
-        procesoHTML.innerText = proceso;
-    }
-
-}
-
-// ======================================
-// TABLA
-// ======================================
-
-function renderizarTabla(){
-
-    const tbody =
-    document.getElementById('tablaOrdenes');
-
-    if(!tbody) return;
+    const tbody = document.getElementById('tablaOrdenes');
 
     tbody.innerHTML = '';
 
-    ordenesData.forEach((orden) => {
+    ordenesData.forEach(orden => {
 
-        const fila =
-        document.createElement('tr');
+        const fila = document.createElement('tr');
 
         fila.innerHTML = `
 
-            <td class="border px-4 py-2">
-                ${orden.folio || '-'}
+            <td class="px-6 py-4">${orden.equipo || '-'}</td>
+
+            <td class="px-6 py-4">${orden.tecnico || '-'}</td>
+
+            <td class="px-6 py-4">${orden.tipo || '-'}</td>
+
+            <td class="px-6 py-4">
+
+                <span class="
+                    px-3 py-1 rounded-full text-xs font-medium
+
+                    ${orden.prioridad === 'Alta'
+                        ? 'bg-red-100 text-red-700'
+                        : orden.prioridad === 'Media'
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-green-100 text-green-700'
+                    }
+                ">
+
+                    ${orden.prioridad || 'Baja'}
+
+                </span>
+
             </td>
 
-            <td class="border px-4 py-2">
-                ${orden.equipo || '-'}
+            <td class="px-6 py-4">
+
+                <span class="
+                    px-3 py-1 rounded-full text-xs font-medium
+
+                    ${orden.estado === 'Completada'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }
+                ">
+
+                    ${orden.estado || 'Pendiente'}
+
+                </span>
+
             </td>
 
-            <td class="border px-4 py-2">
-                ${orden.tecnico || '-'}
-            </td>
+            <td class="px-6 py-4">
 
-            <td class="border px-4 py-2">
-                ${orden.estado || '-'}
-            </td>
-
-            <td class="border px-4 py-2">
                 ${orden.fecha || '-'}
+
+            </td>
+
+            <td class="px-6 py-4 text-center">
+
+                <button
+                    onclick="editarOrden('${orden.id}')"
+                    class="text-blue-600 hover:text-blue-800 mr-3"
+                >
+
+                    ✏️
+
+                </button>
+
             </td>
 
         `;
@@ -169,11 +155,5 @@ function renderizarTabla(){
 
 }
 
-// ======================================
-// INICIAR
-// ======================================
-
-document.addEventListener(
-    'DOMContentLoaded',
-    cargarOrdenes
-);
+// Iniciar dashboard
+document.addEventListener('DOMContentLoaded', cargarOrdenes);

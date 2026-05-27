@@ -1,193 +1,73 @@
-// ======================================
-// GENERAR FOLIO AUTOMÁTICO
-// ======================================
+// Importar Firebase
+import { database } from './firebase-config.js';
 
-async function generarFolio() {
+import {
 
-    try {
+    ref,
+    push
 
-        const snapshot = await db
-        .collection('ordenes')
-        .orderBy('numeroFolio', 'desc')
-        .limit(1)
-        .get();
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        let ultimoNumero = 0;
+// Formulario
+const form = document.getElementById('ordenForm');
 
-        if (!snapshot.empty) {
+// Mensaje
+const mensaje = document.getElementById('mensaje');
 
-            const ultimaOrden =
-            snapshot.docs[0].data();
+// Evento guardar
+form.addEventListener('submit', guardarOrden);
 
-            ultimoNumero =
-            ultimaOrden.numeroFolio || 0;
+async function guardarOrden(e){
 
-        }
+    e.preventDefault();
 
-        // NUEVO NÚMERO
-        ultimoNumero++;
+    try{
 
-        // FORMATO
-        const nuevoFolio =
-        `OS-26${String(ultimoNumero).padStart(5, '0')}`;
+        // Obtener valores
+        const equipo = document.getElementById('equipo').value;
 
-        // INPUT FOLIO
-        const inputFolio =
-        document.getElementById('folio');
+        const tecnico = document.getElementById('tecnico').value;
 
-        if (inputFolio) {
+        const tipo = document.getElementById('tipo').value;
 
-            inputFolio.value = nuevoFolio;
+        const prioridad = document.getElementById('prioridad').value;
 
-        }
+        const descripcion = document.getElementById('descripcion').value;
 
-    }
+        // Fecha automática
+        const fecha = new Date().toLocaleDateString();
 
-    catch (error) {
+        // Estado inicial
+        const estado = "Pendiente";
 
-        console.error(
-            'Error generando folio:',
-            error
-        );
+        // Referencia Firebase
+        const ordenesRef = ref(database, 'ordenes');
 
-    }
-
-}
-
-// ======================================
-// GUARDAR ORDEN
-// ======================================
-
-async function guardarOrden(event) {
-
-    event.preventDefault();
-
-    try {
-
-        // ======================================
-        // CAMPOS EXISTENTES
-        // ======================================
-
-        const folio =
-        document.getElementById('folio')?.value || '';
-
-        const equipo =
-        document.getElementById('equipo')?.value || '';
-
-        const tecnico =
-        document.getElementById('tecnico')?.value || '';
-
-        const prioridad =
-        document.getElementById('prioridad')?.value || '';
-
-        const descripcion =
-        document.getElementById('descripcion')?.value || '';
-
-        // ======================================
-        // NUMERO FOLIO
-        // ======================================
-
-        const numeroFolio =
-        parseInt(
-            folio.replace('OS-26', '')
-        );
-
-        // ======================================
-        // OBJETO ORDEN
-        // ======================================
-
-        const orden = {
-
-            folio,
-            numeroFolio,
+        // Guardar
+        await push(ordenesRef, {
 
             equipo,
             tecnico,
+            tipo,
             prioridad,
             descripcion,
+            fecha,
+            estado
 
-            estado: 'Pendiente',
+        });
 
-            fecha:
-            new Date().toLocaleString(),
+        // Mensaje éxito
+        mensaje.innerHTML = "✅ Orden guardada correctamente";
 
-            timestamp:
-            firebase.firestore.FieldValue.serverTimestamp()
+        // Limpiar formulario
+        form.reset();
 
-        };
+    }catch(error){
 
-        // ======================================
-        // GUARDAR FIRESTORE
-        // ======================================
+        console.error(error);
 
-        await db
-        .collection('ordenes')
-        .add(orden);
-
-        alert(
-            '✅ Orden guardada correctamente'
-        );
-
-        // ======================================
-        // RESET FORMULARIO
-        // ======================================
-
-        const form =
-        document.getElementById('formOrden');
-
-        if(form){
-
-            form.reset();
-
-        }
-
-        // ======================================
-        // NUEVO FOLIO
-        // ======================================
-
-        generarFolio();
-
-    }
-
-    catch (error) {
-
-        console.error(
-            'Error guardando orden:',
-            error
-        );
-
-        alert(
-            '❌ Error al guardar orden'
-        );
+        mensaje.innerHTML = "❌ Error al guardar";
 
     }
 
 }
-
-// ======================================
-// INICIAR
-// ======================================
-
-document.addEventListener(
-
-    'DOMContentLoaded',
-
-    () => {
-
-        generarFolio();
-
-        const form =
-        document.getElementById('formOrden');
-
-        if (form) {
-
-            form.addEventListener(
-                'submit',
-                guardarOrden
-            );
-
-        }
-
-    }
-
-);

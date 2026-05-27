@@ -3,152 +3,72 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Nueva Orden</title>
+    <title>Nueva Orden</title>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-
-<!-- TAILWIND -->
-<script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/ordenes.css">
 
 </head>
 
-<body class="bg-gray-100 p-8">
+<body>
 
-<div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+    <div class="contenedor">
 
-    <h1 class="text-3xl font-bold mb-8">
+        <h1>CONCRETERA DEL SURESTE</h1>
 
-        Nueva Orden de Servicio
+        <h2>Nueva Orden de Servicio</h2>
 
-    </h1>
+        <form id="ordenForm">
 
-    <form id="formOrden" class="space-y-6">
+            <label>Equipo</label>
+            <input type="text" id="equipo" required>
 
-        <!-- FOLIO -->
-        <div>
+            <label>Técnico</label>
+            <input type="text" id="tecnico" required>
 
-            <label class="block mb-2 font-bold">
+            <label>Tipo de mantenimiento</label>
+            <select id="tipo" required>
 
-                Folio
+                <option value="">Seleccionar</option>
 
-            </label>
+                <option value="Preventivo">Preventivo</option>
 
-            <input
-                type="text"
-                id="folio"
-                readonly
-                class="w-full border p-3 rounded-lg bg-gray-100"
-            >
-
-        </div>
-
-        <!-- EQUIPO -->
-        <div>
-
-            <label class="block mb-2 font-bold">
-
-                Equipo
-
-            </label>
-
-            <input
-                type="text"
-                id="equipo"
-                required
-                class="w-full border p-3 rounded-lg"
-            >
-
-        </div>
-
-        <!-- TÉCNICO -->
-        <div>
-
-            <label class="block mb-2 font-bold">
-
-                Técnico
-
-            </label>
-
-            <input
-                type="text"
-                id="tecnico"
-                required
-                class="w-full border p-3 rounded-lg"
-            >
-
-        </div>
-
-        <!-- PRIORIDAD -->
-        <div>
-
-            <label class="block mb-2 font-bold">
-
-                Prioridad
-
-            </label>
-
-            <select
-                id="prioridad"
-                class="w-full border p-3 rounded-lg"
-            >
-
-                <option>Alta</option>
-                <option>Media</option>
-                <option>Baja</option>
+                <option value="Correctivo">Correctivo</option>
 
             </select>
 
-        </div>
+            <label>Prioridad</label>
+            <select id="prioridad" required>
 
-        <!-- DESCRIPCIÓN -->
-        <div>
+                <option value="">Seleccionar</option>
 
-            <label class="block mb-2 font-bold">
+                <option value="Alta">Alta</option>
 
-                Descripción
+                <option value="Media">Media</option>
 
-            </label>
+                <option value="Baja">Baja</option>
 
-            <textarea
-                id="descripcion"
-                rows="5"
-                class="w-full border p-3 rounded-lg"
-            ></textarea>
+            </select>
 
-        </div>
+            <label>Descripción</label>
+            <textarea id="descripcion" rows="5"></textarea>
 
-        <!-- BOTÓN -->
-        <button
-            type="submit"
-            class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-6 py-3 rounded-lg"
-        >
+            <button type="submit">
 
-            Guardar Orden
+                Guardar Orden
 
-        </button>
+            </button>
 
-    </form>
+        </form>
 
-</div>
+        <div id="mensaje"></div>
 
-<!-- FIREBASE -->
-<script src="../js/firebase-config.js?v=12"></script>
+    </div>
 
-<!-- ORDENES -->
-<script src="../js/ordenes.js?v=12"></script>
+    <script type="module" src="../js/ordenes.js"></script>
 
 </body>
-
 </html>

@@ -1,57 +1,79 @@
-// ======================================
-// FIREBASE CONFIG
-// ======================================
+// Importar Firebase App
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
+// Importar Firestore
+import {
+  getFirestore,
+  enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Importar Auth
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// Importar Storage
+import {
+  getStorage
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// Configuración Firebase
 const firebaseConfig = {
 
-    apiKey: "AIzaSyDR4D1IyOqAYOE3JZzsqBhlfpwGwmT4m-A",
+  apiKey: "AIzaSyDR4D1IyOqAYOE3JZzsqBhlfpwGwmT4m-A",
 
-    authDomain: "mantenimiento-planta-adbfc.firebaseapp.com",
+  authDomain: "mantenimiento-planta-adbfc.firebaseapp.com",
 
-    projectId: "mantenimiento-planta-adbfc",
+  projectId: "mantenimiento-planta-adbfc",
 
-    storageBucket: "mantenimiento-planta-adbfc.firebasestorage.app",
+  storageBucket: "mantenimiento-planta-adbfc.firebasestorage.app",
 
-    messagingSenderId: "182924583347",
+  messagingSenderId: "182924583347",
 
-    appId: "1:182924583347:web:96531f94bc101af2a12bc6",
+  appId: "1:182924583347:web:96531f94bc101af2a12bc6",
 
-    measurementId: "G-HZ8W5B6ZG3"
+  measurementId: "G-HZ8W5B6ZG3"
 
 };
 
-// ======================================
-// INICIALIZAR FIREBASE
-// ======================================
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
 
-firebase.initializeApp(firebaseConfig);
+// Inicializar Firestore
+const db = getFirestore(app);
 
-// ======================================
-// SERVICIOS
-// ======================================
+// Activar persistencia offline
+enableIndexedDbPersistence(db)
+  .then(() => {
 
-const db = firebase.firestore();
+    console.log("Modo offline activado correctamente");
 
-const auth = firebase.auth();
+  })
+  .catch((err) => {
 
-const storage = firebase.storage();
+    if (err.code === 'failed-precondition') {
 
-// ======================================
-// OFFLINE
-// ======================================
+      console.log("Varias pestañas abiertas");
 
-firebase.firestore()
+    } else if (err.code === 'unimplemented') {
 
-.enablePersistence()
+      console.log("Navegador no compatible");
 
-.catch((err) => {
+    }
 
-    console.log(
+  });
 
-        'Persistencia no disponible',
+// Inicializar Auth
+const auth = getAuth(app);
 
-        err
+// Inicializar Storage
+const storage = getStorage(app);
 
-    );
+// Exportar servicios
+export {
 
-});
+  db,
+  auth,
+  storage
+
+};
