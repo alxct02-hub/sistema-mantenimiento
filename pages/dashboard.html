@@ -24,139 +24,325 @@ content="width=device-width, initial-scale=1.0"
 <!-- TAILWIND -->
 <script src="https://cdn.tailwindcss.com"></script>
 
+<!-- ICONOS -->
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+/>
+
 </head>
 
 <body class="bg-gray-100">
 
-<!-- HEADER -->
-<header class="bg-gray-900 text-white p-4">
+<div class="flex min-h-screen">
 
-<div class="flex justify-between items-center">
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-gray-900 text-white flex flex-col">
 
-<h1 class="text-2xl font-bold">
+        <!-- LOGO -->
+        <div class="p-6 border-b border-gray-700">
 
-Dashboard Mantenimiento
+            <div class="flex items-center gap-4">
 
-</h1>
+                <img
+                    src="../img/logo.png"
+                    class="w-16 h-16 bg-white rounded-xl p-2 object-contain"
+                >
 
-<a
-href="../login.html"
-class="bg-red-500 px-4 py-2 rounded"
->
+                <div>
 
-Cerrar sesión
+                    <h1 class="font-bold text-lg">
 
-</a>
+                        Sistema Mantenimiento
+
+                    </h1>
+
+                    <p class="text-gray-400 text-sm">
+
+                        Concretera del Sureste
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- MENÚ -->
+        <nav class="flex-1 p-4 space-y-2">
+
+            <a
+                href="./dashboard.html"
+                class="flex items-center gap-3 p-3 rounded-lg bg-yellow-500 text-black font-bold"
+            >
+
+                <i class="fas fa-chart-line"></i>
+
+                Dashboard
+
+            </a>
+
+            <a
+                href="./nueva-orden.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+            >
+
+                <i class="fas fa-file-circle-plus"></i>
+
+                Nueva Orden
+
+            </a>
+
+            <a
+                href="./historial.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+            >
+
+                <i class="fas fa-clock-rotate-left"></i>
+
+                Historial
+
+            </a>
+
+            <a
+                href="./tecnicos.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+            >
+
+                <i class="fas fa-users"></i>
+
+                Técnicos
+
+            </a>
+
+            <a
+                href="./reportes.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+            >
+
+                <i class="fas fa-chart-pie"></i>
+
+                Reportes
+
+            </a>
+
+            <a
+                href="./app-tecnico.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+            >
+
+                <i class="fas fa-mobile-screen-button"></i>
+
+                App Técnico
+
+            </a>
+
+        </nav>
+
+        <!-- FOOTER -->
+        <div class="p-4 border-t border-gray-700">
+
+            <a
+                href="../login.html"
+                class="flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 p-3 rounded-lg"
+            >
+
+                <i class="fas fa-right-from-bracket"></i>
+
+                Cerrar sesión
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="flex-1 p-8">
+
+        <!-- TÍTULO -->
+        <div class="mb-8">
+
+            <h2 class="text-4xl font-bold text-gray-800">
+
+                Dashboard General
+
+            </h2>
+
+            <p class="text-gray-500 mt-2">
+
+                Control general de mantenimiento
+
+            </p>
+
+        </div>
+
+        <!-- KPI -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+            <!-- TOTAL -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                <p class="text-gray-500">
+
+                    Total Órdenes
+
+                </p>
+
+                <h3
+                    id="totalOrdenes"
+                    class="text-4xl font-bold mt-2"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+            <!-- PENDIENTES -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                <p class="text-gray-500">
+
+                    Pendientes
+
+                </p>
+
+                <h3
+                    id="pendientes"
+                    class="text-4xl font-bold mt-2 text-yellow-500"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+            <!-- COMPLETADAS -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                <p class="text-gray-500">
+
+                    Completadas
+
+                </p>
+
+                <h3
+                    id="completadas"
+                    class="text-4xl font-bold mt-2 text-green-600"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+            <!-- PROCESO -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                <p class="text-gray-500">
+
+                    En Proceso
+
+                </p>
+
+                <h3
+                    id="enProceso"
+                    class="text-4xl font-bold mt-2 text-blue-600"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+        </div>
+
+        <!-- TABLA -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+
+            <div class="p-5 border-b">
+
+                <h3 class="text-2xl font-bold">
+
+                    Órdenes de Servicio
+
+                </h3>
+
+            </div>
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-gray-800 text-white">
+
+                        <tr>
+
+                            <th class="px-4 py-3 text-left">
+
+                                Folio
+
+                            </th>
+
+                            <th class="px-4 py-3 text-left">
+
+                                Equipo
+
+                            </th>
+
+                            <th class="px-4 py-3 text-left">
+
+                                Tipo
+
+                            </th>
+
+                            <th class="px-4 py-3 text-left">
+
+                                Técnico
+
+                            </th>
+
+                            <th class="px-4 py-3 text-left">
+
+                                Prioridad
+
+                            </th>
+
+                            <th class="px-4 py-3 text-left">
+
+                                Estado
+
+                            </th>
+
+                            <th class="px-4 py-3 text-left">
+
+                                Fecha
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaOrdenes">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
-
-</header>
-
-<!-- CONTENIDO -->
-<main class="p-6">
-
-<!-- KPI -->
-<div class="grid grid-cols-3 gap-5 mb-8">
-
-<div class="bg-white p-6 rounded-xl shadow">
-
-<h2>Total</h2>
-
-<p
-id="totalOrdenes"
-class="text-4xl font-bold"
->
-
-0
-
-</p>
-
-</div>
-
-<div class="bg-white p-6 rounded-xl shadow">
-
-<h2>Pendientes</h2>
-
-<p
-id="pendientes"
-class="text-4xl font-bold text-yellow-500"
->
-
-0
-
-</p>
-
-</div>
-
-<div class="bg-white p-6 rounded-xl shadow">
-
-<h2>Completadas</h2>
-
-<p
-id="completadas"
-class="text-4xl font-bold text-green-600"
->
-
-0
-
-</p>
-
-</div>
-
-</div>
-
-<!-- TABLA -->
-<div class="bg-white rounded-xl shadow overflow-hidden">
-
-<table class="w-full">
-
-<thead class="bg-gray-800 text-white">
-
-<tr>
-
-<th class="px-4 py-3">
-
-Folio
-
-</th>
-
-<th class="px-4 py-3">
-
-Equipo
-
-</th>
-
-<th class="px-4 py-3">
-
-Técnico
-
-</th>
-
-<th class="px-4 py-3">
-
-Estado
-
-</th>
-
-<th class="px-4 py-3">
-
-Fecha
-
-</th>
-
-</tr>
-
-</thead>
-
-<tbody id="tablaOrdenes">
-
-</tbody>
-
-</table>
-
-</div>
-
-</main>
 
 <!-- FIREBASE -->
 <script src="../js/firebase-config.js"></script>
@@ -165,5 +351,4 @@ Fecha
 <script src="../js/dashboard.js"></script>
 
 </body>
-
 </html>
