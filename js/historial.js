@@ -15,7 +15,6 @@ async function cargarHistorial(){
 
         const snapshot = await db
         .collection('ordenes')
-        .orderBy('fechaCreacion', 'desc')
         .get();
 
         ordenes = [];
