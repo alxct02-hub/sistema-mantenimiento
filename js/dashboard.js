@@ -1,223 +1,119 @@
-import { db } from './firebase-config.js';
-
-import {
-
-    collection,
-    getDocs
-
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 // ======================================
-// ELEMENTOS KPI
+// FIRESTORE
 // ======================================
 
-const kpiTotal =
-
-    document.getElementById('kpiTotal');
-
-const kpiPendientes =
-
-    document.getElementById('kpiPendientes');
-
-const kpiProceso =
-
-    document.getElementById('kpiProceso');
-
-const kpiCompletadas =
-
-    document.getElementById('kpiCompletadas');
-
-const kpiEquipo =
-
-    document.getElementById('kpiEquipo');
-
-const kpiTecnico =
-
-    document.getElementById('kpiTecnico');
+const db = firebase.firestore();
 
 // ======================================
-// INICIALIZAR
+// VARIABLES
 // ======================================
 
-cargarDashboard();
+let ordenesData = [];
 
 // ======================================
-// CARGAR DASHBOARD
+// CARGAR ÓRDENES
 // ======================================
 
-async function cargarDashboard(){
+async function cargarOrdenes() {
 
-    try{
+    try {
 
-        // ======================================
-        // OBTENER ÓRDENES
-        // ======================================
+        const snapshot = await db
 
-        const snapshot = await getDocs(
+        .collection('ordenes')
 
-            collection(db, 'ordenes')
+        .orderBy('fechaCreacion', 'desc')
 
-        );
+        .get();
 
-        // ======================================
-        // VARIABLES KPI
-        // ======================================
+        ordenesData = [];
 
         let total = 0;
-
         let pendientes = 0;
-
-        let proceso = 0;
-
         let completadas = 0;
-
-        // ======================================
-        // CONTADORES
-        // ======================================
-
-        let equipos = {};
-
-        let tecnicos = {};
-
-        // ======================================
-        // RECORRER ÓRDENES
-        // ======================================
+        let proceso = 0;
+        let prioridadAlta = 0;
 
         snapshot.forEach((doc) => {
 
             const orden = doc.data();
 
+            orden.id = doc.id;
+
+            ordenesData.push(orden);
+
             total++;
 
-            // ======================================
             // ESTADOS
-            // ======================================
+            if (
 
-            if(orden.estado === 'Pendiente'){
+                orden.estado === 'Completada' ||
 
-                pendientes++;
+                orden.estado === 'Finalizada'
 
-            }
-
-            else if(orden.estado === 'En proceso'){
-
-                proceso++;
-
-            }
-
-            else if(orden.estado === 'Completada'){
+            ) {
 
                 completadas++;
 
             }
 
-            // ======================================
-            // EQUIPOS
-            // ======================================
+            else if (
 
-            if(orden.equipo){
+                orden.estado === 'En Proceso'
 
-                if(!equipos[orden.equipo]){
+            ) {
 
-                    equipos[orden.equipo] = 0;
-
-                }
-
-                equipos[orden.equipo]++;
+                proceso++;
 
             }
 
-            // ======================================
-            // TÉCNICOS
-            // ======================================
+            else {
 
-            if(orden.tecnico){
+                pendientes++;
 
-                if(!tecnicos[orden.tecnico]){
+            }
 
-                    tecnicos[orden.tecnico] = 0;
+            // PRIORIDAD
+            if (
 
-                }
+                orden.prioridad === 'Alta'
 
-                tecnicos[orden.tecnico]++;
+            ) {
+
+                prioridadAlta++;
 
             }
 
         });
 
         // ======================================
-        // ACTUALIZAR KPI
+        // KPI
         // ======================================
 
-        kpiTotal.innerText = total;
+        actualizarKPIs(
 
-        kpiPendientes.innerText = pendientes;
-
-        kpiProceso.innerText = proceso;
-
-        kpiCompletadas.innerText = completadas;
-
-        // ======================================
-        // EQUIPO MÁS FALLAS
-        // ======================================
-
-        let equipoTop = '-';
-
-        let maxEquipo = 0;
-
-        for(const equipo in equipos){
-
-            if(equipos[equipo] > maxEquipo){
-
-                maxEquipo = equipos[equipo];
-
-                equipoTop = equipo;
-
-            }
-
-        }
-
-        kpiEquipo.innerText = equipoTop;
-
-        // ======================================
-        // TÉCNICO MÁS ÓRDENES
-        // ======================================
-
-        let tecnicoTop = '-';
-
-        let maxTecnico = 0;
-
-        for(const tecnico in tecnicos){
-
-            if(tecnicos[tecnico] > maxTecnico){
-
-                maxTecnico = tecnicos[tecnico];
-
-                tecnicoTop = tecnico;
-
-            }
-
-        }
-
-        kpiTecnico.innerText = tecnicoTop;
-
-        // ======================================
-        // CREAR GRÁFICA
-        // ======================================
-
-        crearGrafica(
-
+            total,
             pendientes,
+            completadas,
             proceso,
-            completadas
+            prioridadAlta
 
         );
 
-    }catch(error){
+        // ======================================
+        // TABLA
+        // ======================================
+
+        renderizarTabla();
+
+    }
+
+    catch (error) {
 
         console.error(
 
-            'Error dashboard:',
+            'Error cargando órdenes:',
+
             error
 
         );
@@ -227,85 +123,225 @@ async function cargarDashboard(){
 }
 
 // ======================================
-// CREAR GRÁFICA
+// KPI
 // ======================================
 
-function crearGrafica(
+function actualizarKPIs(
 
+    total,
     pendientes,
+    completadas,
     proceso,
-    completadas
+    prioridadAlta
 
-){
+) {
 
-    const ctx = document
+    const totalOrdenes = document.getElementById(
 
-        .getElementById('graficaOrdenes')
+        'totalOrdenes'
 
-        .getContext('2d');
+    );
 
-    // ======================================
-    // CHART
-    // ======================================
+    const pendientesHTML = document.getElementById(
 
-    new Chart(ctx, {
+        'pendientes'
 
-        type: 'doughnut',
+    );
 
-        data: {
+    const completadasHTML = document.getElementById(
 
-            labels: [
+        'completadas'
 
-                'Pendientes',
-                'En Proceso',
-                'Completadas'
+    );
 
-            ],
+    const procesoHTML = document.getElementById(
 
-            datasets: [
+        'enProceso'
 
-                {
+    );
 
-                    data: [
+    const prioridadHTML = document.getElementById(
 
-                        pendientes,
-                        proceso,
-                        completadas
+        'prioridadAlta'
 
-                    ],
+    );
 
-                    backgroundColor: [
+    if (totalOrdenes) {
 
-                        '#facc15',
-                        '#3b82f6',
-                        '#22c55e'
+        totalOrdenes.innerText = total;
 
-                    ],
+    }
 
-                    borderWidth: 0
+    if (pendientesHTML) {
 
-                }
+        pendientesHTML.innerText = pendientes;
 
-            ]
+    }
 
-        },
+    if (completadasHTML) {
 
-        options: {
+        completadasHTML.innerText = completadas;
 
-            responsive: true,
+    }
 
-            plugins: {
+    if (procesoHTML) {
 
-                legend: {
+        procesoHTML.innerText = proceso;
 
-                    position: 'bottom'
+    }
 
-                }
+    if (prioridadHTML) {
 
-            }
+        prioridadHTML.innerText = prioridadAlta;
 
-        }
+    }
+
+}
+
+// ======================================
+// TABLA
+// ======================================
+
+function renderizarTabla() {
+
+    const tbody = document.getElementById(
+
+        'tablaOrdenes'
+
+    );
+
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    ordenesData.forEach((orden) => {
+
+        const fila = document.createElement('tr');
+
+        fila.className =
+
+        'border-b hover:bg-gray-50';
+
+        fila.innerHTML = `
+
+            <td class="px-4 py-3">
+
+                ${orden.folio || '-'}
+
+            </td>
+
+            <td class="px-4 py-3">
+
+                ${orden.equipo || '-'}
+
+            </td>
+
+            <td class="px-4 py-3">
+
+                ${orden.tipo || '-'}
+
+            </td>
+
+            <td class="px-4 py-3">
+
+                ${orden.tecnico || '-'}
+
+            </td>
+
+            <td class="px-4 py-3">
+
+                <span class="px-3 py-1 rounded-full text-xs font-bold
+                ${obtenerColorPrioridad(orden.prioridad)}">
+
+                    ${orden.prioridad || '-'}
+
+                </span>
+
+            </td>
+
+            <td class="px-4 py-3">
+
+                <span class="px-3 py-1 rounded-full text-xs font-bold
+                ${obtenerColorEstado(orden.estado)}">
+
+                    ${orden.estado || '-'}
+
+                </span>
+
+            </td>
+
+            <td class="px-4 py-3">
+
+                ${orden.fecha || '-'}
+
+            </td>
+
+        `;
+
+        tbody.appendChild(fila);
 
     });
 
 }
+
+// ======================================
+// COLOR PRIORIDAD
+// ======================================
+
+function obtenerColorPrioridad(prioridad) {
+
+    switch (prioridad) {
+
+        case 'Alta':
+
+            return 'bg-red-100 text-red-700';
+
+        case 'Media':
+
+            return 'bg-yellow-100 text-yellow-700';
+
+        default:
+
+            return 'bg-green-100 text-green-700';
+
+    }
+
+}
+
+// ======================================
+// COLOR ESTADO
+// ======================================
+
+function obtenerColorEstado(estado) {
+
+    switch (estado) {
+
+        case 'Completada':
+
+        case 'Finalizada':
+
+            return 'bg-green-100 text-green-700';
+
+        case 'En Proceso':
+
+            return 'bg-blue-100 text-blue-700';
+
+        default:
+
+            return 'bg-yellow-100 text-yellow-700';
+
+    }
+
+}
+
+// ======================================
+// INICIAR
+// ======================================
+
+document.addEventListener(
+
+    'DOMContentLoaded',
+
+    cargarOrdenes
+
+);
