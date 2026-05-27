@@ -1,45 +1,32 @@
-import { db } from './firebase-config.js';
-
-import {
-
-    collection,
-    getDocs
-
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 // ======================================
 // VARIABLES
 // ======================================
 
 let ordenes = [];
-
 let ordenesFiltradas = [];
 
 // ======================================
-// CARGAR ÓRDENES
+// CARGAR HISTORIAL
 // ======================================
 
-async function cargarOrdenes(){
+async function cargarHistorial(){
 
-    try{
+    try {
 
-        const snapshot = await getDocs(
-
-            collection(db, 'ordenes')
-
-        );
+        const snapshot = await db
+        .collection('ordenes')
+        .orderBy('fechaCreacion', 'desc')
+        .get();
 
         ordenes = [];
 
         snapshot.forEach((doc) => {
 
-            ordenes.push({
+            const orden = doc.data();
 
-                id: doc.id,
+            orden.id = doc.id;
 
-                ...doc.data()
-
-            });
+            ordenes.push(orden);
 
         });
 
@@ -47,81 +34,94 @@ async function cargarOrdenes(){
 
         renderizarTabla();
 
-    }catch(error){
+    }
+
+    catch(error){
 
         console.error(error);
-
-        alert('❌ Error cargando historial');
 
     }
 
 }
 
 // ======================================
-// RENDERIZAR TABLA
+// RENDER TABLA
 // ======================================
 
 function renderizarTabla(){
 
-    const tabla = document.getElementById(
+    const tbody =
+    document.getElementById('tablaHistorial');
 
-        'tablaHistorial'
-
-    );
-
-    tabla.innerHTML = '';
+    tbody.innerHTML = '';
 
     ordenesFiltradas.forEach((orden) => {
 
-        tabla.innerHTML += `
+        const fila =
+        document.createElement('tr');
 
-            <tr class="hover:bg-gray-50">
+        fila.innerHTML = `
 
-                <td class="px-4 py-4">
+            <td class="border px-4 py-3">
+                ${orden.folio || '-'}
+            </td>
 
-                    ${orden.folio || '-'}
+            <td class="border px-4 py-3">
+                ${orden.equipo || '-'}
+            </td>
 
-                </td>
+            <td class="border px-4 py-3">
+                ${orden.tecnico || '-'}
+            </td>
 
-                <td class="px-4 py-4">
+            <td class="border px-4 py-3">
+                ${orden.estado || '-'}
+            </td>
 
-                    ${orden.equipo || '-'}
+            <td class="border px-4 py-3">
+                ${orden.fechaInicio || '-'}
+            </td>
 
-                </td>
+            <td class="border px-4 py-3">
+                ${orden.fechaFin || '-'}
+            </td>
 
-                <td class="px-4 py-4">
+            <td class="border px-4 py-3">
 
-                    ${orden.tecnico || '-'}
+                ${
+                    orden.fechaInicio &&
+                    orden.fechaFin
 
-                </td>
+                    ?
 
-                <td class="px-4 py-4">
+                    calcularHorasLaborales(
+                        orden.fechaInicio,
+                        orden.fechaFin
+                    )
 
-                    ${orden.tipo || '-'}
+                    :
 
-                </td>
+                    '-'
+                }
 
-                <td class="px-4 py-4">
+            </td>
 
-                    ${orden.prioridad || '-'}
+            <td class="border px-4 py-3">
 
-                </td>
+                <button
+                    onclick="generarPDF('${orden.id}')"
+                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg"
+                >
 
-                <td class="px-4 py-4">
+                    PDF
 
-                    ${orden.estado || '-'}
+                </button>
 
-                </td>
-
-                <td class="px-4 py-4">
-
-                    ${orden.fecha || '-'}
-
-                </td>
-
-            </tr>
+            </td>
 
         `;
+
+        tbody.appendChild(fila);
 
     });
 
@@ -131,87 +131,48 @@ function renderizarTabla(){
 // FILTROS
 // ======================================
 
-window.aplicarFiltros = function(){
+function aplicarFiltros(){
 
-    const fechaInicio = document.getElementById(
+    const fechaInicio =
+    document.getElementById('fechaInicioFiltro').value;
 
-        'fechaInicio'
+    const fechaFin =
+    document.getElementById('fechaFinFiltro').value;
 
-    ).value;
+    const equipo =
+    document.getElementById('equipoFiltro')
+    .value
+    .toLowerCase();
 
-    const fechaFin = document.getElementById(
+    const estado =
+    document.getElementById('estadoFiltro').value;
 
-        'fechaFin'
-
-    ).value;
-
-    const equipo = document.getElementById(
-
-        'filtroEquipo'
-
-    ).value.toLowerCase();
-
-    const tecnico = document.getElementById(
-
-        'filtroTecnico'
-
-    ).value.toLowerCase();
-
-    const estado = document.getElementById(
-
-        'filtroEstado'
-
-    ).value;
-
-    ordenesFiltradas = ordenes.filter((orden) => {
+    ordenesFiltradas =
+    ordenes.filter((orden) => {
 
         let cumple = true;
 
         // EQUIPO
-        if(equipo){
+        if(
+            equipo &&
+            !(
+                orden.equipo || ''
+            )
+            .toLowerCase()
+            .includes(equipo)
+        ){
 
-            cumple = cumple &&
-
-            orden.equipo?.toLowerCase()
-
-            .includes(equipo);
-
-        }
-
-        // TÉCNICO
-        if(tecnico){
-
-            cumple = cumple &&
-
-            orden.tecnico?.toLowerCase()
-
-            .includes(tecnico);
+            cumple = false;
 
         }
 
         // ESTADO
-        if(estado){
+        if(
+            estado &&
+            orden.estado !== estado
+        ){
 
-            cumple = cumple &&
-
-            orden.estado === estado;
-
-        }
-
-        // FECHA
-        if(fechaInicio){
-
-            cumple = cumple &&
-
-            orden.fecha >= fechaInicio;
-
-        }
-
-        if(fechaFin){
-
-            cumple = cumple &&
-
-            orden.fecha <= fechaFin;
+            cumple = false;
 
         }
 
@@ -224,75 +185,251 @@ window.aplicarFiltros = function(){
 }
 
 // ======================================
-// LIMPIAR
+// HORAS LABORALES
 // ======================================
 
-window.limpiarFiltros = function(){
+function calcularHorasLaborales(
+    fechaInicio,
+    fechaFin
+){
 
-    document.getElementById('fechaInicio').value = '';
+    let inicio = new Date(fechaInicio);
 
-    document.getElementById('fechaFin').value = '';
+    let fin = new Date(fechaFin);
 
-    document.getElementById('filtroEquipo').value = '';
+    let totalMinutos = 0;
 
-    document.getElementById('filtroTecnico').value = '';
+    while(inicio < fin){
 
-    document.getElementById('filtroEstado').value = '';
+        const dia =
+        inicio.getDay();
 
-    ordenesFiltradas = [...ordenes];
+        // DOMINGO
+        if(dia !== 0){
 
-    renderizarTabla();
+            let horaInicio = 7;
+            let horaFin = 18;
+
+            // SABADO
+            if(dia === 6){
+
+                horaFin = 14;
+
+            }
+
+            const inicioLaboral =
+            new Date(inicio);
+
+            inicioLaboral.setHours(
+                horaInicio,
+                0,
+                0,
+                0
+            );
+
+            const finLaboral =
+            new Date(inicio);
+
+            finLaboral.setHours(
+                horaFin,
+                0,
+                0,
+                0
+            );
+
+            const inicioReal =
+            inicio > inicioLaboral
+            ? inicio
+            : inicioLaboral;
+
+            const finReal =
+            fin < finLaboral
+            ? fin
+            : finLaboral;
+
+            if(finReal > inicioReal){
+
+                totalMinutos +=
+                (finReal - inicioReal)
+                / 1000 / 60;
+
+            }
+
+        }
+
+        inicio.setDate(
+            inicio.getDate() + 1
+        );
+
+        inicio.setHours(0,0,0,0);
+
+    }
+
+    const horas =
+    Math.floor(totalMinutos / 60);
+
+    const minutos =
+    Math.floor(totalMinutos % 60);
+
+    return `${horas}h ${minutos}m`;
 
 }
 
 // ======================================
-// EXPORTAR EXCEL
+// PDF
 // ======================================
 
-window.exportarExcel = function(){
+function generarPDF(id){
 
-    const datos = ordenesFiltradas.map((orden) => ({
-
-        Folio: orden.folio || '',
-
-        Equipo: orden.equipo || '',
-
-        Tecnico: orden.tecnico || '',
-
-        Tipo: orden.tipo || '',
-
-        Prioridad: orden.prioridad || '',
-
-        Estado: orden.estado || '',
-
-        Fecha: orden.fecha || ''
-
-    }));
-
-    const hoja = XLSX.utils.json_to_sheet(
-
-        datos
-
+    const orden =
+    ordenes.find(
+        o => o.id === id
     );
 
-    const libro = XLSX.utils.book_new();
+    if(!orden){
+
+        alert('Orden no encontrada');
+
+        return;
+
+    }
+
+    const ventana =
+    window.open('', '_blank');
+
+    ventana.document.write(`
+
+        <html>
+
+        <head>
+
+            <title>${orden.folio}</title>
+
+            <style>
+
+                body{
+
+                    font-family: Arial;
+                    padding:40px;
+
+                }
+
+                table{
+
+                    width:100%;
+                    border-collapse: collapse;
+
+                }
+
+                td{
+
+                    border:1px solid #ccc;
+                    padding:12px;
+
+                }
+
+            </style>
+
+        </head>
+
+        <body>
+
+            <h1>
+
+                Orden de Servicio
+
+            </h1>
+
+            <table>
+
+                <tr>
+                    <td>Folio</td>
+                    <td>${orden.folio}</td>
+                </tr>
+
+                <tr>
+                    <td>Equipo</td>
+                    <td>${orden.equipo}</td>
+                </tr>
+
+                <tr>
+                    <td>Técnico</td>
+                    <td>${orden.tecnico}</td>
+                </tr>
+
+                <tr>
+                    <td>Estado</td>
+                    <td>${orden.estado}</td>
+                </tr>
+
+                <tr>
+                    <td>Tiempo laboral</td>
+
+                    <td>
+
+                        ${
+                            orden.fechaInicio &&
+                            orden.fechaFin
+
+                            ?
+
+                            calcularHorasLaborales(
+                                orden.fechaInicio,
+                                orden.fechaFin
+                            )
+
+                            :
+
+                            '-'
+                        }
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+            <script>
+
+                window.onload = () => {
+
+                    window.print();
+
+                }
+
+            </script>
+
+        </body>
+
+        </html>
+
+    `);
+
+}
+
+// ======================================
+// EXCEL
+// ======================================
+
+function exportarExcel(){
+
+    const ws =
+    XLSX.utils.json_to_sheet(
+        ordenesFiltradas
+    );
+
+    const wb =
+    XLSX.utils.book_new();
 
     XLSX.utils.book_append_sheet(
-
-        libro,
-
-        hoja,
-
+        wb,
+        ws,
         'Historial'
-
     );
 
     XLSX.writeFile(
-
-        libro,
-
-        'Historial-Ordenes.xlsx'
-
+        wb,
+        'Historial_Ordenes.xlsx'
     );
 
 }
@@ -301,4 +438,10 @@ window.exportarExcel = function(){
 // INICIAR
 // ======================================
 
-cargarOrdenes();
+document.addEventListener(
+
+    'DOMContentLoaded',
+
+    cargarHistorial
+
+);
