@@ -1,159 +1,311 @@
-// Importar Firestore
 import { db } from './firebase-config.js';
 
 import {
 
     collection,
-    onSnapshot
+    getDocs
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Array órdenes
-let ordenesData = [];
+// ======================================
+// ELEMENTOS KPI
+// ======================================
 
-// Cargar órdenes en tiempo real
-async function cargarOrdenes() {
+const kpiTotal =
 
-    try {
+    document.getElementById('kpiTotal');
 
-        // Referencia colección
-        const ordenesRef = collection(db, 'ordenes');
+const kpiPendientes =
 
-        // Escuchar cambios en tiempo real
-        onSnapshot(ordenesRef, (snapshot) => {
+    document.getElementById('kpiPendientes');
 
-            ordenesData = [];
+const kpiProceso =
 
-            let total = 0;
-            let pendientes = 0;
-            let completadas = 0;
+    document.getElementById('kpiProceso');
 
-            snapshot.forEach((doc) => {
+const kpiCompletadas =
 
-                const orden = doc.data();
+    document.getElementById('kpiCompletadas');
 
-                orden.id = doc.id;
+const kpiEquipo =
 
-                ordenesData.push(orden);
+    document.getElementById('kpiEquipo');
 
-                total++;
+const kpiTecnico =
 
-                if (
-                    orden.estado === "Completada" ||
-                    orden.estado === "Finalizada"
-                ) {
+    document.getElementById('kpiTecnico');
 
-                    completadas++;
+// ======================================
+// INICIALIZAR
+// ======================================
 
-                } else {
+cargarDashboard();
 
-                    pendientes++;
+// ======================================
+// CARGAR DASHBOARD
+// ======================================
+
+async function cargarDashboard(){
+
+    try{
+
+        // ======================================
+        // OBTENER ÓRDENES
+        // ======================================
+
+        const snapshot = await getDocs(
+
+            collection(db, 'ordenes')
+
+        );
+
+        // ======================================
+        // VARIABLES KPI
+        // ======================================
+
+        let total = 0;
+
+        let pendientes = 0;
+
+        let proceso = 0;
+
+        let completadas = 0;
+
+        // ======================================
+        // CONTADORES
+        // ======================================
+
+        let equipos = {};
+
+        let tecnicos = {};
+
+        // ======================================
+        // RECORRER ÓRDENES
+        // ======================================
+
+        snapshot.forEach((doc) => {
+
+            const orden = doc.data();
+
+            total++;
+
+            // ======================================
+            // ESTADOS
+            // ======================================
+
+            if(orden.estado === 'Pendiente'){
+
+                pendientes++;
+
+            }
+
+            else if(orden.estado === 'En proceso'){
+
+                proceso++;
+
+            }
+
+            else if(orden.estado === 'Completada'){
+
+                completadas++;
+
+            }
+
+            // ======================================
+            // EQUIPOS
+            // ======================================
+
+            if(orden.equipo){
+
+                if(!equipos[orden.equipo]){
+
+                    equipos[orden.equipo] = 0;
 
                 }
 
-            });
+                equipos[orden.equipo]++;
 
-            // Actualizar contadores
-            document.getElementById('totalOrdenes').innerText = total;
+            }
 
-            document.getElementById('pendientes').innerText = pendientes;
+            // ======================================
+            // TÉCNICOS
+            // ======================================
 
-            document.getElementById('completadas').innerText = completadas;
+            if(orden.tecnico){
 
-            // Renderizar tabla
-            renderizarTabla();
+                if(!tecnicos[orden.tecnico]){
+
+                    tecnicos[orden.tecnico] = 0;
+
+                }
+
+                tecnicos[orden.tecnico]++;
+
+            }
 
         });
 
-    } catch (error) {
+        // ======================================
+        // ACTUALIZAR KPI
+        // ======================================
 
-        console.error("Error al cargar órdenes:", error);
+        kpiTotal.innerText = total;
+
+        kpiPendientes.innerText = pendientes;
+
+        kpiProceso.innerText = proceso;
+
+        kpiCompletadas.innerText = completadas;
+
+        // ======================================
+        // EQUIPO MÁS FALLAS
+        // ======================================
+
+        let equipoTop = '-';
+
+        let maxEquipo = 0;
+
+        for(const equipo in equipos){
+
+            if(equipos[equipo] > maxEquipo){
+
+                maxEquipo = equipos[equipo];
+
+                equipoTop = equipo;
+
+            }
+
+        }
+
+        kpiEquipo.innerText = equipoTop;
+
+        // ======================================
+        // TÉCNICO MÁS ÓRDENES
+        // ======================================
+
+        let tecnicoTop = '-';
+
+        let maxTecnico = 0;
+
+        for(const tecnico in tecnicos){
+
+            if(tecnicos[tecnico] > maxTecnico){
+
+                maxTecnico = tecnicos[tecnico];
+
+                tecnicoTop = tecnico;
+
+            }
+
+        }
+
+        kpiTecnico.innerText = tecnicoTop;
+
+        // ======================================
+        // CREAR GRÁFICA
+        // ======================================
+
+        crearGrafica(
+
+            pendientes,
+            proceso,
+            completadas
+
+        );
+
+    }catch(error){
+
+        console.error(
+
+            'Error dashboard:',
+            error
+
+        );
 
     }
 
 }
 
-// Renderizar tabla
-function renderizarTabla() {
+// ======================================
+// CREAR GRÁFICA
+// ======================================
 
-    const tbody = document.getElementById('tablaOrdenes');
+function crearGrafica(
 
-    tbody.innerHTML = '';
+    pendientes,
+    proceso,
+    completadas
 
-    ordenesData.forEach(orden => {
+){
 
-        const fila = document.createElement('tr');
+    const ctx = document
 
-        fila.innerHTML = `
+        .getElementById('graficaOrdenes')
 
-            <td class="px-6 py-4">${orden.equipo || '-'}</td>
+        .getContext('2d');
 
-            <td class="px-6 py-4">${orden.tecnico || '-'}</td>
+    // ======================================
+    // CHART
+    // ======================================
 
-            <td class="px-6 py-4">${orden.tipo || '-'}</td>
+    new Chart(ctx, {
 
-            <td class="px-6 py-4">
+        type: 'doughnut',
 
-                <span class="
-                    px-3 py-1 rounded-full text-xs font-medium
+        data: {
 
-                    ${orden.prioridad === 'Alta'
-                        ? 'bg-red-100 text-red-700'
-                        : orden.prioridad === 'Media'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-green-100 text-green-700'
-                    }
-                ">
+            labels: [
 
-                    ${orden.prioridad || 'Baja'}
+                'Pendientes',
+                'En Proceso',
+                'Completadas'
 
-                </span>
+            ],
 
-            </td>
+            datasets: [
 
-            <td class="px-6 py-4">
+                {
 
-                <span class="
-                    px-3 py-1 rounded-full text-xs font-medium
+                    data: [
 
-                    ${orden.estado === 'Completada'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                    }
-                ">
+                        pendientes,
+                        proceso,
+                        completadas
 
-                    ${orden.estado || 'Pendiente'}
+                    ],
 
-                </span>
+                    backgroundColor: [
 
-            </td>
+                        '#facc15',
+                        '#3b82f6',
+                        '#22c55e'
 
-            <td class="px-6 py-4">
+                    ],
 
-                ${orden.fecha || '-'}
+                    borderWidth: 0
 
-            </td>
+                }
 
-            <td class="px-6 py-4 text-center">
+            ]
 
-                <button
-                    onclick="editarOrden('${orden.id}')"
-                    class="text-blue-600 hover:text-blue-800 mr-3"
-                >
+        },
 
-                    ✏️
+        options: {
 
-                </button>
+            responsive: true,
 
-            </td>
+            plugins: {
 
-        `;
+                legend: {
 
-        tbody.appendChild(fila);
+                    position: 'bottom'
+
+                }
+
+            }
+
+        }
 
     });
 
 }
-
-// Iniciar dashboard
-document.addEventListener('DOMContentLoaded', cargarOrdenes);
