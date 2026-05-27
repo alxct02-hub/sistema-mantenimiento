@@ -1,44 +1,70 @@
-body{
+*{
 
     margin:0;
+
     padding:0;
 
-    background:#121212;
+    box-sizing:border-box;
 
     font-family:Arial, sans-serif;
 
-    color:white;
+}
+
+body{
+
+    background:#f4f4f4;
+
+    padding:40px;
 
 }
 
 .contenedor{
 
-    width:90%;
     max-width:700px;
 
     margin:auto;
 
-    margin-top:40px;
+    background:white;
 
-    background:#1f1f1f;
+    padding:40px;
 
-    padding:30px;
+    border-radius:15px;
 
-    border-radius:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
+
+}
+
+.encabezado{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
+
+.logo{
+
+    width:100px;
+
+    object-fit:contain;
 
 }
 
 h1{
 
-    color:#f5b400;
-
-    margin-bottom:5px;
+    color:#2c3e50;
 
 }
 
 h2{
 
-    margin-bottom:30px;
+    color:#7f8c8d;
+
+    margin-top:5px;
 
 }
 
@@ -48,13 +74,17 @@ form{
 
     flex-direction:column;
 
-    gap:15px;
-
 }
 
 label{
 
+    margin-top:15px;
+
+    margin-bottom:8px;
+
     font-weight:bold;
+
+    color:#34495e;
 
 }
 
@@ -62,11 +92,11 @@ input,
 select,
 textarea{
 
-    padding:12px;
+    padding:14px;
 
-    border:none;
+    border:1px solid #dcdde1;
 
-    border-radius:5px;
+    border-radius:10px;
 
     font-size:16px;
 
@@ -74,15 +104,19 @@ textarea{
 
 button{
 
-    background:#f5b400;
-
-    color:black;
+    margin-top:30px;
 
     padding:15px;
 
     border:none;
 
-    border-radius:5px;
+    border-radius:10px;
+
+    background:#f5b400;
+
+    color:black;
+
+    font-size:16px;
 
     font-weight:bold;
 
@@ -104,6 +138,6 @@ button:hover{
 
     font-weight:bold;
 
-    color:#00ff88;
+    text-align:center;
 
 }

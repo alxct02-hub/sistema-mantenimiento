@@ -15,88 +15,158 @@
 
 <body class="bg-gray-100">
 
-    <!-- Header -->
-    <header class="bg-gray-900 text-white p-5 flex justify-between items-center">
+<div class="flex min-h-screen">
 
-        <h1 class="text-2xl font-bold">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-gray-900 text-white flex flex-col">
 
-            Sistema de Mantenimiento
+        <!-- Encabezado -->
+        <div class="p-6 border-b border-gray-700">
 
-        </h1>
+            <div class="flex items-center gap-4">
 
-        <a href="../login.html"
-           class="bg-red-500 px-4 py-2 rounded">
+                <img
+                    src="../img/logo.png"
+                    alt="Logo"
+                    class="w-16 h-16 object-contain"
+                >
 
-            Salir
+                <div>
 
-        </a>
+                    <h1 class="font-bold text-lg">
 
-    </header>
+                        Sistema Mantenimiento
 
-    <!-- Contenido -->
-    <main class="p-6">
+                    </h1>
 
-        <!-- Tarjetas -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <p class="text-gray-400 text-sm">
 
-            <div class="bg-white p-6 rounded shadow">
+                        Concretera del Sureste
 
-                <h2 class="text-gray-500">
+                    </p>
 
-                    Total Órdenes
-
-                </h2>
-
-                <p id="totalOrdenes"
-                   class="text-4xl font-bold mt-2">
-
-                    0
-
-                </p>
-
-            </div>
-
-            <div class="bg-white p-6 rounded shadow">
-
-                <h2 class="text-gray-500">
-
-                    Pendientes
-
-                </h2>
-
-                <p id="pendientes"
-                   class="text-4xl font-bold mt-2 text-yellow-500">
-
-                    0
-
-                </p>
-
-            </div>
-
-            <div class="bg-white p-6 rounded shadow">
-
-                <h2 class="text-gray-500">
-
-                    Completadas
-
-                </h2>
-
-                <p id="completadas"
-                   class="text-4xl font-bold mt-2 text-green-500">
-
-                    0
-
-                </p>
+                </div>
 
             </div>
 
         </div>
 
-        <!-- Botón nueva orden -->
-        <div class="mb-6">
+        <!-- Menú -->
+        <nav class="flex-1 p-4">
 
-            <a href="./nueva-orden.html"
-               class="bg-yellow-500 text-black px-5 py-3 rounded font-bold">
+            <ul class="space-y-3">
+
+                <li>
+
+                    <a
+                        href="./dashboard.html"
+                        class="block bg-yellow-500 text-black px-4 py-3 rounded font-bold"
+                    >
+
+                        📊 Dashboard
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a
+                        href="./nueva-orden.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded"
+                    >
+
+                        🛠 Nueva Orden
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a
+                        href="./historial.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded"
+                    >
+
+                        📁 Historial
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a
+                        href="./tecnicos.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded"
+                    >
+
+                        👷 Técnicos
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a
+                        href="./reportes.html"
+                        class="block hover:bg-gray-700 px-4 py-3 rounded"
+                    >
+
+                        📑 Reportes
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </nav>
+
+        <!-- Botón salir -->
+        <div class="p-4 border-t border-gray-700">
+
+            <a
+                href="../login.html"
+                class="block bg-red-500 text-center py-3 rounded font-bold"
+            >
+
+                Cerrar Sesión
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- Contenido -->
+    <main class="flex-1 p-8">
+
+        <!-- Encabezado -->
+        <div class="flex justify-between items-center mb-8">
+
+            <div>
+
+                <h2 class="text-3xl font-bold text-gray-800">
+
+                    Dashboard General
+
+                </h2>
+
+                <p class="text-gray-500">
+
+                    Resumen operativo del sistema
+
+                </p>
+
+            </div>
+
+            <a
+                href="./nueva-orden.html"
+                class="bg-yellow-500 text-black px-5 py-3 rounded font-bold"
+            >
 
                 + Nueva Orden
 
@@ -104,72 +174,150 @@
 
         </div>
 
+        <!-- Tarjetas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+            <div class="bg-white rounded-xl shadow p-6">
+
+                <p class="text-gray-500">
+
+                    Total Órdenes
+
+                </p>
+
+                <h3
+                    id="totalOrdenes"
+                    class="text-5xl font-bold mt-3"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+
+                <p class="text-gray-500">
+
+                    Pendientes
+
+                </p>
+
+                <h3
+                    id="pendientes"
+                    class="text-5xl font-bold text-yellow-500 mt-3"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+
+                <p class="text-gray-500">
+
+                    Completadas
+
+                </p>
+
+                <h3
+                    id="completadas"
+                    class="text-5xl font-bold text-green-500 mt-3"
+                >
+
+                    0
+
+                </h3>
+
+            </div>
+
+        </div>
+
         <!-- Tabla -->
-        <div class="bg-white rounded shadow overflow-auto">
+        <div class="bg-white rounded-xl shadow overflow-hidden">
 
-            <table class="min-w-full">
+            <div class="p-5 border-b">
 
-                <thead class="bg-gray-800 text-white">
+                <h3 class="font-bold text-lg">
 
-                    <tr>
+                    Órdenes recientes
 
-                        <th class="px-6 py-4 text-left">
+                </h3>
 
-                            Equipo
+            </div>
 
-                        </th>
+            <div class="overflow-auto">
 
-                        <th class="px-6 py-4 text-left">
+                <table class="min-w-full">
 
-                            Técnico
+                    <thead class="bg-gray-800 text-white">
 
-                        </th>
+                        <tr>
 
-                        <th class="px-6 py-4 text-left">
+                            <th class="px-6 py-4 text-left">
 
-                            Tipo
+                                Folio
 
-                        </th>
+                            </th>
 
-                        <th class="px-6 py-4 text-left">
+                            <th class="px-6 py-4 text-left">
 
-                            Prioridad
+                                Equipo
 
-                        </th>
+                            </th>
 
-                        <th class="px-6 py-4 text-left">
+                            <th class="px-6 py-4 text-left">
 
-                            Estado
+                                Técnico
 
-                        </th>
+                            </th>
 
-                        <th class="px-6 py-4 text-left">
+                            <th class="px-6 py-4 text-left">
 
-                            Fecha
+                                Tipo
 
-                        </th>
+                            </th>
 
-                        <th class="px-6 py-4 text-center">
+                            <th class="px-6 py-4 text-left">
 
-                            Acción
+                                Prioridad
 
-                        </th>
+                            </th>
 
-                    </tr>
+                            <th class="px-6 py-4 text-left">
 
-                </thead>
+                                Estado
 
-                <tbody id="tablaOrdenes">
+                            </th>
 
-                </tbody>
+                            <th class="px-6 py-4 text-left">
 
-            </table>
+                                Fecha
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaOrdenes">
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
     </main>
 
-    <script type="module" src="../js/dashboard.js"></script>
+</div>
+
+<script type="module" src="../js/dashboard.js"></script>
 
 </body>
 </html>
