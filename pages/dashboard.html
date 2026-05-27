@@ -1,127 +1,169 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema Mantenimiento</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>Dashboard</title>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+
+<!-- TAILWIND -->
+<script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body class="bg-gray-950 text-white">
 
-    <!-- Navbar -->
-    <nav class="bg-gray-900 border-b border-gray-800">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <h1 class="text-2xl font-bold text-yellow-400">Mantenimiento</h1>
-            </div>
-            <div class="flex items-center gap-6">
-                <span id="user-name" class="text-sm"></span>
-                <button onclick="logout()" class="text-red-400 hover:text-red-500">
-                    <i class="fas fa-sign-out-alt"></i> Salir
-                </button>
-            </div>
-        </div>
-    </nav>
+<body class="bg-gray-100">
 
-    <div class="max-w-7xl mx-auto p-6">
-        <h2 class="text-3xl font-bold mb-8">Dashboard</h2>
+<!-- HEADER -->
+<header class="bg-gray-900 text-white p-4">
 
-        <!-- KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="bg-gray-900 p-6 rounded-2xl">
-                <p class="text-gray-400 text-sm">Órdenes Totales</p>
-                <p id="total-ordenes" class="text-4xl font-bold mt-2">0</p>
-            </div>
-            <div class="bg-gray-900 p-6 rounded-2xl">
-                <p class="text-gray-400 text-sm">Pendientes</p>
-                <p id="pendientes" class="text-4xl font-bold mt-2 text-orange-400">0</p>
-            </div>
-            <div class="bg-gray-900 p-6 rounded-2xl">
-                <p class="text-gray-400 text-sm">En Proceso</p>
-                <p id="en-proceso" class="text-4xl font-bold mt-2 text-blue-400">0</p>
-            </div>
-            <div class="bg-gray-900 p-6 rounded-2xl">
-                <p class="text-gray-400 text-sm">Completadas</p>
-                <p id="completadas" class="text-4xl font-bold mt-2 text-green-400">0</p>
-            </div>
-        </div>
+<div class="flex justify-between items-center">
 
-        <!-- Gráfica -->
-        <div class="bg-gray-900 p-6 rounded-2xl mb-10">
-            <h3 class="text-xl font-semibold mb-4">Estado de Órdenes</h3>
-            <canvas id="ordenesChart" height="100"></canvas>
-        </div>
+<h1 class="text-2xl font-bold">
 
-        <!-- Botones rápidos -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="nueva-orden.html" class="bg-yellow-500 text-black font-bold py-6 rounded-2xl text-center hover:bg-yellow-600 transition">
-                <i class="fas fa-plus text-2xl mb-2"></i><br>Nueva Orden
-            </a>
-            <a href="historial.html" class="bg-gray-800 hover:bg-gray-700 font-bold py-6 rounded-2xl text-center transition">
-                <i class="fas fa-history text-2xl mb-2"></i><br>Historial
-            </a>
-            <a href="tecnicos.html" class="bg-gray-800 hover:bg-gray-700 font-bold py-6 rounded-2xl text-center transition">
-                <i class="fas fa-users text-2xl mb-2"></i><br>Técnicos
-            </a>
-            <a href="reportes.html" class="bg-gray-800 hover:bg-gray-700 font-bold py-6 rounded-2xl text-center transition">
-                <i class="fas fa-chart-bar text-2xl mb-2"></i><br>Reportes
-            </a>
-        </div>
-    </div>
+Dashboard Mantenimiento
 
-    <script>
-        // Firebase Config (usa la misma que en login.html)
-        const firebaseConfig = { /* Pega aquí tu configuración de Firebase */ };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+</h1>
 
-        async function loadDashboard() {
-            try {
-                const snapshot = await db.collection('ordenes').get();
-                let total = 0, pendientes = 0, proceso = 0, completadas = 0;
+<a
+href="../login.html"
+class="bg-red-500 px-4 py-2 rounded"
+>
 
-                snapshot.forEach(doc => {
-                    total++;
-                    const estado = doc.data().estado;
-                    if (estado === "Pendiente") pendientes++;
-                    else if (estado === "En Proceso") proceso++;
-                    else if (estado === "Completada") completadas++;
-                });
+Cerrar sesión
 
-                document.getElementById('total-ordenes').textContent = total;
-                document.getElementById('pendientes').textContent = pendientes;
-                document.getElementById('en-proceso').textContent = proceso;
-                document.getElementById('completadas').textContent = completadas;
+</a>
 
-                // Gráfica
-                new Chart(document.getElementById('ordenesChart'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Pendientes', 'En Proceso', 'Completadas'],
-                        datasets: [{
-                            data: [pendientes, proceso, completadas],
-                            backgroundColor: ['#f59e0b', '#3b82f6', '#10b981']
-                        }]
-                    }
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
+</div>
 
-        function logout() {
-            firebase.auth().signOut().then(() => {
-                window.location.href = "../login.html";
-            });
-        }
+</header>
 
-        // Cargar al iniciar
-        window.onload = loadDashboard;
-    </script>
+<!-- CONTENIDO -->
+<main class="p-6">
+
+<!-- KPI -->
+<div class="grid grid-cols-3 gap-5 mb-8">
+
+<div class="bg-white p-6 rounded-xl shadow">
+
+<h2>Total</h2>
+
+<p
+id="totalOrdenes"
+class="text-4xl font-bold"
+>
+
+0
+
+</p>
+
+</div>
+
+<div class="bg-white p-6 rounded-xl shadow">
+
+<h2>Pendientes</h2>
+
+<p
+id="pendientes"
+class="text-4xl font-bold text-yellow-500"
+>
+
+0
+
+</p>
+
+</div>
+
+<div class="bg-white p-6 rounded-xl shadow">
+
+<h2>Completadas</h2>
+
+<p
+id="completadas"
+class="text-4xl font-bold text-green-600"
+>
+
+0
+
+</p>
+
+</div>
+
+</div>
+
+<!-- TABLA -->
+<div class="bg-white rounded-xl shadow overflow-hidden">
+
+<table class="w-full">
+
+<thead class="bg-gray-800 text-white">
+
+<tr>
+
+<th class="px-4 py-3">
+
+Folio
+
+</th>
+
+<th class="px-4 py-3">
+
+Equipo
+
+</th>
+
+<th class="px-4 py-3">
+
+Técnico
+
+</th>
+
+<th class="px-4 py-3">
+
+Estado
+
+</th>
+
+<th class="px-4 py-3">
+
+Fecha
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tablaOrdenes">
+
+</tbody>
+
+</table>
+
+</div>
+
+</main>
+
+<!-- FIREBASE -->
+<script src="../js/firebase-config.js"></script>
+
+<!-- DASHBOARD -->
+<script src="../js/dashboard.js"></script>
+
 </body>
+
 </html>

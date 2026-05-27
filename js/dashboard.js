@@ -1,4 +1,4 @@
-// ======================================
+/// ======================================
 // FIRESTORE
 // ======================================
 
@@ -22,8 +22,6 @@ async function cargarOrdenes() {
 
         .collection('ordenes')
 
-        .orderBy('fechaCreacion', 'desc')
-
         .get();
 
         ordenesData = [];
@@ -31,8 +29,6 @@ async function cargarOrdenes() {
         let total = 0;
         let pendientes = 0;
         let completadas = 0;
-        let proceso = 0;
-        let prioridadAlta = 0;
 
         snapshot.forEach((doc) => {
 
@@ -44,26 +40,13 @@ async function cargarOrdenes() {
 
             total++;
 
-            // ESTADOS
             if (
 
-                orden.estado === 'Completada' ||
-
-                orden.estado === 'Finalizada'
+                orden.estado === 'Completada'
 
             ) {
 
                 completadas++;
-
-            }
-
-            else if (
-
-                orden.estado === 'En Proceso'
-
-            ) {
-
-                proceso++;
 
             }
 
@@ -73,46 +56,37 @@ async function cargarOrdenes() {
 
             }
 
-            // PRIORIDAD
-            if (
-
-                orden.prioridad === 'Alta'
-
-            ) {
-
-                prioridadAlta++;
-
-            }
-
         });
 
-        // ======================================
         // KPI
-        // ======================================
+        document.getElementById(
 
-        actualizarKPIs(
+            'totalOrdenes'
 
-            total,
-            pendientes,
-            completadas,
-            proceso,
-            prioridadAlta
+        ).innerText = total;
 
-        );
+        document.getElementById(
 
-        // ======================================
+            'pendientes'
+
+        ).innerText = pendientes;
+
+        document.getElementById(
+
+            'completadas'
+
+        ).innerText = completadas;
+
         // TABLA
-        // ======================================
-
         renderizarTabla();
 
     }
 
-    catch (error) {
+    catch(error){
 
         console.error(
 
-            'Error cargando órdenes:',
+            'Error cargando órdenes',
 
             error
 
@@ -123,86 +97,10 @@ async function cargarOrdenes() {
 }
 
 // ======================================
-// KPI
-// ======================================
-
-function actualizarKPIs(
-
-    total,
-    pendientes,
-    completadas,
-    proceso,
-    prioridadAlta
-
-) {
-
-    const totalOrdenes = document.getElementById(
-
-        'totalOrdenes'
-
-    );
-
-    const pendientesHTML = document.getElementById(
-
-        'pendientes'
-
-    );
-
-    const completadasHTML = document.getElementById(
-
-        'completadas'
-
-    );
-
-    const procesoHTML = document.getElementById(
-
-        'enProceso'
-
-    );
-
-    const prioridadHTML = document.getElementById(
-
-        'prioridadAlta'
-
-    );
-
-    if (totalOrdenes) {
-
-        totalOrdenes.innerText = total;
-
-    }
-
-    if (pendientesHTML) {
-
-        pendientesHTML.innerText = pendientes;
-
-    }
-
-    if (completadasHTML) {
-
-        completadasHTML.innerText = completadas;
-
-    }
-
-    if (procesoHTML) {
-
-        procesoHTML.innerText = proceso;
-
-    }
-
-    if (prioridadHTML) {
-
-        prioridadHTML.innerText = prioridadAlta;
-
-    }
-
-}
-
-// ======================================
 // TABLA
 // ======================================
 
-function renderizarTabla() {
+function renderizarTabla(){
 
     const tbody = document.getElementById(
 
@@ -210,7 +108,7 @@ function renderizarTabla() {
 
     );
 
-    if (!tbody) return;
+    if(!tbody) return;
 
     tbody.innerHTML = '';
 
@@ -218,59 +116,33 @@ function renderizarTabla() {
 
         const fila = document.createElement('tr');
 
-        fila.className =
-
-        'border-b hover:bg-gray-50';
-
         fila.innerHTML = `
 
-            <td class="px-4 py-3">
+            <td class="border px-4 py-2">
 
                 ${orden.folio || '-'}
 
             </td>
 
-            <td class="px-4 py-3">
+            <td class="border px-4 py-2">
 
                 ${orden.equipo || '-'}
 
             </td>
 
-            <td class="px-4 py-3">
-
-                ${orden.tipo || '-'}
-
-            </td>
-
-            <td class="px-4 py-3">
+            <td class="border px-4 py-2">
 
                 ${orden.tecnico || '-'}
 
             </td>
 
-            <td class="px-4 py-3">
+            <td class="border px-4 py-2">
 
-                <span class="px-3 py-1 rounded-full text-xs font-bold
-                ${obtenerColorPrioridad(orden.prioridad)}">
-
-                    ${orden.prioridad || '-'}
-
-                </span>
+                ${orden.estado || '-'}
 
             </td>
 
-            <td class="px-4 py-3">
-
-                <span class="px-3 py-1 rounded-full text-xs font-bold
-                ${obtenerColorEstado(orden.estado)}">
-
-                    ${orden.estado || '-'}
-
-                </span>
-
-            </td>
-
-            <td class="px-4 py-3">
+            <td class="border px-4 py-2">
 
                 ${orden.fecha || '-'}
 
@@ -281,56 +153,6 @@ function renderizarTabla() {
         tbody.appendChild(fila);
 
     });
-
-}
-
-// ======================================
-// COLOR PRIORIDAD
-// ======================================
-
-function obtenerColorPrioridad(prioridad) {
-
-    switch (prioridad) {
-
-        case 'Alta':
-
-            return 'bg-red-100 text-red-700';
-
-        case 'Media':
-
-            return 'bg-yellow-100 text-yellow-700';
-
-        default:
-
-            return 'bg-green-100 text-green-700';
-
-    }
-
-}
-
-// ======================================
-// COLOR ESTADO
-// ======================================
-
-function obtenerColorEstado(estado) {
-
-    switch (estado) {
-
-        case 'Completada':
-
-        case 'Finalizada':
-
-            return 'bg-green-100 text-green-700';
-
-        case 'En Proceso':
-
-            return 'bg-blue-100 text-blue-700';
-
-        default:
-
-            return 'bg-yellow-100 text-yellow-700';
-
-    }
 
 }
 
