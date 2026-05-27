@@ -23,38 +23,81 @@
 
         <form id="ordenForm">
 
+            <label>Folio</label>
+            <input
+                type="text"
+                id="folio"
+                readonly
+            >
+
+            <label>Área</label>
+            <input
+                type="text"
+                id="area"
+                required
+            >
+
             <label>Equipo</label>
-            <input type="text" id="equipo" required>
+            <input
+                type="text"
+                id="equipo"
+                required
+            >
 
             <label>Técnico</label>
-            <input type="text" id="tecnico" required>
+            <input
+                type="text"
+                id="tecnico"
+                required
+            >
 
             <label>Tipo de mantenimiento</label>
+
             <select id="tipo" required>
 
-                <option value="">Seleccionar</option>
+                <option value="">
+                    Seleccionar
+                </option>
 
-                <option value="Preventivo">Preventivo</option>
+                <option value="Preventivo">
+                    Preventivo
+                </option>
 
-                <option value="Correctivo">Correctivo</option>
+                <option value="Correctivo">
+                    Correctivo
+                </option>
 
             </select>
 
             <label>Prioridad</label>
+
             <select id="prioridad" required>
 
-                <option value="">Seleccionar</option>
+                <option value="">
+                    Seleccionar
+                </option>
 
-                <option value="Alta">Alta</option>
+                <option value="Alta">
+                    Alta
+                </option>
 
-                <option value="Media">Media</option>
+                <option value="Media">
+                    Media
+                </option>
 
-                <option value="Baja">Baja</option>
+                <option value="Baja">
+                    Baja
+                </option>
 
             </select>
 
             <label>Descripción</label>
-            <textarea id="descripcion" rows="5"></textarea>
+
+            <textarea
+                id="descripcion"
+                rows="5"
+                required
+            ></textarea>
 
             <button type="submit">
 
