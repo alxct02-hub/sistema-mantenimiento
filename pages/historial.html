@@ -3,25 +3,38 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
 
-    <title>Historial</title>
+<title>Dashboard</title>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 
-    <!-- XLSX -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+
+<!-- TAILWIND -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- FONT AWESOME -->
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+/>
 
 </head>
 
 <body class="bg-gray-100">
 
+<!-- CONTENEDOR -->
 <div class="flex min-h-screen">
 
     <!-- SIDEBAR -->
@@ -34,7 +47,7 @@
 
                 <img
                     src="../img/logo.png"
-                    class="w-16 h-16 object-contain bg-white rounded-lg p-1"
+                    class="w-16 h-16 bg-white rounded-xl p-1 object-contain"
                 >
 
                 <div>
@@ -57,283 +70,278 @@
 
         </div>
 
-        <!-- MENU -->
-        <nav class="flex-1 p-4">
+        <!-- MENÚ -->
+        <nav class="flex-1 p-4 space-y-2">
 
-            <ul class="space-y-3">
+            <a
+                href="./dashboard.html"
+                class="flex items-center gap-3 p-3 rounded-lg bg-yellow-500 text-black font-bold"
+            >
 
-                <li>
-                    <a href="./dashboard.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
-                        📊 Dashboard
-                    </a>
-                </li>
+                <i class="fas fa-chart-line"></i>
 
-                <li>
-                    <a href="./nueva-orden.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
-                        🛠 Nueva Orden
-                    </a>
-                </li>
+                Dashboard
 
-                <li>
-                    <a href="./historial.html" class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold">
-                        📁 Historial
-                    </a>
-                </li>
+            </a>
 
-                <li>
-                    <a href="./tecnicos.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
-                        👷 Técnicos
-                    </a>
-                </li>
+            <a
+                href="./nueva-orden.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800"
+            >
 
-                <li>
-                    <a href="./reportes.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg">
-                        📑 Reportes
-                    </a>
-                </li>
+                <i class="fas fa-file-circle-plus"></i>
 
-            </ul>
+                Nueva Orden
+
+            </a>
+
+            <a
+                href="./historial.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800"
+            >
+
+                <i class="fas fa-clock-rotate-left"></i>
+
+                Historial
+
+            </a>
+
+            <a
+                href="./tecnicos.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800"
+            >
+
+                <i class="fas fa-users"></i>
+
+                Técnicos
+
+            </a>
+
+            <a
+                href="./reportes.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800"
+            >
+
+                <i class="fas fa-chart-pie"></i>
+
+                Reportes
+
+            </a>
+
+            <a
+                href="./app-tecnico.html"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800"
+            >
+
+                <i class="fas fa-mobile-screen-button"></i>
+
+                App Técnico
+
+            </a>
 
         </nav>
+
+        <!-- FOOTER -->
+        <div class="p-4 border-t border-gray-700">
+
+            <a
+                href="../login.html"
+                class="flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 p-3 rounded-lg"
+            >
+
+                <i class="fas fa-right-from-bracket"></i>
+
+                Cerrar sesión
+
+            </a>
+
+        </div>
 
     </aside>
 
     <!-- CONTENIDO -->
     <main class="flex-1 p-8">
 
-        <!-- TITULO -->
+        <!-- TÍTULO -->
         <div class="mb-8">
 
-            <h2 class="text-3xl font-bold text-gray-800">
+            <h2 class="text-4xl font-bold text-gray-800">
 
-                Historial de Órdenes
+                Dashboard General
 
             </h2>
 
             <p class="text-gray-500 mt-2">
 
-                Consulta y exportación de información operativa
+                Control general de mantenimiento
 
             </p>
 
         </div>
 
-        <!-- FILTROS -->
-        <div class="bg-white rounded-xl shadow p-6 mb-8">
+        <!-- KPI -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+            <!-- TOTAL -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
 
-                <!-- FECHA INICIO -->
-                <div>
+                <div class="flex justify-between items-center">
 
-                    <label class="block mb-2 font-semibold">
+                    <div>
 
-                        Fecha inicio
+                        <p class="text-gray-500">
 
-                    </label>
+                            Total Órdenes
 
-                    <input
-                        type="date"
-                        id="fechaInicio"
-                        class="w-full border rounded-lg p-3"
-                    >
+                        </p>
 
-                </div>
+                        <h3
+                            id="totalOrdenes"
+                            class="text-4xl font-bold mt-2"
+                        >
 
-                <!-- FECHA FIN -->
-                <div>
+                            0
 
-                    <label class="block mb-2 font-semibold">
+                        </h3>
 
-                        Fecha fin
+                    </div>
 
-                    </label>
-
-                    <input
-                        type="date"
-                        id="fechaFin"
-                        class="w-full border rounded-lg p-3"
-                    >
-
-                </div>
-
-                <!-- EQUIPO -->
-                <div>
-
-                    <label class="block mb-2 font-semibold">
-
-                        Equipo
-
-                    </label>
-
-                    <input
-                        type="text"
-                        id="filtroEquipo"
-                        placeholder="Buscar equipo"
-                        class="w-full border rounded-lg p-3"
-                    >
-
-                </div>
-
-                <!-- TÉCNICO -->
-                <div>
-
-                    <label class="block mb-2 font-semibold">
-
-                        Técnico
-
-                    </label>
-
-                    <input
-                        type="text"
-                        id="filtroTecnico"
-                        placeholder="Buscar técnico"
-                        class="w-full border rounded-lg p-3"
-                    >
-
-                </div>
-
-                <!-- ESTADO -->
-                <div>
-
-                    <label class="block mb-2 font-semibold">
-
-                        Estado
-
-                    </label>
-
-                    <select
-                        id="filtroEstado"
-                        class="w-full border rounded-lg p-3"
-                    >
-
-                        <option value="">
-
-                            Todos
-
-                        </option>
-
-                        <option value="Pendiente">
-
-                            Pendiente
-
-                        </option>
-
-                        <option value="En proceso">
-
-                            En proceso
-
-                        </option>
-
-                        <option value="Completada">
-
-                            Completada
-
-                        </option>
-
-                    </select>
+                    <i class="fas fa-file-lines text-5xl text-yellow-500"></i>
 
                 </div>
 
             </div>
 
-            <!-- BOTONES -->
-            <div class="flex flex-wrap gap-4 mt-6">
+            <!-- PENDIENTES -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
 
-                <button
-                    onclick="aplicarFiltros()"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-bold"
-                >
+                <div class="flex justify-between items-center">
 
-                    Filtrar
+                    <div>
 
-                </button>
+                        <p class="text-gray-500">
 
-                <button
-                    onclick="limpiarFiltros()"
-                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold"
-                >
+                            Pendientes
 
-                    Limpiar
+                        </p>
 
-                </button>
+                        <h3
+                            id="pendientes"
+                            class="text-4xl font-bold mt-2 text-yellow-500"
+                        >
 
-                <button
-                    onclick="exportarExcel()"
-                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold"
-                >
+                            0
 
-                    Descargar Excel
+                        </h3>
 
-                </button>
+                    </div>
+
+                    <i class="fas fa-clock text-5xl text-yellow-500"></i>
+
+                </div>
+
+            </div>
+
+            <!-- COMPLETADAS -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                <div class="flex justify-between items-center">
+
+                    <div>
+
+                        <p class="text-gray-500">
+
+                            Completadas
+
+                        </p>
+
+                        <h3
+                            id="completadas"
+                            class="text-4xl font-bold mt-2 text-green-600"
+                        >
+
+                            0
+
+                        </h3>
+
+                    </div>
+
+                    <i class="fas fa-circle-check text-5xl text-green-600"></i>
+
+                </div>
+
+            </div>
+
+            <!-- PROCESO -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                <div class="flex justify-between items-center">
+
+                    <div>
+
+                        <p class="text-gray-500">
+
+                            En Proceso
+
+                        </p>
+
+                        <h3
+                            id="enProceso"
+                            class="text-4xl font-bold mt-2 text-blue-600"
+                        >
+
+                            0
+
+                        </h3>
+
+                    </div>
+
+                    <i class="fas fa-screwdriver-wrench text-5xl text-blue-600"></i>
+
+                </div>
 
             </div>
 
         </div>
 
         <!-- TABLA -->
-        <div class="bg-white rounded-xl shadow overflow-auto">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-            <table class="w-full">
+            <div class="p-5 border-b">
 
-                <thead class="bg-gray-900 text-white">
+                <h3 class="text-2xl font-bold">
 
-                    <tr>
+                    Órdenes Recientes
 
-                        <th class="px-4 py-4 text-left">
+                </h3>
 
-                            Folio
+            </div>
 
-                        </th>
+            <div class="overflow-x-auto">
 
-                        <th class="px-4 py-4 text-left">
+                <table class="w-full">
 
-                            Equipo
+                    <thead class="bg-gray-800 text-white">
 
-                        </th>
+                        <tr>
 
-                        <th class="px-4 py-4 text-left">
+                            <th class="px-4 py-3 text-left">Folio</th>
+                            <th class="px-4 py-3 text-left">Equipo</th>
+                            <th class="px-4 py-3 text-left">Técnico</th>
+                            <th class="px-4 py-3 text-left">Estado</th>
+                            <th class="px-4 py-3 text-left">Fecha</th>
 
-                            Técnico
+                        </tr>
 
-                        </th>
+                    </thead>
 
-                        <th class="px-4 py-4 text-left">
+                    <tbody id="tablaOrdenes">
 
-                            Tipo
+                    </tbody>
 
-                        </th>
+                </table>
 
-                        <th class="px-4 py-4 text-left">
-
-                            Prioridad
-
-                        </th>
-
-                        <th class="px-4 py-4 text-left">
-
-                            Estado
-
-                        </th>
-
-                        <th class="px-4 py-4 text-left">
-
-                            Fecha
-
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody
-                    id="tablaHistorial"
-                    class="divide-y"
-                >
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
@@ -341,7 +349,11 @@
 
 </div>
 
-<script type="module" src="../js/historial.js"></script>
+<!-- FIREBASE -->
+<script src="../js/firebase-config.js"></script>
+
+<!-- DASHBOARD -->
+<script src="../js/dashboard.js"></script>
 
 </body>
 </html>
