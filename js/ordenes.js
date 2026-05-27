@@ -4,7 +4,10 @@ import {
 
     collection,
     addDoc,
-    getDocs
+    getDocs,
+    query,
+    orderBy,
+    limit
 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -14,7 +17,7 @@ const form = document.getElementById('ordenForm');
 // Mensaje
 const mensaje = document.getElementById('mensaje');
 
-// Input folio
+// Campo folio
 const folioInput = document.getElementById('folio');
 
 // Inicializar
@@ -23,35 +26,73 @@ generarFolio();
 // Evento guardar
 form.addEventListener('submit', guardarOrden);
 
-// Generar folio profesional
+// ======================================
+// GENERAR FOLIO CONSECUTIVO
+// ======================================
+
 async function generarFolio(){
 
     try{
 
-        const querySnapshot = await getDocs(collection(db, 'ordenes'));
+        const ordenesRef = collection(db, 'ordenes');
 
-        const total = querySnapshot.size + 1;
+        const q = query(
+            ordenesRef,
+            orderBy('folio', 'desc'),
+            limit(1)
+        );
 
-        const numero = String(total).padStart(4, '0');
+        const snapshot = await getDocs(q);
 
-        folioInput.value = `OS-26${numero}`;
+        let nuevoNumero = 1;
+
+        // Si ya existen órdenes
+        if(!snapshot.empty){
+
+            const ultimaOrden = snapshot.docs[0].data();
+
+            const ultimoFolio = ultimaOrden.folio;
+
+            // Extraer número
+            const numeroActual = parseInt(
+                ultimoFolio.replace('OS-', '')
+            );
+
+            nuevoNumero = numeroActual + 1;
+
+        }
+
+        // Formato
+        const folioFinal =
+            'OS-' +
+            '26' + String(nuevoNumero).padStart(5, '0');
+
+        // Mostrar
+        folioInput.value = folioFinal;
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            'Error generando folio:',
+            error
+        );
+
+        folioInput.value = 'OS-2600001';
 
     }
 
 }
 
-// Guardar orden
+// ======================================
+// GUARDAR ORDEN
+// ======================================
+
 async function guardarOrden(e){
 
     e.preventDefault();
 
     try{
 
-        // Datos
         const folio = document.getElementById('folio').value;
 
         const area = document.getElementById('area').value;
@@ -66,13 +107,11 @@ async function guardarOrden(e){
 
         const descripcion = document.getElementById('descripcion').value;
 
-        // Fecha
         const fecha = new Date().toLocaleString();
 
-        // Estado
-        const estado = "Pendiente";
+        const estado = 'Pendiente';
 
-        // Guardar Firestore
+        // Guardar en Firestore
         await addDoc(collection(db, 'ordenes'), {
 
             folio,
@@ -87,12 +126,14 @@ async function guardarOrden(e){
 
         });
 
-        // Mensaje
-        mensaje.innerHTML = "✅ Orden guardada correctamente";
+        // Mensaje éxito
+        mensaje.innerHTML =
+            '✅ Orden guardada correctamente';
 
-        mensaje.className = "mt-6 text-center font-bold text-green-600";
+        mensaje.className =
+            'mt-6 text-center font-bold text-green-600';
 
-        // Reset
+        // Limpiar formulario
         form.reset();
 
         // Nuevo folio
@@ -102,9 +143,11 @@ async function guardarOrden(e){
 
         console.error(error);
 
-        mensaje.innerHTML = "❌ Error al guardar orden";
+        mensaje.innerHTML =
+            '❌ Error al guardar orden';
 
-        mensaje.className = "mt-6 text-center font-bold text-red-600";
+        mensaje.className =
+            'mt-6 text-center font-bold text-red-600';
 
     }
 
