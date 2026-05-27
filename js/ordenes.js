@@ -1,208 +1,159 @@
-import { db } from './firebase-config.js';
+// ======================================
+// VARIABLES
+// ======================================
 
-import {
+let ultimoFolio = 0;
 
-    collection,
-    addDoc,
-    getDocs,
-    query,
-    orderBy,
-    limit
-
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-// ========================================
-// ELEMENTOS
-// ========================================
-
-const form = document.getElementById('ordenForm');
-
-const mensaje = document.getElementById('mensaje');
-
-const folioInput = document.getElementById('folio');
-
-// ========================================
-// INICIALIZAR
-// ========================================
-
-generarFolio();
-
-form.addEventListener('submit', guardarOrden);
-
-// ========================================
+// ======================================
 // GENERAR FOLIO
-// ========================================
+// ======================================
 
-async function generarFolio(){
+async function generarFolio() {
 
-    try{
+    try {
 
-        const ordenesRef = collection(db, 'ordenes');
+        const snapshot = await db
+        .collection('ordenes')
+        .orderBy('numeroFolio', 'desc')
+        .limit(1)
+        .get();
 
-        const q = query(
+        if (!snapshot.empty) {
 
-            ordenesRef,
-            orderBy('folio', 'desc'),
-            limit(1)
+            const ultimaOrden =
+            snapshot.docs[0].data();
 
-        );
-
-        const snapshot = await getDocs(q);
-
-        let nuevoNumero = 1;
-
-        // Si ya existen órdenes
-        if(!snapshot.empty){
-
-            const ultimaOrden = snapshot.docs[0].data();
-
-            const ultimoFolio = ultimaOrden.folio;
-
-            // Obtener número
-            const numeroActual = parseInt(
-
-                ultimoFolio.replace('OS-26', '')
-
-            );
-
-            nuevoNumero = numeroActual + 1;
+            ultimoFolio =
+            ultimaOrden.numeroFolio || 0;
 
         }
 
-        // Generar nuevo folio
-        const folioFinal =
+        ultimoFolio++;
 
-            'OS-26' +
-            String(nuevoNumero).padStart(5, '0');
+        const folio =
+        `OS-26${String(ultimoFolio).padStart(5, '0')}`;
 
-        // Mostrar
-        folioInput.value = folioFinal;
+        const inputFolio =
+        document.getElementById('folio');
 
-    }catch(error){
+        if(inputFolio){
+
+            inputFolio.value = folio;
+
+        }
+
+    }
+
+    catch(error){
 
         console.error(
-
             'Error generando folio:',
             error
-
         );
-
-        // Folio respaldo
-        folioInput.value = 'OS-2600001';
 
     }
 
 }
 
-// ========================================
+// ======================================
 // GUARDAR ORDEN
-// ========================================
+// ======================================
 
-async function guardarOrden(e){
+async function guardarOrden(event){
 
-    e.preventDefault();
+    event.preventDefault();
 
-    try{
+    try {
 
-        // =========================
-        // OBTENER DATOS
-        // =========================
+        const folio =
+        document.getElementById('folio').value;
 
-        const folio = document.getElementById('folio').value;
+        const equipo =
+        document.getElementById('equipo').value;
 
-        const area = document.getElementById('area').value;
+        const tecnico =
+        document.getElementById('tecnico').value;
 
-        const equipo = document.getElementById('equipo').value;
+        const prioridad =
+        document.getElementById('prioridad').value;
 
-        const kilometraje = document.getElementById('kilometraje').value;
+        const descripcion =
+        document.getElementById('descripcion').value;
 
-        const horometro = document.getElementById('horometro').value;
+        const numeroFolio =
+        parseInt(folio.replace('OS-26', ''));
 
-        const operador = document.getElementById('operador').value;
+        const orden = {
 
-        const tecnico = document.getElementById('tecnico').value;
+            folio,
+            numeroFolio,
 
-        const tipo = document.getElementById('tipo').value;
+            equipo,
+            tecnico,
+            prioridad,
+            descripcion,
 
-        const prioridad = document.getElementById('prioridad').value;
+            estado: 'Pendiente',
 
-        const descripcion = document.getElementById('descripcion').value;
+            fecha:
+            new Date().toLocaleString(),
 
-        // =========================
-        // DATOS AUTOMÁTICOS
-        // =========================
+            fechaCreacion:
+            firebase.firestore.FieldValue.serverTimestamp()
 
-        const fecha = new Date().toLocaleString();
+        };
 
-        const estado = 'Pendiente';
+        await db
+        .collection('ordenes')
+        .add(orden);
 
-        // =========================
-        // GUARDAR FIRESTORE
-        // =========================
+        alert('✅ Orden guardada correctamente');
 
-        await addDoc(
-
-            collection(db, 'ordenes'),
-
-            {
-
-                folio,
-                area,
-                equipo,
-                kilometraje,
-                horometro,
-                operador,
-                tecnico,
-                tipo,
-                prioridad,
-                descripcion,
-                fecha,
-                estado
-
-            }
-
-        );
-
-        // =========================
-        // MENSAJE ÉXITO
-        // =========================
-
-        mensaje.innerHTML =
-
-            '✅ Orden guardada correctamente';
-
-        mensaje.className =
-
-            'mt-6 text-center font-bold text-green-600';
-
-        // =========================
-        // LIMPIAR FORMULARIO
-        // =========================
-
-        form.reset();
-
-        // =========================
-        // NUEVO FOLIO
-        // =========================
+        document.getElementById('formOrden').reset();
 
         generarFolio();
 
-    }catch(error){
+    }
 
-        console.error(error);
+    catch(error){
 
-        // =========================
-        // MENSAJE ERROR
-        // =========================
+        console.error(
+            'Error guardando orden:',
+            error
+        );
 
-        mensaje.innerHTML =
-
-            '❌ Error al guardar orden';
-
-        mensaje.className =
-
-            'mt-6 text-center font-bold text-red-600';
+        alert(
+            '❌ Error al guardar orden'
+        );
 
     }
 
 }
+
+// ======================================
+// INICIAR
+// ======================================
+
+document.addEventListener(
+
+    'DOMContentLoaded',
+
+    () => {
+
+        generarFolio();
+
+        const form =
+        document.getElementById('formOrden');
+
+        if(form){
+
+            form.addEventListener(
+                'submit',
+                guardarOrden
+            );
+
+        }
+
+    }
+
+);
