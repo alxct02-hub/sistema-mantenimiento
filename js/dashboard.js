@@ -1,9 +1,3 @@
-/// ======================================
-// FIRESTORE
-// ======================================
-
-const db = firebase.firestore();
-
 // ======================================
 // VARIABLES
 // ======================================
@@ -29,6 +23,7 @@ async function cargarOrdenes() {
         let total = 0;
         let pendientes = 0;
         let completadas = 0;
+        let proceso = 0;
 
         snapshot.forEach((doc) => {
 
@@ -42,11 +37,23 @@ async function cargarOrdenes() {
 
             if (
 
-                orden.estado === 'Completada'
+                orden.estado === 'Completada' ||
+
+                orden.estado === 'Finalizada'
 
             ) {
 
                 completadas++;
+
+            }
+
+            else if (
+
+                orden.estado === 'En Proceso'
+
+            ) {
+
+                proceso++;
 
             }
 
@@ -59,23 +66,14 @@ async function cargarOrdenes() {
         });
 
         // KPI
-        document.getElementById(
+        actualizarKPIs(
 
-            'totalOrdenes'
+            total,
+            pendientes,
+            completadas,
+            proceso
 
-        ).innerText = total;
-
-        document.getElementById(
-
-            'pendientes'
-
-        ).innerText = pendientes;
-
-        document.getElementById(
-
-            'completadas'
-
-        ).innerText = completadas;
+        );
 
         // TABLA
         renderizarTabla();
@@ -86,11 +84,74 @@ async function cargarOrdenes() {
 
         console.error(
 
-            'Error cargando órdenes',
+            'Error cargando órdenes:',
 
             error
 
         );
+
+    }
+
+}
+
+// ======================================
+// KPI
+// ======================================
+
+function actualizarKPIs(
+
+    total,
+    pendientes,
+    completadas,
+    proceso
+
+){
+
+    const totalHTML = document.getElementById(
+
+        'totalOrdenes'
+
+    );
+
+    const pendientesHTML = document.getElementById(
+
+        'pendientes'
+
+    );
+
+    const completadasHTML = document.getElementById(
+
+        'completadas'
+
+    );
+
+    const procesoHTML = document.getElementById(
+
+        'enProceso'
+
+    );
+
+    if(totalHTML){
+
+        totalHTML.innerText = total;
+
+    }
+
+    if(pendientesHTML){
+
+        pendientesHTML.innerText = pendientes;
+
+    }
+
+    if(completadasHTML){
+
+        completadasHTML.innerText = completadas;
+
+    }
+
+    if(procesoHTML){
+
+        procesoHTML.innerText = proceso;
 
     }
 
@@ -116,33 +177,41 @@ function renderizarTabla(){
 
         const fila = document.createElement('tr');
 
+        fila.className =
+
+        'border-b hover:bg-gray-50';
+
         fila.innerHTML = `
 
-            <td class="border px-4 py-2">
+            <td class="px-4 py-3">
 
                 ${orden.folio || '-'}
 
             </td>
 
-            <td class="border px-4 py-2">
+            <td class="px-4 py-3">
 
                 ${orden.equipo || '-'}
 
             </td>
 
-            <td class="border px-4 py-2">
+            <td class="px-4 py-3">
 
                 ${orden.tecnico || '-'}
 
             </td>
 
-            <td class="border px-4 py-2">
+            <td class="px-4 py-3">
 
-                ${orden.estado || '-'}
+                <span class="${obtenerClaseEstado(orden.estado)} px-3 py-1 rounded-full text-xs font-bold">
+
+                    ${orden.estado || '-'}
+
+                </span>
 
             </td>
 
-            <td class="border px-4 py-2">
+            <td class="px-4 py-3">
 
                 ${orden.fecha || '-'}
 
@@ -153,6 +222,32 @@ function renderizarTabla(){
         tbody.appendChild(fila);
 
     });
+
+}
+
+// ======================================
+// ESTADOS
+// ======================================
+
+function obtenerClaseEstado(estado){
+
+    switch(estado){
+
+        case 'Completada':
+
+        case 'Finalizada':
+
+            return 'bg-green-100 text-green-700';
+
+        case 'En Proceso':
+
+            return 'bg-blue-100 text-blue-700';
+
+        default:
+
+            return 'bg-yellow-100 text-yellow-700';
+
+    }
 
 }
 
