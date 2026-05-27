@@ -9,13 +9,23 @@ let ordenesFiltradas = [];
 // CARGAR HISTORIAL
 // ======================================
 
-async function cargarHistorial(){
+async function cargarHistorial() {
 
     try {
 
-        const snapshot = await db
-        .collection('ordenes')
-        .get();
+        const tabla =
+        document.getElementById(
+            'tablaHistorial'
+        );
+
+        tabla.innerHTML = '';
+
+        // ======================================
+        // FIRESTORE
+        // ======================================
+
+        const snapshot =
+        await db.collection('ordenes').get();
 
         ordenes = [];
 
@@ -52,7 +62,10 @@ async function cargarHistorial(){
 
         });
 
-        // ORDENAR MÁS NUEVAS
+        // ======================================
+        // ORDENAR
+        // ======================================
+
         ordenes.reverse();
 
         ordenesFiltradas = [...ordenes];
@@ -61,10 +74,10 @@ async function cargarHistorial(){
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(
-            'Error historial:',
+            'Error cargando historial:',
             error
         );
 
@@ -73,85 +86,109 @@ async function cargarHistorial(){
 }
 
 // ======================================
-// TABLA
+// RENDER TABLA
 // ======================================
 
 function renderizarTabla(){
 
-    const tbody =
-    document.getElementById('tablaHistorial');
+    const tabla =
+    document.getElementById(
+        'tablaHistorial'
+    );
 
-    if(!tbody) return;
-
-    tbody.innerHTML = '';
+    tabla.innerHTML = '';
 
     ordenesFiltradas.forEach((orden) => {
 
-        const fila =
-        document.createElement('tr');
+        tabla.innerHTML += `
 
-        fila.innerHTML = `
+            <tr class="hover:bg-gray-100">
 
-            <td class="border px-4 py-3">
-                ${orden.folio}
-            </td>
+                <td class="border px-4 py-3">
+                    ${orden.folio}
+                </td>
 
-            <td class="border px-4 py-3">
-                ${orden.equipo}
-            </td>
+                <td class="border px-4 py-3">
+                    ${orden.equipo}
+                </td>
 
-            <td class="border px-4 py-3">
-                ${orden.tecnico}
-            </td>
+                <td class="border px-4 py-3">
+                    ${orden.tecnico}
+                </td>
 
-            <td class="border px-4 py-3">
-                ${orden.estado}
-            </td>
+                <td class="border px-4 py-3">
 
-            <td class="border px-4 py-3">
-                ${orden.fechaInicio || '-'}
-            </td>
+                    <span
+                    class="
+                    px-3 py-1 rounded-full text-white
 
-            <td class="border px-4 py-3">
-                ${orden.fechaFin || '-'}
-            </td>
+                    ${
+                        orden.estado === 'Completada'
+                        ? 'bg-green-500'
+                        : orden.estado === 'En Proceso'
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
+                    }
 
-            <td class="border px-4 py-3">
+                    "
+                    >
 
-                ${
-                    orden.fechaInicio &&
-                    orden.fechaFin
+                        ${orden.estado}
 
-                    ?
+                    </span>
 
-                    calcularHorasLaborales(
-                        orden.fechaInicio,
+                </td>
+
+                <td class="border px-4 py-3">
+                    ${orden.fechaInicio || '-'}
+                </td>
+
+                <td class="border px-4 py-3">
+                    ${orden.fechaFin || '-'}
+                </td>
+
+                <td class="border px-4 py-3">
+
+                    ${
+                        orden.fechaInicio &&
                         orden.fechaFin
-                    )
 
-                    :
+                        ?
 
-                    '-'
-                }
+                        calcularHorasLaborales(
+                            orden.fechaInicio,
+                            orden.fechaFin
+                        )
 
-            </td>
+                        :
 
-            <td class="border px-4 py-3">
+                        '-'
+                    }
 
-                <button
+                </td>
+
+                <td class="border px-4 py-3">
+
+                    <button
                     onclick="generarPDF('${orden.id}')"
-                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-                >
+                    class="
+                    bg-red-500
+                    hover:bg-red-600
+                    text-white
+                    px-4 py-2
+                    rounded-lg
+                    "
+                    >
 
-                    PDF
+                        PDF
 
-                </button>
+                    </button>
 
-            </td>
+                </td>
+
+            </tr>
 
         `;
-
-        tbody.appendChild(fila);
 
     });
 
@@ -164,13 +201,17 @@ function renderizarTabla(){
 function aplicarFiltros(){
 
     const equipo =
-    document.getElementById('equipoFiltro')
-    ?.value
-    .toLowerCase() || '';
+    document.getElementById(
+        'equipoFiltro'
+    )
+    .value
+    .toLowerCase();
 
     const estado =
-    document.getElementById('estadoFiltro')
-    ?.value || '';
+    document.getElementById(
+        'estadoFiltro'
+    )
+    .value;
 
     ordenesFiltradas =
     ordenes.filter((orden) => {
@@ -392,31 +433,6 @@ function generarPDF(id){
                     <td>${orden.fecha}</td>
                 </tr>
 
-                <tr>
-                    <td>Tiempo laboral</td>
-
-                    <td>
-
-                        ${
-                            orden.fechaInicio &&
-                            orden.fechaFin
-
-                            ?
-
-                            calcularHorasLaborales(
-                                orden.fechaInicio,
-                                orden.fechaFin
-                            )
-
-                            :
-
-                            '-'
-                        }
-
-                    </td>
-
-                </tr>
-
             </table>
 
             <script>
@@ -438,7 +454,7 @@ function generarPDF(id){
 }
 
 // ======================================
-// EXCEL
+// EXPORTAR EXCEL
 // ======================================
 
 function exportarExcel(){
@@ -481,6 +497,10 @@ document.addEventListener(
 
     'DOMContentLoaded',
 
-    cargarHistorial
+    () => {
+
+        cargarHistorial();
+
+    }
 
 );
