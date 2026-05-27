@@ -13,9 +13,7 @@ async function cargarOrdenes() {
     try {
 
         const snapshot = await db
-
         .collection('ordenes')
-
         .get();
 
         ordenesData = [];
@@ -36,11 +34,8 @@ async function cargarOrdenes() {
             total++;
 
             if (
-
                 orden.estado === 'Completada' ||
-
                 orden.estado === 'Finalizada'
-
             ) {
 
                 completadas++;
@@ -48,9 +43,7 @@ async function cargarOrdenes() {
             }
 
             else if (
-
                 orden.estado === 'En Proceso'
-
             ) {
 
                 proceso++;
@@ -65,17 +58,13 @@ async function cargarOrdenes() {
 
         });
 
-        // KPI
         actualizarKPIs(
-
             total,
             pendientes,
             completadas,
             proceso
-
         );
 
-        // TABLA
         renderizarTabla();
 
     }
@@ -83,11 +72,8 @@ async function cargarOrdenes() {
     catch(error){
 
         console.error(
-
             'Error cargando órdenes:',
-
             error
-
         );
 
     }
@@ -99,60 +85,38 @@ async function cargarOrdenes() {
 // ======================================
 
 function actualizarKPIs(
-
     total,
     pendientes,
     completadas,
     proceso
-
 ){
 
-    const totalHTML = document.getElementById(
+    const totalHTML =
+    document.getElementById('totalOrdenes');
 
-        'totalOrdenes'
+    const pendientesHTML =
+    document.getElementById('pendientes');
 
-    );
+    const completadasHTML =
+    document.getElementById('completadas');
 
-    const pendientesHTML = document.getElementById(
-
-        'pendientes'
-
-    );
-
-    const completadasHTML = document.getElementById(
-
-        'completadas'
-
-    );
-
-    const procesoHTML = document.getElementById(
-
-        'enProceso'
-
-    );
+    const procesoHTML =
+    document.getElementById('enProceso');
 
     if(totalHTML){
-
         totalHTML.innerText = total;
-
     }
 
     if(pendientesHTML){
-
         pendientesHTML.innerText = pendientes;
-
     }
 
     if(completadasHTML){
-
         completadasHTML.innerText = completadas;
-
     }
 
     if(procesoHTML){
-
         procesoHTML.innerText = proceso;
-
     }
 
 }
@@ -163,11 +127,8 @@ function actualizarKPIs(
 
 function renderizarTabla(){
 
-    const tbody = document.getElementById(
-
-        'tablaOrdenes'
-
-    );
+    const tbody =
+    document.getElementById('tablaOrdenes');
 
     if(!tbody) return;
 
@@ -175,46 +136,29 @@ function renderizarTabla(){
 
     ordenesData.forEach((orden) => {
 
-        const fila = document.createElement('tr');
-
-        fila.className =
-
-        'border-b hover:bg-gray-50';
+        const fila =
+        document.createElement('tr');
 
         fila.innerHTML = `
 
-            <td class="px-4 py-3">
-
+            <td class="border px-4 py-2">
                 ${orden.folio || '-'}
-
             </td>
 
-            <td class="px-4 py-3">
-
+            <td class="border px-4 py-2">
                 ${orden.equipo || '-'}
-
             </td>
 
-            <td class="px-4 py-3">
-
+            <td class="border px-4 py-2">
                 ${orden.tecnico || '-'}
-
             </td>
 
-            <td class="px-4 py-3">
-
-                <span class="${obtenerClaseEstado(orden.estado)} px-3 py-1 rounded-full text-xs font-bold">
-
-                    ${orden.estado || '-'}
-
-                </span>
-
+            <td class="border px-4 py-2">
+                ${orden.estado || '-'}
             </td>
 
-            <td class="px-4 py-3">
-
+            <td class="border px-4 py-2">
                 ${orden.fecha || '-'}
-
             </td>
 
         `;
@@ -226,39 +170,10 @@ function renderizarTabla(){
 }
 
 // ======================================
-// ESTADOS
-// ======================================
-
-function obtenerClaseEstado(estado){
-
-    switch(estado){
-
-        case 'Completada':
-
-        case 'Finalizada':
-
-            return 'bg-green-100 text-green-700';
-
-        case 'En Proceso':
-
-            return 'bg-blue-100 text-blue-700';
-
-        default:
-
-            return 'bg-yellow-100 text-yellow-700';
-
-    }
-
-}
-
-// ======================================
 // INICIAR
 // ======================================
 
 document.addEventListener(
-
     'DOMContentLoaded',
-
     cargarOrdenes
-
 );
