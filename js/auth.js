@@ -1,85 +1,46 @@
-// ======================================
-// LOGIN
-// ======================================
+// Importar Auth
+import { auth } from './firebase-config.js';
 
-document.getElementById(
+import {
 
-    'loginForm'
+    signInWithEmailAndPassword
 
-)
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-.addEventListener(
+// Formulario
+const loginForm = document.getElementById('loginForm');
 
-    'submit',
+// Evento login
+loginForm.addEventListener('submit', iniciarSesion);
 
-    async (e) => {
+// Función login
+async function iniciarSesion(e){
 
-        e.preventDefault();
+    e.preventDefault();
 
-        const correo = document.getElementById(
+    // Obtener datos
+    const email = document.getElementById('email').value;
 
-            'correo'
+    const password = document.getElementById('password').value;
 
-        ).value;
+    try{
 
-        const password = document.getElementById(
-
-            'password'
-
-        ).value;
-
-        const errorBox = document.getElementById(
-
-            'errorBox'
-
+        // Iniciar sesión
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
         );
 
-        const loadingText = document.getElementById(
+        // Redireccionar
+        window.location.href = "./pages/dashboard.html";
 
-            'loadingText'
+    }catch(error){
 
-        );
+        console.error(error);
 
-        try {
-
-            loadingText.style.display = 'block';
-
-            errorBox.style.display = 'none';
-
-            // LOGIN FIREBASE
-            await auth.signInWithEmailAndPassword(
-
-                correo,
-
-                password
-
-            );
-
-            // REDIRECCIÓN
-            window.location.href =
-
-            './pages/dashboard.html';
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-            errorBox.style.display = 'block';
-
-            errorBox.innerText =
-
-            'Error al iniciar sesión';
-
-        }
-
-        finally {
-
-            loadingText.style.display = 'none';
-
-        }
+        alert("Error al iniciar sesión");
 
     }
 
-);
+}
