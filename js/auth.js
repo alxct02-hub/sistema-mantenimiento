@@ -1,51 +1,85 @@
-// Importar auth
-import { auth } from './firebase-config.js';
+// ======================================
+// LOGIN
+// ======================================
 
-import {
+document.getElementById(
 
-  signInWithEmailAndPassword
+    'loginForm'
 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+)
 
-// Formulario
-const loginForm = document.getElementById('loginForm');
+.addEventListener(
 
-// Evento login
-loginForm.addEventListener('submit', iniciarSesion);
+    'submit',
 
-// Función login
-async function iniciarSesion(e){
+    async (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    // Obtener datos
-    const email = document.getElementById('email').value;
+        const correo = document.getElementById(
 
-    const password = document.getElementById('password').value;
+            'correo'
 
-    try{
+        ).value;
 
-        // Mostrar en consola
-        console.log("Intentando iniciar sesión...");
+        const password = document.getElementById(
 
-        // Login Firebase
-        const userCredential = await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
+            'password'
+
+        ).value;
+
+        const errorBox = document.getElementById(
+
+            'errorBox'
+
         );
 
-        console.log("Login correcto:", userCredential.user);
+        const loadingText = document.getElementById(
 
-        // Redireccionar
-        window.location.href = "./pages/dashboard.html";
+            'loadingText'
 
-    }catch(error){
+        );
 
-        console.error("ERROR FIREBASE:", error);
+        try {
 
-        alert(error.message);
+            loadingText.style.display = 'block';
+
+            errorBox.style.display = 'none';
+
+            // LOGIN FIREBASE
+            await auth.signInWithEmailAndPassword(
+
+                correo,
+
+                password
+
+            );
+
+            // REDIRECCIÓN
+            window.location.href =
+
+            './pages/dashboard.html';
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            errorBox.style.display = 'block';
+
+            errorBox.innerText =
+
+            'Error al iniciar sesión';
+
+        }
+
+        finally {
+
+            loadingText.style.display = 'none';
+
+        }
 
     }
 
-}
+);
