@@ -3,352 +3,341 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Dashboard</title>
+    <title>Dashboard</title>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <!-- FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 
-<!-- TAILWIND -->
-<script src="https://cdn.tailwindcss.com"></script>
+    <!-- TAILWIND -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- ICONOS -->
-<link
-rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-/>
+    <!-- FONT AWESOME -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
 
 </head>
 
 <body class="bg-gray-100">
 
-<div class="flex min-h-screen">
+    <div class="flex min-h-screen">
 
-    <!-- SIDEBAR -->
-    <aside class="w-72 bg-gray-900 text-white flex flex-col">
+        <!-- SIDEBAR -->
+        <aside class="w-72 bg-gray-900 text-white flex flex-col">
 
-        <!-- LOGO -->
-        <div class="p-6 border-b border-gray-700">
+            <!-- LOGO -->
+            <div class="p-6 border-b border-gray-700">
 
-            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4">
 
-                <img
-                    src="../img/logo.png"
-                    class="w-16 h-16 bg-white rounded-xl p-2 object-contain"
-                >
+                    <img
+                        src="../img/logo.png"
+                        class="w-16 h-16 bg-white rounded-xl p-2 object-contain"
+                    >
 
-                <div>
+                    <div>
 
-                    <h1 class="font-bold text-lg">
+                        <h1 class="font-bold text-lg">
 
-                        Sistema Mantenimiento
+                            Sistema Mantenimiento
 
-                    </h1>
+                        </h1>
 
-                    <p class="text-gray-400 text-sm">
+                        <p class="text-gray-400 text-sm">
 
-                        Concretera del Sureste
+                            Concretera del Sureste
 
-                    </p>
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
+            <!-- MENÚ -->
+            <nav class="flex-1 p-4 space-y-2">
 
-        <!-- MENÚ -->
-        <nav class="flex-1 p-4 space-y-2">
+                <a
+                    href="./dashboard.html"
+                    class="flex items-center gap-3 p-3 rounded-lg bg-yellow-500 text-black font-bold"
+                >
 
-            <a
-                href="./dashboard.html"
-                class="flex items-center gap-3 p-3 rounded-lg bg-yellow-500 text-black font-bold"
-            >
+                    <i class="fas fa-chart-line"></i>
 
-                <i class="fas fa-chart-line"></i>
+                    Dashboard
 
-                Dashboard
+                </a>
 
-            </a>
+                <a
+                    href="./nueva-orden.html"
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+                >
 
-            <a
-                href="./nueva-orden.html"
-                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-            >
+                    <i class="fas fa-file-circle-plus"></i>
 
-                <i class="fas fa-file-circle-plus"></i>
+                    Nueva Orden
 
-                Nueva Orden
+                </a>
 
-            </a>
+                <a
+                    href="./historial.html"
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+                >
 
-            <a
-                href="./historial.html"
-                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-            >
+                    <i class="fas fa-clock-rotate-left"></i>
 
-                <i class="fas fa-clock-rotate-left"></i>
+                    Historial
 
-                Historial
+                </a>
 
-            </a>
+                <a
+                    href="./tecnicos.html"
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+                >
 
-            <a
-                href="./tecnicos.html"
-                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-            >
+                    <i class="fas fa-users"></i>
 
-                <i class="fas fa-users"></i>
+                    Técnicos
 
-                Técnicos
+                </a>
 
-            </a>
+                <a
+                    href="./reportes.html"
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+                >
 
-            <a
-                href="./reportes.html"
-                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-            >
+                    <i class="fas fa-chart-pie"></i>
 
-                <i class="fas fa-chart-pie"></i>
+                    Reportes
 
-                Reportes
+                </a>
 
-            </a>
+                <a
+                    href="./app-tecnico.html"
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+                >
 
-            <a
-                href="./app-tecnico.html"
-                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
-            >
+                    <i class="fas fa-mobile-screen-button"></i>
 
-                <i class="fas fa-mobile-screen-button"></i>
+                    App Técnico
 
-                App Técnico
+                </a>
 
-            </a>
+            </nav>
 
-        </nav>
+            <!-- FOOTER -->
+            <div class="p-4 border-t border-gray-700">
 
-        <!-- FOOTER -->
-        <div class="p-4 border-t border-gray-700">
+                <a
+                    href="../login.html"
+                    class="flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 p-3 rounded-lg"
+                >
 
-            <a
-                href="../login.html"
-                class="flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 p-3 rounded-lg"
-            >
+                    <i class="fas fa-right-from-bracket"></i>
 
-                <i class="fas fa-right-from-bracket"></i>
+                    Cerrar sesión
 
-                Cerrar sesión
+                </a>
 
-            </a>
+            </div>
 
-        </div>
+        </aside>
 
-    </aside>
+        <!-- CONTENIDO -->
+        <main class="flex-1 p-8">
 
-    <!-- CONTENIDO -->
-    <main class="flex-1 p-8">
+            <!-- TÍTULO -->
+            <div class="mb-8">
 
-        <!-- TÍTULO -->
-        <div class="mb-8">
+                <h2 class="text-4xl font-bold text-gray-800">
 
-            <h2 class="text-4xl font-bold text-gray-800">
+                    Dashboard General
 
-                Dashboard General
+                </h2>
 
-            </h2>
+                <p class="text-gray-500 mt-2">
 
-            <p class="text-gray-500 mt-2">
-
-                Control general de mantenimiento
-
-            </p>
-
-        </div>
-
-        <!-- KPI -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-            <!-- TOTAL -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-
-                <p class="text-gray-500">
-
-                    Total Órdenes
+                    Control general de mantenimiento
 
                 </p>
 
-                <h3
-                    id="totalOrdenes"
-                    class="text-4xl font-bold mt-2"
-                >
+            </div>
 
-                    0
+            <!-- KPI -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 
-                </h3>
+                <!-- TOTAL -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                    <p class="text-gray-500">
+
+                        Total Órdenes
+
+                    </p>
+
+                    <h3
+                        id="totalOrdenes"
+                        class="text-4xl font-bold mt-2"
+                    >
+
+                        0
+
+                    </h3>
+
+                </div>
+
+                <!-- PENDIENTES -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                    <p class="text-gray-500">
+
+                        Pendientes
+
+                    </p>
+
+                    <h3
+                        id="pendientes"
+                        class="text-4xl font-bold mt-2 text-yellow-500"
+                    >
+
+                        0
+
+                    </h3>
+
+                </div>
+
+                <!-- COMPLETADAS -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                    <p class="text-gray-500">
+
+                        Completadas
+
+                    </p>
+
+                    <h3
+                        id="completadas"
+                        class="text-4xl font-bold mt-2 text-green-600"
+                    >
+
+                        0
+
+                    </h3>
+
+                </div>
+
+                <!-- PROCESO -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+
+                    <p class="text-gray-500">
+
+                        En Proceso
+
+                    </p>
+
+                    <h3
+                        id="enProceso"
+                        class="text-4xl font-bold mt-2 text-blue-600"
+                    >
+
+                        0
+
+                    </h3>
+
+                </div>
 
             </div>
 
-            <!-- PENDIENTES -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
+            <!-- TABLA -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-                <p class="text-gray-500">
+                <div class="p-5 border-b">
 
-                    Pendientes
+                    <h3 class="text-2xl font-bold">
 
-                </p>
+                        Órdenes de Servicio
 
-                <h3
-                    id="pendientes"
-                    class="text-4xl font-bold mt-2 text-yellow-500"
-                >
+                    </h3>
 
-                    0
+                </div>
 
-                </h3>
+                <div class="overflow-x-auto">
 
-            </div>
+                    <table class="w-full">
 
-            <!-- COMPLETADAS -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <thead class="bg-gray-800 text-white">
 
-                <p class="text-gray-500">
+                            <tr>
 
-                    Completadas
+                                <th class="px-4 py-3 text-left">
 
-                </p>
+                                    Folio
 
-                <h3
-                    id="completadas"
-                    class="text-4xl font-bold mt-2 text-green-600"
-                >
+                                </th>
 
-                    0
+                                <th class="px-4 py-3 text-left">
 
-                </h3>
+                                    Equipo
 
-            </div>
+                                </th>
 
-            <!-- PROCESO -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
+                                <th class="px-4 py-3 text-left">
 
-                <p class="text-gray-500">
+                                    Técnico
 
-                    En Proceso
+                                </th>
 
-                </p>
+                                <th class="px-4 py-3 text-left">
 
-                <h3
-                    id="enProceso"
-                    class="text-4xl font-bold mt-2 text-blue-600"
-                >
+                                    Estado
 
-                    0
+                                </th>
 
-                </h3>
+                                <th class="px-4 py-3 text-left">
 
-            </div>
+                                    Fecha
 
-        </div>
+                                </th>
 
-        <!-- TABLA -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                            </tr>
 
-            <div class="p-5 border-b">
+                        </thead>
 
-                <h3 class="text-2xl font-bold">
+                        <tbody id="tablaOrdenes">
 
-                    Órdenes de Servicio
+                        </tbody>
 
-                </h3>
+                    </table>
+
+                </div>
 
             </div>
 
-            <div class="overflow-x-auto">
+        </main>
 
-                <table class="w-full">
+    </div>
 
-                    <thead class="bg-gray-800 text-white">
+    <!-- FIREBASE -->
+    <script src="../js/firebase-config.js?v=11"></script>
 
-                        <tr>
-
-                            <th class="px-4 py-3 text-left">
-
-                                Folio
-
-                            </th>
-
-                            <th class="px-4 py-3 text-left">
-
-                                Equipo
-
-                            </th>
-
-                            <th class="px-4 py-3 text-left">
-
-                                Tipo
-
-                            </th>
-
-                            <th class="px-4 py-3 text-left">
-
-                                Técnico
-
-                            </th>
-
-                            <th class="px-4 py-3 text-left">
-
-                                Prioridad
-
-                            </th>
-
-                            <th class="px-4 py-3 text-left">
-
-                                Estado
-
-                            </th>
-
-                            <th class="px-4 py-3 text-left">
-
-                                Fecha
-
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="tablaOrdenes">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </main>
-
-</div>
-
-<!-- FIREBASE -->
-<script src="../js/firebase-config.js"></script>
-
-<!-- DASHBOARD -->
-<script src="../js/dashboard.js"></script>
+    <!-- DASHBOARD -->
+    <script src="../js/dashboard.js?v=11"></script>
 
 </body>
+
 </html>
