@@ -1,133 +1,51 @@
-import { db } from './firebase-config.js';
+// Importar auth
+import { auth } from './firebase-config.js';
 
 import {
 
-    collection,
-    getDocs
+  signInWithEmailAndPassword
 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// LOGIN
-document.getElementById(
+// Formulario
+const loginForm = document.getElementById('loginForm');
 
-    'loginForm'
+// Evento login
+loginForm.addEventListener('submit', iniciarSesion);
 
-)
+// Función login
+async function iniciarSesion(e){
 
-.addEventListener(
+    e.preventDefault();
 
-    'submit',
+    // Obtener datos
+    const email = document.getElementById('email').value;
 
-    async (e) => {
+    const password = document.getElementById('password').value;
 
-        e.preventDefault();
+    try{
 
-        const usuario = document.getElementById(
+        // Mostrar en consola
+        console.log("Intentando iniciar sesión...");
 
-            'usuario'
+        // Login Firebase
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
-        ).value.trim();
+        console.log("Login correcto:", userCredential.user);
 
-        const password = document.getElementById(
+        // Redireccionar
+        window.location.href = "./pages/dashboard.html";
 
-            'password'
+    }catch(error){
 
-        ).value.trim();
+        console.error("ERROR FIREBASE:", error);
 
-        try {
-
-            const snapshot = await getDocs(
-
-                collection(db, 'usuarios')
-
-            );
-
-            let acceso = false;
-
-            snapshot.forEach((doc) => {
-
-                const user = doc.data();
-
-                if (
-
-                    user.usuario === usuario &&
-
-                    user.password === password
-
-                ) {
-
-                    acceso = true;
-
-                    localStorage.setItem(
-
-                        'usuarioLogueado',
-
-                        JSON.stringify(user)
-
-                    );
-
-                    // REDIRECCIÓN
-                    if (user.rol === 'director') {
-
-                        window.location.href =
-
-                        './pages/dashboard.html';
-
-                    }
-
-                    else if (
-
-                        user.rol === 'supervisor'
-
-                    ) {
-
-                        window.location.href =
-
-                        './pages/nueva-orden.html';
-
-                    }
-
-                }
-
-            });
-
-            if (!acceso) {
-
-                mostrarError(
-
-                    'Usuario o contraseña incorrectos'
-
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(error);
-
-            mostrarError(
-
-                'Error al iniciar sesión'
-
-            );
-
-        }
+        alert(error.message);
 
     }
-
-);
-
-// ERROR
-function mostrarError(texto) {
-
-    const error = document.getElementById(
-
-        'error'
-
-    );
-
-    error.classList.remove('hidden');
-
-    error.innerText = texto;
 
 }

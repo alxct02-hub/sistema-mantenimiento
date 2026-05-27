@@ -1,53 +1,79 @@
-// ======================================
-// IMPORTAR FIREBASE
-// ======================================
+// Importar Firebase App
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import { initializeApp }
-
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
+// Importar Firestore
 import {
-
-    getFirestore
-
+  getFirestore,
+  enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ======================================
-// CONFIG FIREBASE
-// ======================================
+// Importar Auth
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// Importar Storage
+import {
+  getStorage
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// Configuración Firebase
 const firebaseConfig = {
 
-    apiKey: "AIzaSyDR4D1IyOqAYOE3JZzsqBhlfpwGwmT4m-A",
+  apiKey: "AIzaSyDR4D1IyOqAYOE3JZzsqBhlfpwGwmT4m-A",
 
-    authDomain: "mantenimiento-planta-adbfc.firebaseapp.com",
+  authDomain: "mantenimiento-planta-adbfc.firebaseapp.com",
 
-    projectId: "mantenimiento-planta-adbfc",
+  projectId: "mantenimiento-planta-adbfc",
 
-    storageBucket: "mantenimiento-planta-adbfc.firebasestorage.app",
+  storageBucket: "mantenimiento-planta-adbfc.firebasestorage.app",
 
-    messagingSenderId: "182924583347",
+  messagingSenderId: "182924583347",
 
-    appId: "1:182924583347:web:96531f94bc101af2a12bc6",
+  appId: "1:182924583347:web:96531f94bc101af2a12bc6",
 
-    measurementId: "G-HZ8W5B6ZG3"
+  measurementId: "G-HZ8W5B6ZG3"
 
 };
 
-// ======================================
-// INICIALIZAR FIREBASE
-// ======================================
-
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 
-// ======================================
-// FIRESTORE
-// ======================================
-
+// Inicializar Firestore
 const db = getFirestore(app);
 
-// ======================================
-// EXPORTAR
-// ======================================
+// Activar persistencia offline
+enableIndexedDbPersistence(db)
+  .then(() => {
 
-export { db };
+    console.log("Modo offline activado correctamente");
+
+  })
+  .catch((err) => {
+
+    if (err.code === 'failed-precondition') {
+
+      console.log("Varias pestañas abiertas");
+
+    } else if (err.code === 'unimplemented') {
+
+      console.log("Navegador no compatible");
+
+    }
+
+  });
+
+// Inicializar Auth
+const auth = getAuth(app);
+
+// Inicializar Storage
+const storage = getStorage(app);
+
+// Exportar servicios
+export {
+
+  db,
+  auth,
+  storage
+
+};

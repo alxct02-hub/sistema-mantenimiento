@@ -3,105 +3,195 @@
 
 <head>
 
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login Sistema</title>
+  <title>Login - Sistema Mantenimiento</title>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+
+      background:#121212;
+
+      height:100vh;
+
+      display:flex;
+
+      justify-content:center;
+
+      align-items:center;
+
+    }
+
+    .login-container{
+
+      width:100%;
+      max-width:420px;
+
+      background:#1f1f1f;
+
+      padding:40px;
+
+      border-radius:15px;
+
+      box-shadow:0 5px 20px rgba(0,0,0,0.4);
+
+      color:white;
+
+      text-align:center;
+
+    }
+
+    .logo{
+
+      width:140px;
+
+      margin-bottom:20px;
+
+    }
+
+    h1{
+
+      color:#f5b400;
+
+      margin-bottom:10px;
+
+    }
+
+    p{
+
+      color:#ccc;
+
+      margin-bottom:30px;
+
+    }
+
+    .form-group{
+
+      margin-bottom:20px;
+
+      text-align:left;
+
+    }
+
+    label{
+
+      display:block;
+
+      margin-bottom:8px;
+
+      font-weight:bold;
+
+    }
+
+    input{
+
+      width:100%;
+
+      padding:14px;
+
+      border:none;
+
+      border-radius:10px;
+
+      font-size:16px;
+
+    }
+
+    button{
+
+      width:100%;
+
+      padding:14px;
+
+      border:none;
+
+      border-radius:10px;
+
+      background:#f5b400;
+
+      color:black;
+
+      font-size:16px;
+
+      font-weight:bold;
+
+      cursor:pointer;
+
+      transition:0.3s;
+
+    }
+
+    button:hover{
+
+      opacity:0.8;
+
+    }
+
+  </style>
 
 </head>
 
-<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+<body>
 
-    <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
+<div class="login-container">
 
-        <!-- LOGO -->
-        <div class="text-center mb-8">
+  <img
+    src="./img/logo.png"
+    alt="Logo"
+    class="logo"
+  >
 
-            <img
-                src="./img/logo.png"
-                class="w-28 mx-auto mb-4"
-            >
+  <h1>Sistema Mantenimiento</h1>
 
-            <h1 class="text-3xl font-bold text-gray-800">
+  <p>Concretera del Sureste</p>
 
-                Sistema Mantenimiento
+  <form id="loginForm">
 
-            </h1>
+    <div class="form-group">
 
-            <p class="text-gray-500 mt-2">
+      <label>Correo</label>
 
-                Concretera del Sureste
-
-            </p>
-
-        </div>
-
-        <!-- ERROR -->
-        <div
-            id="error"
-            class="hidden bg-red-500 text-white p-3 rounded-lg mb-5 text-center"
-        ></div>
-
-        <!-- FORM -->
-        <form id="loginForm">
-
-            <!-- USUARIO -->
-            <div class="mb-5">
-
-                <label class="block mb-2 font-semibold">
-
-                    Usuario
-
-                </label>
-
-                <input
-                    type="text"
-                    id="usuario"
-                    class="w-full border rounded-lg p-3"
-                    required
-                >
-
-            </div>
-
-            <!-- PASSWORD -->
-            <div class="mb-6">
-
-                <label class="block mb-2 font-semibold">
-
-                    Contraseña
-
-                </label>
-
-                <input
-                    type="password"
-                    id="password"
-                    class="w-full border rounded-lg p-3"
-                    required
-                >
-
-            </div>
-
-            <!-- BOTÓN -->
-            <button
-                type="submit"
-                class="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-lg font-bold"
-            >
-
-                Ingresar
-
-            </button>
-
-        </form>
+      <input
+        type="email"
+        id="email"
+        required
+      >
 
     </div>
 
-    <!-- LOGIN JS -->
-    <script type="module" src="./js/auth.js"></script>
+    <div class="form-group">
+
+      <label>Contraseña</label>
+
+      <input
+        type="password"
+        id="password"
+        required
+      >
+
+    </div>
+
+    <button type="submit">
+
+      Iniciar Sesión
+
+    </button>
+
+  </form>
+
+</div>
+
+<script type="module" src="./js/auth.js"></script>
 
 </body>
-
 </html>
