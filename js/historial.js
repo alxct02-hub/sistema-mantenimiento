@@ -1,4 +1,16 @@
 // ======================================
+// IMPORTS
+// ======================================
+
+import { db } from './firebase-config.js';
+import {
+    collection,
+    getDocs,
+    orderBy,
+    query
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+// ======================================
 // VARIABLES
 // ======================================
 
@@ -24,8 +36,8 @@ async function cargarHistorial() {
         // FIRESTORE
         // ======================================
 
-        const snapshot =
-        await db.collection('ordenes').get();
+        const ordenesRef = collection(db, 'ordenes');
+        const snapshot = await getDocs(ordenesRef);
 
         ordenes = [];
 
@@ -198,7 +210,7 @@ function renderizarTabla(){
 // FILTROS
 // ======================================
 
-function aplicarFiltros(){
+window.aplicarFiltros = function(){
 
     const equipo =
     document.getElementById(
@@ -345,7 +357,7 @@ function calcularHorasLaborales(
 // PDF
 // ======================================
 
-function generarPDF(id){
+window.generarPDF = function(id){
 
     const orden =
     ordenes.find(
@@ -457,7 +469,7 @@ function generarPDF(id){
 // EXPORTAR EXCEL
 // ======================================
 
-function exportarExcel(){
+window.exportarExcel = function(){
 
     const datos =
     ordenesFiltradas.map((o) => ({
