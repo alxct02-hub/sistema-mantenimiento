@@ -117,6 +117,9 @@
 
       transition:0.3s;
 
+      -webkit-user-select: none;
+      user-select: none;
+
     }
 
     input:focus{
@@ -247,7 +250,7 @@
 
   <p>Concretera del Sureste</p>
 
-  <form id="loginForm">
+  <form id="loginForm" novalidate>
 
     <div id="loginError"></div>
 
@@ -260,7 +263,6 @@
         id="usuario"
         placeholder="Ingresa tu usuario"
         required
-        autocomplete="username"
       >
 
     </div>
@@ -274,7 +276,6 @@
         id="password"
         placeholder="Ingresa tu contraseña"
         required
-        autocomplete="current-password"
       >
 
     </div>
