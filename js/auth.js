@@ -86,8 +86,7 @@ async function iniciarSesion(e) {
       return;
     }
 
-    // Comparar contraseña (simple - en producción usar hashing)
-    // NOTA: En producción, usa bcryptjs u otra librería de hashing
+    // Comparar contraseña
     const passwordValida = await verificarContraseña(
       password, 
       usuarioData.password
@@ -115,18 +114,17 @@ async function iniciarSesion(e) {
       uid: uid,
       usuario: usuarioData.usuario,
       nombre: usuarioData.nombre || usuarioData.usuario,
-      rol: usuarioData.rol || 'tecnico',
-      email: usuarioData.email || '',
+      rol: usuarioData.rol || 'coordinador',
       timestamp: new Date().getTime()
     };
 
     localStorage.setItem('sesion', JSON.stringify(sesionData));
-    localStorage.setItem('token', uid); // Token simple
+    localStorage.setItem('token', uid);
 
     console.log('✅ Sesión guardada:', sesionData);
 
     // Redirigir según el rol
-    redirigirPorRol(usuarioData.rol || 'tecnico');
+    redirigirPorRol(usuarioData.rol || 'coordinador');
 
   } catch (error) {
     console.error('❌ Error en login:', error);
@@ -141,17 +139,8 @@ async function iniciarSesion(e) {
 // ======================================
 
 async function verificarContraseña(passwordIngresada, passwordGuardada) {
-  
-  // OPCIÓN 1: Comparación simple (NO RECOMENDADO para producción)
-  // return passwordIngresada === passwordGuardada;
-
-  // OPCIÓN 2: Usar bcryptjs (MÁS SEGURO - requiere librería)
-  // return await bcrypt.compare(passwordIngresada, passwordGuardada);
-
-  // OPCIÓN 3: Usar librería simétrica
   try {
-    // Aquí se implementaría una función de hash seguro
-    // Por ahora usamos comparación simple
+    // Comparación simple
     // En producción, implementa bcryptjs o similar
     return passwordIngresada === passwordGuardada;
   } catch (error) {
@@ -184,19 +173,18 @@ function mostrarError(mensaje) {
 // ======================================
 
 function redirigirPorRol(rol) {
-  
   switch(rol.toLowerCase()) {
     case 'admin':
       window.location.href = './pages/dashboard.html';
       break;
-    case 'supervisor':
+    case 'coordinador':
       window.location.href = './pages/dashboard.html';
       break;
     case 'tecnico':
       window.location.href = './pages/app-tecnico.html';
       break;
     default:
-      window.location.href = './pages/app-tecnico.html';
+      window.location.href = './pages/dashboard.html';
   }
 }
 
