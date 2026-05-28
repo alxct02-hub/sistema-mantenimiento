@@ -54,6 +54,14 @@ async function cargarOrdenes(){
             const id = documento.id;
 
             // ======================================
+            // FILTRAR COMPLETADAS
+            // ======================================
+
+            if(orden.estado === 'Completada'){
+                return; // Saltar ordenes completadas
+            }
+
+            // ======================================
             // COLORES
             // ======================================
 

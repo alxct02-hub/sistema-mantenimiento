@@ -5,9 +5,7 @@
 import { db } from './firebase-config.js';
 import {
     collection,
-    getDocs,
-    orderBy,
-    query
+    getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ======================================
@@ -357,7 +355,7 @@ function calcularHorasLaborales(
 // PDF
 // ======================================
 
-window.generarPDF = function(id){
+window.generarPDF = async function(id){
 
     const orden =
     ordenes.find(
@@ -372,96 +370,185 @@ window.generarPDF = function(id){
 
     }
 
-    const ventana =
-    window.open('', '_blank');
+    // Obtener datos completos de Firebase
+    const snapshot = await getDocs(collection(db, 'ordenes'));
+    let ordenCompleta = null;
 
-    ventana.document.write(`
+    snapshot.forEach((doc) => {
+        if(doc.id === id){
+            ordenCompleta = doc.data();
+        }
+    });
 
-        <html>
+    if(!ordenCompleta){
+        alert('Error al obtener datos');
+        return;
+    }
 
-        <head>
+    // JSPDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
 
-            <title>${orden.folio}</title>
+    // ======================================
+    // HEADER
+    // ======================================
 
-            <style>
+    pdf.setFillColor(30, 41, 59);
+    pdf.rect(0, 0, 210, 35, 'F');
 
-                body{
+    pdf.setTextColor(255,255,255);
+    pdf.setFontSize(22);
+    pdf.text('ORDEN DE SERVICIO', 20, 20);
 
-                    font-family: Arial;
-                    padding:40px;
+    pdf.setFontSize(12);
+    pdf.text('Concretera del Sureste', 20, 28);
 
-                }
+    // ======================================
+    // DATOS GENERALES
+    // ======================================
 
-                table{
+    pdf.setTextColor(0,0,0);
+    pdf.setFontSize(15);
+    pdf.text('DATOS GENERALES', 20, 50);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 53, 190, 53);
 
-                    width:100%;
-                    border-collapse: collapse;
+    pdf.setFontSize(10);
 
-                }
+    let y = 63;
 
-                td{
+    pdf.text(`Folio: ${ordenCompleta.folio || '-'}`, 20, y); y += 8;
+    pdf.text(`Fecha: ${ordenCompleta.fecha || '-'}`, 20, y); y += 8;
+    pdf.text(`Area: ${ordenCompleta.area || '-'}`, 20, y); y += 8;
+    pdf.text(`Equipo: ${ordenCompleta.equipo || '-'}`, 20, y); y += 8;
+    pdf.text(`Kilometraje: ${ordenCompleta.kilometraje || '-'}`, 110, y - 24);
+    pdf.text(`Horometro: ${ordenCompleta.horometro || '-'}`, 110, y - 16);
+    pdf.text(`Operador: ${ordenCompleta.operador || '-'}`, 20, y); y += 8;
+    pdf.text(`Tecnico: ${ordenCompleta.tecnico || '-'}`, 20, y); y += 8;
+    pdf.text(`Tipo: ${ordenCompleta.tipo || '-'}`, 110, y - 8);
+    pdf.text(`Prioridad: ${ordenCompleta.prioridad || '-'}`, 20, y); y += 8;
+    pdf.text(`Estado: ${ordenCompleta.estado || '-'}`, 20, y); y += 12;
 
-                    border:1px solid #ccc;
-                    padding:12px;
+    // ======================================
+    // DESCRIPCION
+    // ======================================
 
-                }
+    pdf.setFontSize(15);
+    pdf.text('DESCRIPCION DEL SERVICIO', 20, y);
+    pdf.line(20, y + 3, 190, y + 3);
 
-            </style>
+    y += 13;
+    pdf.setFontSize(10);
 
-        </head>
+    const descripcion = pdf.splitTextToSize(ordenCompleta.descripcion || '-', 165);
+    pdf.text(descripcion, 20, y);
+    y += (descripcion.length * 5) + 10;
 
-        <body>
+    // ======================================
+    // CONTROL DE TIEMPOS
+    // ======================================
 
-            <h1>
+    pdf.setFontSize(15);
+    pdf.text('CONTROL DE TIEMPOS', 20, y);
+    pdf.line(20, y + 3, 190, y + 3);
 
-                Orden de Servicio
+    y += 13;
+    pdf.setFontSize(10);
+    pdf.text(`Hora inicio: ${ordenCompleta.horaInicio || '-'}`, 20, y);
+    pdf.text(`Hora final: ${ordenCompleta.horaFin || '-'}`, 110, y);
+    y += 15;
 
-            </h1>
+    // ======================================
+    // OBSERVACIONES
+    // ======================================
 
-            <table>
+    pdf.setFontSize(15);
+    pdf.text('OBSERVACIONES', 20, y);
+    pdf.line(20, y + 3, 190, y + 3);
 
-                <tr>
-                    <td>Folio</td>
-                    <td>${orden.folio}</td>
-                </tr>
+    y += 13;
+    pdf.setFontSize(10);
 
-                <tr>
-                    <td>Equipo</td>
-                    <td>${orden.equipo}</td>
-                </tr>
+    const observaciones = pdf.splitTextToSize(ordenCompleta.observaciones || '-', 165);
+    pdf.text(observaciones, 20, y);
+    y += (observaciones.length * 5) + 10;
 
-                <tr>
-                    <td>Técnico</td>
-                    <td>${orden.tecnico}</td>
-                </tr>
+    // ======================================
+    // EVIDENCIA FOTOGRAFICA
+    // ======================================
 
-                <tr>
-                    <td>Estado</td>
-                    <td>${orden.estado}</td>
-                </tr>
+    if(ordenCompleta.evidencia){
+        try{
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.src = ordenCompleta.evidencia;
 
-                <tr>
-                    <td>Fecha</td>
-                    <td>${orden.fecha}</td>
-                </tr>
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+            });
 
-            </table>
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
 
-            <script>
+            const dataURL = canvas.toDataURL('image/jpeg');
 
-                window.onload = () => {
+            // Nueva pagina
+            pdf.addPage();
 
-                    window.print();
+            pdf.setFontSize(18);
+            pdf.setTextColor(0,0,0);
+            pdf.text('EVIDENCIA FOTOGRAFICA', 20, 20);
+            pdf.line(20, 25, 190, 25);
 
-                }
+            // Imagen
+            pdf.addImage(dataURL, 'JPEG', 20, 35, 170, 120);
 
-            </script>
+        }catch(error){
+            console.error('Error imagen PDF:', error);
+        }
+    }
 
-        </body>
+    // ======================================
+    // FIRMAS
+    // ======================================
 
-        </html>
+    pdf.addPage();
 
-    `);
+    pdf.setFontSize(15);
+    pdf.text('FIRMAS DE CONFORMIDAD', 20, 30);
+    pdf.line(20, 33, 190, 33);
+
+    // Firma del Tecnico
+    pdf.setFontSize(12);
+    pdf.text('Firma del Tecnico', 30, 60);
+    pdf.line(20, 90, 90, 90);
+    pdf.setFontSize(10);
+    pdf.text(ordenCompleta.tecnico || 'Tecnico', 30, 100);
+
+    // Firma del Operador/Solicitante
+    pdf.setFontSize(12);
+    pdf.text('Firma del Operador', 130, 60);
+    pdf.line(110, 90, 190, 90);
+    pdf.setFontSize(10);
+    pdf.text(ordenCompleta.operador || 'Operador', 130, 100);
+
+    // ======================================
+    // FOOTER
+    // ======================================
+
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Sistema de Mantenimiento - Concretera del Sureste', 20, 285);
+
+    // ======================================
+    // DESCARGAR
+    // ======================================
+
+    pdf.save(`${ordenCompleta.folio || 'orden'}.pdf`);
 
 }
 
