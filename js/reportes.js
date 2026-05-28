@@ -37,6 +37,8 @@ window.generarReporte = async function(){
 
         let tecnicos = {};
 
+        let tiemposReparacion = [];
+
         snapshot.forEach((doc) => {
 
             const orden = doc.data();
@@ -88,6 +90,27 @@ window.generarReporte = async function(){
 
             }
 
+            // Tiempo reparación
+            if(orden.horaInicio && orden.horaFin){
+
+                const inicio = new Date(orden.horaInicio);
+                const fin = new Date(orden.horaFin);
+
+                if(!isNaN(inicio) && !isNaN(fin)){
+
+                    const diffMs = fin - inicio;
+                    const diffHoras = diffMs / (1000 * 60 * 60);
+
+                    if(diffHoras > 0){
+
+                        tiemposReparacion.push(diffHoras);
+
+                    }
+
+                }
+
+            }
+
         });
 
         // ======================================
@@ -127,6 +150,26 @@ window.generarReporte = async function(){
                 tecnicoTop = tecnico;
 
             }
+
+        }
+
+        // ======================================
+        // TIEMPO PROMEDIO
+        // ======================================
+
+        let tiempoPromedio = '-';
+
+        if(tiemposReparacion.length > 0){
+
+            const suma = tiemposReparacion.reduce((a, b) => a + b, 0);
+
+            const promedioHoras = suma / tiemposReparacion.length;
+
+            const horas = Math.floor(promedioHoras);
+
+            const minutos = Math.round((promedioHoras - horas) * 60);
+
+            tiempoPromedio = `${horas}h ${minutos}m`;
 
         }
 
@@ -269,11 +312,21 @@ window.generarReporte = async function(){
 
         pdf.text(
 
-            `Técnico con más órdenes: ${tecnicoTop}`,
+            `Tecnico con mas ordenes: ${tecnicoTop}`,
 
             25,
 
             150
+
+        );
+
+        pdf.text(
+
+            `Tiempo promedio reparacion: ${tiempoPromedio}`,
+
+            25,
+
+            162
 
         );
 
@@ -286,16 +339,16 @@ window.generarReporte = async function(){
 
             20,
 
-            180
+            192
 
         );
 
         pdf.line(
 
             20,
-            184,
+            196,
             190,
-            184
+            196
 
         );
 
@@ -303,16 +356,19 @@ window.generarReporte = async function(){
 
         const resumen = `
 
-El sistema registra actualmente ${total} órdenes de servicio.
+El sistema registra actualmente ${total} ordenes de servicio.
 
-Se identifican ${pendientes} órdenes pendientes,
+Se identifican ${pendientes} ordenes pendientes,
 ${proceso} en proceso y ${completadas} completadas.
 
 El equipo con mayor recurrencia de fallas es:
 ${equipoTop}.
 
-El técnico con mayor participación operativa es:
+El tecnico con mayor participacion operativa es:
 ${tecnicoTop}.
+
+El tiempo promedio de reparacion es:
+${tiempoPromedio}.
 
         `;
 
@@ -330,7 +386,7 @@ ${tecnicoTop}.
 
             20,
 
-            200
+            212
 
         );
 

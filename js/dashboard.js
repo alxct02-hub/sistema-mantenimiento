@@ -35,6 +35,10 @@ const kpiTecnico =
 
     document.getElementById('kpiTecnico');
 
+const kpiTiempoPromedio =
+
+    document.getElementById('kpiTiempoPromedio');
+
 // ======================================
 // INICIALIZAR
 // ======================================
@@ -78,6 +82,8 @@ async function cargarDashboard(){
         let equipos = {};
 
         let tecnicos = {};
+
+        let tiemposReparacion = [];
 
         // ======================================
         // RECORRER ÓRDENES
@@ -143,6 +149,30 @@ async function cargarDashboard(){
 
             }
 
+            // ======================================
+            // TIEMPO REPARACIÓN
+            // ======================================
+
+            if(orden.horaInicio && orden.horaFin){
+
+                const inicio = new Date(orden.horaInicio);
+                const fin = new Date(orden.horaFin);
+
+                if(!isNaN(inicio) && !isNaN(fin)){
+
+                    const diffMs = fin - inicio;
+                    const diffHoras = diffMs / (1000 * 60 * 60);
+
+                    if(diffHoras > 0){
+
+                        tiemposReparacion.push(diffHoras);
+
+                    }
+
+                }
+
+            }
+
         });
 
         // ======================================
@@ -200,6 +230,28 @@ async function cargarDashboard(){
         }
 
         kpiTecnico.innerText = tecnicoTop;
+
+        // ======================================
+        // TIEMPO PROMEDIO
+        // ======================================
+
+        let tiempoPromedio = '-';
+
+        if(tiemposReparacion.length > 0){
+
+            const suma = tiemposReparacion.reduce((a, b) => a + b, 0);
+
+            const promedioHoras = suma / tiemposReparacion.length;
+
+            const horas = Math.floor(promedioHoras);
+
+            const minutos = Math.round((promedioHoras - horas) * 60);
+
+            tiempoPromedio = `${horas}h ${minutos}m`;
+
+        }
+
+        kpiTiempoPromedio.innerText = tiempoPromedio;
 
         // ======================================
         // CREAR GRÁFICA
