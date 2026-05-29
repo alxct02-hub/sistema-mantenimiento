@@ -1,7 +1,3 @@
-// ======================================
-// SISTEMA DE AUTENTICACIÓN - USUARIO/CONTRASEÑA
-// ======================================
-
 import { db } from './firebase-config.js';
 import {
   collection,
@@ -9,6 +5,10 @@ import {
   where,
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ======================================
+// SISTEMA DE AUTENTICACIÓN - USUARIO/CONTRASEÑA
+// ======================================
 
 // ======================================
 // ELEMENTOS DEL FORMULARIO
@@ -179,6 +179,9 @@ function redirigirPorRol(rol) {
       break;
     case 'coordinador':
       window.location.href = './pages/dashboard.html';
+      break;
+    case 'jefe_planta':
+      window.location.href = './pages/presolicitudes.html';
       break;
     case 'tecnico':
       window.location.href = './pages/app-tecnico.html';
