@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Sistema Mantenimiento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-gray-900 text-white flex flex-col">
+
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-4">
+                <img src="../img/logo.png" alt="Logo" class="w-16 h-16 object-contain bg-white rounded-lg p-1">
+                <div>
+                    <h1 class="font-bold text-lg">Sistema Mantenimiento</h1>
+                    <p class="text-gray-400 text-sm">Concretera del Sureste</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 p-4">
+            <ul class="space-y-3">
+                <li>
+                    <a href="./dashboard.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">📊 Dashboard</a>
+                </li>
+                <li>
+                    <a href="./nueva-orden.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">🛠 Nueva Orden</a>
+                </li>
+                <li>
+                    <a href="./historial.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">📁 Historial</a>
+                </li>
+                <li>
+                    <a href="./tecnicos.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">👷 Técnicos</a>
+                </li>
+                <li>
+                    <a href="./reportes.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">📑 Reportes</a>
+                </li>
+                <li>
+                    <a href="./usuarios.html" class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold">👥 Usuarios</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="p-4 border-t border-gray-700">
+            <button id="btnCerrarSesion" class="w-full bg-red-500 hover:bg-red-600 text-center py-3 rounded-lg font-bold transition">
+                Cerrar Sesión
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="flex-1 p-8">
+
+        <!-- HEADER -->
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">Gestión de Usuarios</h2>
+                <p class="text-gray-500 mt-1">Administra los accesos del sistema (8 usuarios)</p>
+            </div>
+            <button
+                id="btnNuevoUsuario"
+                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-lg transition"
+            >
+                ➕ Nuevo Usuario
+            </button>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="bg-white rounded-xl shadow p-4 mb-6 flex gap-4 flex-wrap items-center">
+            <select id="filtroRol" class="border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                <option value="">Todos los roles</option>
+                <option value="admin">Administrador</option>
+                <option value="jefe_planta">Jefe de Planta</option>
+                <option value="tecnico">Técnico</option>
+            </select>
+            <select id="filtroEstado" class="border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                <option value="">Todos los estados</option>
+                <option value="activo">Activos</option>
+                <option value="inactivo">Inactivos</option>
+            </select>
+        </div>
+
+        <!-- TABLA DE USUARIOS -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold">Usuario</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold">Nombre</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold">Rol</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold">ID Técnico</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold">Estado</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaUsuarios" class="divide-y divide-gray-100">
+                    <tr>
+                        <td colspan="6" class="px-6 py-10 text-center text-gray-400">Cargando usuarios...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+</div>
+
+<!-- ====== MODAL: CREAR / EDITAR USUARIO ====== -->
+<div id="modalUsuario" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+
+        <!-- Header modal -->
+        <div class="flex justify-between items-center p-6 border-b">
+            <h3 id="tituloModal" class="text-2xl font-bold text-gray-800">Nuevo Usuario</h3>
+            <button id="btnCerrarModal" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">✕</button>
+        </div>
+
+        <!-- Formulario -->
+        <form id="formUsuario" class="p-6 space-y-5">
+
+            <input type="hidden" id="usuarioId">
+
+            <!-- Usuario -->
+            <div>
+                <label class="block mb-2 font-bold text-gray-700 text-sm">
+                    Usuario (nombre de acceso) <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="campoUsuario"
+                    placeholder="Ej: jefe_planta4"
+                    required
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                >
+                <p class="text-xs text-gray-400 mt-1">Sin espacios ni caracteres especiales</p>
+            </div>
+
+            <!-- Nombre completo -->
+            <div>
+                <label class="block mb-2 font-bold text-gray-700 text-sm">
+                    Nombre completo <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="campoNombre"
+                    placeholder="Ej: Juan García"
+                    required
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                >
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+                <label class="block mb-2 font-bold text-gray-700 text-sm" id="labelPassword">
+                    Contraseña <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input
+                        type="password"
+                        id="campoPassword"
+                        placeholder="Mínimo 6 caracteres"
+                        class="w-full border border-gray-300 rounded-lg p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    >
+                    <button
+                        type="button"
+                        id="btnVerPassword"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg"
+                    >👁</button>
+                </div>
+                <p id="passwordHint" class="text-xs text-gray-400 mt-1 hidden">Deja vacío para no cambiar la contraseña</p>
+            </div>
+
+            <!-- Rol -->
+            <div>
+                <label class="block mb-2 font-bold text-gray-700 text-sm">
+                    Rol <span class="text-red-500">*</span>
+                </label>
+                <select
+                    id="campoRol"
+                    required
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                >
+                    <option value="">Selecciona un rol</option>
+                    <option value="admin">Administrador</option>
+                    <option value="jefe_planta">Jefe de Planta</option>
+                    <option value="tecnico">Técnico</option>
+                </select>
+            </div>
+
+            <!-- ID Técnico (solo si rol = tecnico) -->
+            <div id="campoTecnicoIdWrapper" class="hidden">
+                <label class="block mb-2 font-bold text-gray-700 text-sm">ID Técnico</label>
+                <input
+                    type="text"
+                    id="campoTecnicoId"
+                    placeholder="Ej: TEC-005"
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                >
+                <p class="text-xs text-gray-400 mt-1">Identificador único del técnico en el sistema</p>
+            </div>
+
+            <!-- Estado -->
+            <div>
+                <label class="block mb-2 font-bold text-gray-700 text-sm">Estado</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="estado" value="activo" checked class="accent-yellow-500">
+                        <span class="text-sm font-semibold text-green-600">Activo</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="estado" value="inactivo" class="accent-red-500">
+                        <span class="text-sm font-semibold text-red-600">Inactivo</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Mensaje -->
+            <div id="mensajeModal" class="hidden rounded-lg px-4 py-3 text-sm font-semibold"></div>
+
+            <!-- Botones -->
+            <div class="flex gap-3 pt-2">
+                <button
+                    type="submit"
+                    id="btnGuardar"
+                    class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-lg transition"
+                >
+                    Guardar
+                </button>
+                <button
+                    type="button"
+                    id="btnCancelar"
+                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg transition"
+                >
+                    Cancelar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ====== MODAL: CONFIRMAR DESACTIVAR ====== -->
+<div id="modalConfirmar" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+        <div class="text-5xl mb-4" id="iconoConfirmar">⚠️</div>
+        <h3 id="tituloConfirmar" class="text-xl font-bold text-gray-800 mb-2">¿Confirmar acción?</h3>
+        <p id="textoConfirmar" class="text-gray-500 mb-6 text-sm"></p>
+        <div class="flex gap-3">
+            <button id="btnConfirmarSi" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg transition">
+                Confirmar
+            </button>
+            <button id="btnConfirmarNo" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg transition">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="../js/usuarios.js"></script>
+
+</body>
+</html>
