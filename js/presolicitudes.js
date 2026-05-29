@@ -49,6 +49,11 @@ formPresolicitud.addEventListener('submit', guardarPresolicitud);
 filtroEstado.addEventListener('change', cargarPresolicitudes);
 btnCerrarSesion.addEventListener('click', cerrarSesion);
 
+// Cerrar modal al clic en fondo
+modalPresolicitud.addEventListener('click', (e) => {
+    if (e.target === modalPresolicitud) cerrarModal();
+});
+
 // ======================================
 // INICIALIZAR
 // ======================================
@@ -70,12 +75,11 @@ async function generarFolioPresolicitud() {
 
         let nuevoNumero = 1;
         if (!snapshot.empty) {
-            const ultimaPresolicitud = snapshot.docs[0].data();
-            nuevoNumero = (ultimaPresolicitud.folioNumero || 1) + 1;
+            const ultima = snapshot.docs[0].data();
+            nuevoNumero = (ultima.folioNumero || 1) + 1;
         }
 
-        const folioFinal = 'PS-26' + String(nuevoNumero).padStart(5, '0');
-        folioPresolicitud.value = folioFinal;
+        folioPresolicitud.value = 'PS-26' + String(nuevoNumero).padStart(5, '0');
 
     } catch (error) {
         console.error('Error generando folio:', error);
@@ -84,7 +88,7 @@ async function generarFolioPresolicitud() {
 }
 
 // ======================================
-// ABRIR MODAL NUEVA PRESOLICITUD
+// ABRIR MODAL
 // ======================================
 
 async function abrirModalNuevaPresolicitud() {
@@ -95,7 +99,7 @@ async function abrirModalNuevaPresolicitud() {
 }
 
 // ======================================
-// CERRAR MODAL
+// CERRAR MODALES
 // ======================================
 
 function cerrarModal() {
@@ -104,16 +108,12 @@ function cerrarModal() {
     mensajePresolicitud.innerHTML = '';
 }
 
-// ======================================
-// CERRAR MODAL DETALLES
-// ======================================
-
 function cerrarModalDetalles() {
     modalDetalles.classList.add('hidden');
 }
 
 // ======================================
-// GUARDAR PRESOLICITUD
+// GUARDAR PRESOLICITUD (con todos los campos)
 // ======================================
 
 async function guardarPresolicitud(e) {
@@ -124,24 +124,40 @@ async function guardarPresolicitud(e) {
 
         const folio       = folioPresolicitud.value;
         const folioNumero = parseInt(folio.replace('PS-26', ''));
-        const area        = document.getElementById('areaPresolicitud').value;
-        const equipo      = document.getElementById('equipoPresolicitud').value;
+        const area        = document.getElementById('areaPresolicitud').value.trim();
+        const equipo      = document.getElementById('equipoPresolicitud').value.trim();
         const kilometraje = document.getElementById('kilometrajePresolicitud').value;
-        const descripcion = document.getElementById('descripcionPresolicitud').value;
+        const horometro   = document.getElementById('horometroPresolicitud').value;
+        const operador    = document.getElementById('operadorPresolicitud').value.trim();
+        const tecnico     = document.getElementById('tecnicoPresolicitud').value.trim();
+        const tipo        = document.getElementById('tipoPresolicitud').value;
+        const prioridad   = document.getElementById('prioridadPresolicitud').value;
+        const descripcion = document.getElementById('descripcionPresolicitud').value.trim();
 
-        const fecha     = new Date().toLocaleString();
+        const fecha     = new Date().toLocaleString('es-MX');
         const estado    = 'draft';
         const creadoPor = usuarioActual?.usuario || 'Sistema';
+        const nombreJefe = usuarioActual?.nombre || '';
 
         await addDoc(collection(db, 'presolicitudes'), {
-            folio, folioNumero, area, equipo,
+            folio, folioNumero,
+            area, equipo,
             kilometraje: kilometraje || '',
-            descripcion, fecha, estado, creadoPor,
-            createdAt: new Date(),
+            horometro:   horometro   || '',
+            operador:    operador    || '',
+            tecnico:     tecnico     || '',
+            tipo:        tipo        || '',
+            prioridad:   prioridad   || '',
+            descripcion,
+            fecha,
+            estado,
+            creadoPor,
+            nombreJefe,
+            createdAt:    new Date(),
             ordenGenerada: false
         });
 
-        // Registrar en bitácora
+        // Bitácora
         await registrarEvento(
             'presolicitud_creada',
             `Presolicitud ${folio} creada — Equipo: ${equipo}, Área: ${area}`,
@@ -153,7 +169,7 @@ async function guardarPresolicitud(e) {
         setTimeout(() => {
             cerrarModal();
             cargarPresolicitudes();
-        }, 1500);
+        }, 1400);
 
     } catch (error) {
         console.error('Error:', error);
@@ -191,23 +207,25 @@ async function cargarPresolicitudes() {
 
         if (snapshot.empty) {
             contenedorPresolicitudes.innerHTML = `
-                <div class="bg-white rounded-xl shadow p-8 text-center col-span-full">
-                    <p class="text-gray-500 text-lg">No hay presolicitudes</p>
+                <div class="bg-white rounded-xl shadow p-10 text-center">
+                    <p class="text-4xl mb-3">📝</p>
+                    <p class="text-gray-500 text-lg font-semibold">No tienes presolicitudes aún</p>
+                    <p class="text-gray-400 text-sm mt-1">Crea una nueva con el botón ➕</p>
                 </div>
             `;
             return;
         }
 
         snapshot.forEach((docSnap) => {
-            const presolicitud = docSnap.data();
-            presolicitud.id = docSnap.id;
-            crearTarjetaPresolicitud(presolicitud);
+            const ps = docSnap.data();
+            ps.id = docSnap.id;
+            contenedorPresolicitudes.appendChild(crearTarjeta(ps));
         });
 
     } catch (error) {
         console.error('Error cargando presolicitudes:', error);
         contenedorPresolicitudes.innerHTML = `
-            <div class="bg-white rounded-xl shadow p-8 text-center col-span-full">
+            <div class="bg-white rounded-xl shadow p-8 text-center">
                 <p class="text-red-500">Error al cargar presolicitudes</p>
             </div>
         `;
@@ -215,57 +233,73 @@ async function cargarPresolicitudes() {
 }
 
 // ======================================
-// CREAR TARJETA PRESOLICITUD
+// CREAR TARJETA
 // ======================================
 
-function crearTarjetaPresolicitud(presolicitud) {
-    const estadoClases = presolicitud.estado === 'draft'
-        ? 'bg-blue-100 text-blue-800'
-        : 'bg-green-100 text-green-800';
+function crearTarjeta(ps) {
+    const esConvertida = ps.estado === 'convertida';
 
-    const tarjeta = document.createElement('div');
-    tarjeta.className = 'bg-white rounded-xl shadow p-6 hover:shadow-lg transition';
-    tarjeta.innerHTML = `
+    const prioridadColor = ps.prioridad === 'Alta'
+        ? 'bg-red-100 text-red-700'
+        : ps.prioridad === 'Media'
+        ? 'bg-yellow-100 text-yellow-700'
+        : ps.prioridad === 'Baja'
+        ? 'bg-green-100 text-green-700'
+        : 'bg-gray-100 text-gray-500';
+
+    const estadoBadge = esConvertida
+        ? '<span class="px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-700">✅ Convertida</span>'
+        : '<span class="px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-700">✏️ Pendiente</span>';
+
+    const div = document.createElement('div');
+    div.className = `bg-white rounded-xl shadow p-6 hover:shadow-md transition ${esConvertida ? 'opacity-75' : 'border-l-4 border-yellow-400'}`;
+    div.innerHTML = `
         <div class="flex justify-between items-start mb-4">
             <div>
-                <h3 class="text-xl font-bold text-gray-800">${presolicitud.folio}</h3>
-                <p class="text-gray-500 text-sm">${presolicitud.fecha}</p>
+                <h3 class="text-xl font-bold text-gray-800 font-mono">${ps.folio}</h3>
+                <p class="text-gray-400 text-xs mt-0.5">${ps.fecha || ''}</p>
             </div>
-            <span class="px-3 py-1 rounded-full text-sm font-bold ${estadoClases}">
-                ${presolicitud.estado === 'draft' ? '✏️ Borrador' : '✅ Convertida'}
-            </span>
+            ${estadoBadge}
         </div>
 
-        <div class="space-y-2 mb-4">
-            <p><strong>Área:</strong> ${presolicitud.area}</p>
-            <p><strong>Equipo:</strong> ${presolicitud.equipo}</p>
-            ${presolicitud.kilometraje ? `<p><strong>Kilometraje:</strong> ${presolicitud.kilometraje}</p>` : ''}
-            <p><strong>Descripción:</strong> ${presolicitud.descripcion.substring(0, 100)}...</p>
+        <div class="grid grid-cols-2 gap-2 text-sm mb-4">
+            <div><span class="text-gray-400">Área:</span> <span class="font-semibold text-gray-700">${ps.area}</span></div>
+            <div><span class="text-gray-400">Equipo:</span> <span class="font-semibold text-gray-700">${ps.equipo}</span></div>
+            ${ps.tipo ? `<div><span class="text-gray-400">Tipo:</span> <span class="font-semibold text-gray-700">${ps.tipo}</span></div>` : ''}
+            ${ps.prioridad ? `<div><span class="text-gray-400">Prioridad:</span> <span class="font-bold px-2 py-0.5 rounded-full text-xs ${prioridadColor}">${ps.prioridad}</span></div>` : ''}
+            ${ps.operador ? `<div><span class="text-gray-400">Operador:</span> <span class="font-semibold text-gray-700">${ps.operador}</span></div>` : ''}
+            ${ps.tecnico ? `<div><span class="text-gray-400">Técnico suger.:</span> <span class="font-semibold text-gray-700">${ps.tecnico}</span></div>` : ''}
         </div>
+
+        <p class="text-gray-500 text-sm mb-4 line-clamp-2">${ps.descripcion}</p>
+
+        ${esConvertida && ps.folioOrden ? `
+            <p class="text-xs text-green-600 font-bold mb-3">→ Orden generada: <span class="font-mono">${ps.folioOrden}</span></p>
+        ` : ''}
 
         <div class="flex gap-3">
             <button
-                onclick="abrirDetalles('${presolicitud.id}')"
-                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition"
+                onclick="abrirDetalles('${ps.id}')"
+                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition text-sm"
             >
                 Ver Detalles
             </button>
-            ${presolicitud.estado === 'draft' ? `
+            ${!esConvertida ? `
                 <button
-                    onclick="eliminarPresolicitud('${presolicitud.id}')"
-                    class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg transition"
+                    onclick="eliminarPresolicitud('${ps.id}')"
+                    class="bg-red-100 hover:bg-red-200 text-red-700 font-bold px-4 py-2 rounded-lg transition text-sm"
                 >
-                    Eliminar
+                    🗑
                 </button>
             ` : ''}
         </div>
     `;
 
-    contenedorPresolicitudes.appendChild(tarjeta);
+    return div;
 }
 
 // ======================================
-// ABRIR DETALLES Y CONVERTIR
+// ABRIR DETALLES
 // ======================================
 
 window.abrirDetalles = async function(presolicitudId) {
@@ -277,54 +311,33 @@ window.abrirDetalles = async function(presolicitudId) {
 
         if (docSnap.empty) return;
 
-        const presolicitud    = docSnap.docs[0].data();
-        presolicitud.id       = presolicitudId;
+        const ps    = docSnap.docs[0].data();
+        ps.id       = presolicitudId;
 
         const contenidoDetalles = document.getElementById('contenidoDetalles');
         contenidoDetalles.innerHTML = `
-            <div class="grid grid-cols-2 gap-4">
-                <div><strong>Folio:</strong> <p class="text-gray-700">${presolicitud.folio}</p></div>
-                <div><strong>Fecha:</strong> <p class="text-gray-700">${presolicitud.fecha}</p></div>
-                <div><strong>Área:</strong> <p class="text-gray-700">${presolicitud.area}</p></div>
-                <div><strong>Equipo:</strong> <p class="text-gray-700">${presolicitud.equipo}</p></div>
-                ${presolicitud.kilometraje ? `
-                    <div class="col-span-2">
-                        <strong>Kilometraje/Horómetro:</strong>
-                        <p class="text-gray-700">${presolicitud.kilometraje}</p>
-                    </div>
-                ` : ''}
-                <div class="col-span-2">
-                    <strong>Descripción:</strong>
-                    <p class="text-gray-700 mt-2">${presolicitud.descripcion}</p>
-                </div>
+            <div class="grid grid-cols-2 gap-3 text-sm">
+                <div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Folio</p><p class="font-mono font-bold text-gray-800">${ps.folio}</p></div>
+                <div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Fecha</p><p class="font-semibold text-gray-700">${ps.fecha}</p></div>
+                <div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Área</p><p class="font-semibold text-gray-700">${ps.area}</p></div>
+                <div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Equipo</p><p class="font-semibold text-gray-700">${ps.equipo}</p></div>
+                ${ps.kilometraje ? `<div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Kilometraje</p><p class="font-semibold text-gray-700">${ps.kilometraje}</p></div>` : ''}
+                ${ps.horometro ? `<div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Horómetro</p><p class="font-semibold text-gray-700">${ps.horometro}</p></div>` : ''}
+                ${ps.operador ? `<div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Operador</p><p class="font-semibold text-gray-700">${ps.operador}</p></div>` : ''}
+                ${ps.tecnico ? `<div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Técnico sugerido</p><p class="font-semibold text-gray-700">${ps.tecnico}</p></div>` : ''}
+                ${ps.tipo ? `<div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Tipo</p><p class="font-semibold text-gray-700">${ps.tipo}</p></div>` : ''}
+                ${ps.prioridad ? `<div class="bg-gray-50 rounded-lg p-3"><p class="text-gray-400 text-xs">Prioridad</p><p class="font-semibold text-gray-700">${ps.prioridad}</p></div>` : ''}
+            </div>
+            <div class="mt-4">
+                <p class="text-gray-400 text-xs mb-1">Descripción</p>
+                <p class="text-gray-700 bg-gray-50 rounded-lg p-3">${ps.descripcion}</p>
             </div>
         `;
 
         const botonesAccion = document.getElementById('botonesAccion');
-        botonesAccion.innerHTML = `
-            ${presolicitud.estado === 'draft' ? `
-                <button
-                    onclick="convertirAOrden('${presolicitudId}')"
-                    class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-lg transition"
-                >
-                    ✅ Convertir a Orden
-                </button>
-                <button
-                    onclick="editarPresolicitud('${presolicitudId}')"
-                    class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 rounded-lg transition"
-                >
-                    ✏️ Editar
-                </button>
-            ` : `
-                <p class="w-full text-center text-green-600 font-bold">✅ Esta presolicitud ya fue convertida a orden</p>
-            `}
-            <button
-                onclick="cerrarModalDetalles()"
-                class="flex-1 bg-gray-300 hover:bg-gray-400 text-black font-bold px-6 py-3 rounded-lg transition"
-            >
-                Cerrar
-            </button>
-        `;
+        botonesAccion.innerHTML = ps.estado === 'draft'
+            ? `<p class="text-xs text-gray-500 w-full">Esta presolicitud será revisada por el administrador para generar la orden de servicio.</p>`
+            : `<p class="w-full text-center text-green-600 font-bold text-sm">✅ Esta presolicitud ya fue convertida — Orden: <span class="font-mono">${ps.folioOrden || ''}</span></p>`;
 
         modalDetalles.classList.remove('hidden');
 
@@ -337,85 +350,6 @@ window.abrirDetalles = async function(presolicitudId) {
 window.cerrarModalDetalles = cerrarModalDetalles;
 
 // ======================================
-// CONVERTIR A ORDEN
-// ======================================
-
-window.convertirAOrden = async function(presolicitudId) {
-    try {
-        const docSnap = await getDocs(query(
-            collection(db, 'presolicitudes'),
-            where('__name__', '==', presolicitudId)
-        ));
-
-        if (docSnap.empty) return;
-
-        const presolicitud = docSnap.docs[0].data();
-
-        // Generar folio de orden
-        const ordenesRef = collection(db, 'ordenes');
-        const q          = query(ordenesRef, orderBy('folio', 'desc'), limit(1));
-        const snapshot   = await getDocs(q);
-
-        let nuevoNumero = 1;
-        if (!snapshot.empty) {
-            const ultimaOrden  = snapshot.docs[0].data();
-            const numeroActual = parseInt(ultimaOrden.folio.replace('OS-26', ''));
-            nuevoNumero = numeroActual + 1;
-        }
-
-        const folioOrden = 'OS-26' + String(nuevoNumero).padStart(5, '0');
-
-        // Crear orden
-        await addDoc(collection(db, 'ordenes'), {
-            folio:              folioOrden,
-            area:               presolicitud.area,
-            equipo:             presolicitud.equipo,
-            kilometraje:        presolicitud.kilometraje || '',
-            horometro:          '',
-            operador:           '',
-            tecnico:            '',
-            tipo:               'Preventivo',
-            prioridad:          'Media',
-            descripcion:        presolicitud.descripcion,
-            fecha:              new Date().toLocaleString(),
-            estado:             'Pendiente',
-            presolicitudOrigen: presolicitud.folio
-        });
-
-        // Marcar presolicitud como convertida
-        const presolicitudRef = doc(db, 'presolicitudes', presolicitudId);
-        await updateDoc(presolicitudRef, {
-            estado:       'convertida',
-            ordenGenerada: true,
-            folioOrden
-        });
-
-        // Registrar en bitácora
-        await registrarEvento(
-            'presolicitud_convertida',
-            `Presolicitud ${presolicitud.folio} convertida a Orden ${folioOrden}`,
-            { folio: presolicitud.folio, objetivo: folioOrden }
-        );
-
-        alert('✅ Orden de servicio generada: ' + folioOrden);
-        cerrarModalDetalles();
-        cargarPresolicitudes();
-
-    } catch (error) {
-        console.error('Error:', error);
-        alert('❌ Error al convertir presolicitud');
-    }
-};
-
-// ======================================
-// EDITAR PRESOLICITUD
-// ======================================
-
-window.editarPresolicitud = async function(presolicitudId) {
-    alert('Funcionalidad de edición próximamente');
-};
-
-// ======================================
 // ELIMINAR PRESOLICITUD
 // ======================================
 
@@ -423,7 +357,6 @@ window.eliminarPresolicitud = async function(presolicitudId) {
     if (!confirm('¿Estás seguro de que deseas eliminar esta presolicitud?')) return;
 
     try {
-        // Obtener folio antes de eliminar para la bitácora
         const docSnap = await getDocs(query(
             collection(db, 'presolicitudes'),
             where('__name__', '==', presolicitudId)
@@ -432,12 +365,7 @@ window.eliminarPresolicitud = async function(presolicitudId) {
 
         await deleteDoc(doc(db, 'presolicitudes', presolicitudId));
 
-        // Registrar en bitácora
-        await registrarEvento(
-            'presolicitud_eliminada',
-            `Presolicitud ${folioPs} eliminada`,
-            { folio: folioPs }
-        );
+        await registrarEvento('presolicitud_eliminada', `Presolicitud ${folioPs} eliminada`, { folio: folioPs });
 
         alert('✅ Presolicitud eliminada');
         cargarPresolicitudes();
