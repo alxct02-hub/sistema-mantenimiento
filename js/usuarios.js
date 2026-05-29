@@ -131,12 +131,15 @@ function renderTabla() {
         const esAdmin = usuario.rol === 'admin';
 
         const tr = document.createElement('tr');
+        tr.id = `fila-${usuario.id}`;
         tr.className = `hover:bg-gray-50 transition ${usuario.estado === 'inactivo' ? 'opacity-60' : ''}`;
         tr.innerHTML = `
             <td class="px-6 py-4">
                 <span class="font-mono font-bold text-gray-800">${usuario.usuario}</span>
             </td>
-            <td class="px-6 py-4 text-gray-700">${usuario.nombre || '-'}</td>
+            <td class="px-6 py-4" id="celda-nombre-${usuario.id}">
+                ${celdaNombreTexto(usuario)}
+            </td>
             <td class="px-6 py-4">${rolBadge}</td>
             <td class="px-6 py-4">
                 ${usuario.tecnicoId
@@ -171,6 +174,147 @@ function renderTabla() {
         tablaUsuarios.appendChild(tr);
     });
 }
+
+// ======================================
+// CELDA NOMBRE — MODO TEXTO (con hint de edición)
+// ======================================
+
+function celdaNombreTexto(usuario) {
+    return `
+        <div
+            class="group flex items-center gap-2 cursor-pointer"
+            onclick="activarEdicionNombre('${usuario.id}')"
+            title="Clic para editar nombre"
+        >
+            <span class="text-gray-800 font-medium">${usuario.nombre || '-'}</span>
+            <span class="opacity-0 group-hover:opacity-100 transition text-gray-400 text-xs select-none">✏️</span>
+        </div>
+    `;
+}
+
+// ======================================
+// ACTIVAR EDICIÓN EN LÍNEA DEL NOMBRE
+// ======================================
+
+window.activarEdicionNombre = function(id) {
+    const usuario = todosLosUsuarios.find(u => u.id === id);
+    if (!usuario) return;
+
+    const celda = document.getElementById(`celda-nombre-${id}`);
+    if (!celda) return;
+
+    // Evitar activar si ya está en modo edición
+    if (celda.querySelector('input')) return;
+
+    const nombreActual = usuario.nombre || '';
+
+    celda.innerHTML = `
+        <div class="flex items-center gap-2">
+            <input
+                type="text"
+                id="input-nombre-${id}"
+                value="${nombreActual.replace(/"/g, '&quot;')}"
+                class="border-2 border-yellow-400 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 w-44"
+                maxlength="60"
+                autofocus
+            >
+            <button
+                onclick="guardarNombreInline('${id}')"
+                class="bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-bold px-2 py-1.5 rounded-lg transition whitespace-nowrap"
+                title="Guardar"
+            >✓</button>
+            <button
+                onclick="cancelarEdicionNombre('${id}')"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-600 text-xs font-bold px-2 py-1.5 rounded-lg transition whitespace-nowrap"
+                title="Cancelar"
+            >✕</button>
+        </div>
+    `;
+
+    const input = document.getElementById(`input-nombre-${id}`);
+    input.focus();
+    input.select();
+
+    // Guardar con Enter, cancelar con Escape
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            guardarNombreInline(id);
+        }
+        if (e.key === 'Escape') {
+            cancelarEdicionNombre(id);
+        }
+    });
+};
+
+// ======================================
+// GUARDAR NOMBRE DESDE LA TABLA
+// ======================================
+
+window.guardarNombreInline = async function(id) {
+    const input = document.getElementById(`input-nombre-${id}`);
+    if (!input) return;
+
+    const nuevoNombre = input.value.trim();
+    const celda       = document.getElementById(`celda-nombre-${id}`);
+
+    if (!nuevoNombre) {
+        input.classList.add('border-red-500');
+        input.placeholder = 'El nombre no puede estar vacío';
+        input.focus();
+        return;
+    }
+
+    // Mostrar indicador de guardando
+    input.disabled = true;
+    celda.querySelector('button').textContent = '...';
+
+    try {
+        await updateDoc(doc(db, 'usuarios', id), { nombre: nuevoNombre });
+
+        // Actualizar en memoria local
+        const idx = todosLosUsuarios.findIndex(u => u.id === id);
+        if (idx !== -1) todosLosUsuarios[idx].nombre = nuevoNombre;
+
+        // Mostrar badge de éxito brevemente, luego volver al texto
+        celda.innerHTML = `
+            <div class="flex items-center gap-2">
+                <span class="text-gray-800 font-medium">${nuevoNombre}</span>
+                <span class="text-green-600 text-xs font-bold animate-pulse">✅ Guardado</span>
+            </div>
+        `;
+
+        setTimeout(() => {
+            const usuarioActualizado = todosLosUsuarios.find(u => u.id === id);
+            if (celda) celda.innerHTML = celdaNombreTexto(usuarioActualizado || { id, nombre: nuevoNombre });
+        }, 1500);
+
+    } catch (error) {
+        console.error('Error guardando nombre:', error);
+        celda.innerHTML = `
+            <div class="flex items-center gap-2">
+                <span class="text-red-500 text-xs font-bold">❌ Error al guardar</span>
+                <button onclick="activarEdicionNombre('${id}')" class="text-xs text-blue-500 underline">Reintentar</button>
+            </div>
+        `;
+        setTimeout(() => {
+            const usuario = todosLosUsuarios.find(u => u.id === id);
+            if (celda && usuario) celda.innerHTML = celdaNombreTexto(usuario);
+        }, 3000);
+    }
+};
+
+// ======================================
+// CANCELAR EDICIÓN EN LÍNEA
+// ======================================
+
+window.cancelarEdicionNombre = function(id) {
+    const usuario = todosLosUsuarios.find(u => u.id === id);
+    const celda   = document.getElementById(`celda-nombre-${id}`);
+    if (celda && usuario) {
+        celda.innerHTML = celdaNombreTexto(usuario);
+    }
+};
 
 // ======================================
 // ABRIR MODAL NUEVO USUARIO
