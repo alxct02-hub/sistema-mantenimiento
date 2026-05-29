@@ -4,11 +4,8 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Presolicitudes - Sistema Mantenimiento</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
@@ -22,121 +19,63 @@
 
         <!-- Logo -->
         <div class="p-6 border-b border-gray-700">
-
             <div class="flex items-center gap-4">
-
-                <img
-                    src="../img/logo.png"
-                    alt="Logo"
-                    class="w-16 h-16 object-contain bg-white rounded-lg p-1"
-                >
-
+                <img src="../img/logo.png" alt="Logo" class="w-16 h-16 object-contain bg-white rounded-lg p-1">
                 <div>
-
-                    <h1 class="font-bold text-lg">
-
-                        Sistema Mantenimiento
-
-                    </h1>
-
-                    <p class="text-gray-400 text-sm">
-
-                        Concretera del Sureste
-
-                    </p>
-
+                    <h1 class="font-bold text-lg">Sistema Mantenimiento</h1>
+                    <p class="text-gray-400 text-sm">Concretera del Sureste</p>
                 </div>
-
             </div>
-
         </div>
 
-        <!-- Menú -->
-        <nav class="flex-1 p-4">
+        <!-- Info usuario -->
+        <div class="px-4 pt-4">
+            <div class="bg-gray-800 rounded-lg p-3">
+                <p id="nombreUsuario" class="font-bold text-yellow-400 text-sm"></p>
+                <p id="rolUsuario" class="text-gray-400 text-xs mt-1"></p>
+            </div>
+        </div>
 
+        <!-- Menú Jefe de Planta -->
+        <nav class="flex-1 p-4">
             <ul class="space-y-3">
 
                 <li>
-
-                    <a
-                        href="./dashboard.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
-                        📊 Dashboard
-
-                    </a>
-
-                </li>
-
-                <li>
-
                     <a
                         href="./presolicitudes.html"
                         class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold"
                     >
-
-                        📝 Presolicitudes
-
+                        📝 Mis Solicitudes
                     </a>
-
                 </li>
 
                 <li>
-
                     <a
-                        href="./nueva-orden.html"
+                        href="./mis-ordenes.html"
                         class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
                     >
-
-                        🛠 Nueva Orden
-
+                        📋 Estado de mis Órdenes
                     </a>
-
                 </li>
 
-                <li>
-
-                    <a
-                        href="./historial.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
-                        📁 Historial
-
+                <!-- Solo visible para admin -->
+                <li id="menuAdmin" class="hidden">
+                    <a href="./dashboard.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">
+                        📊 Dashboard
                     </a>
-
-                </li>
-
-                <li>
-
-                    <a
-                        href="./reportes.html"
-                        class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition"
-                    >
-
-                        📑 Reportes
-
-                    </a>
-
                 </li>
 
             </ul>
-
         </nav>
 
         <!-- Salir -->
         <div class="p-4 border-t border-gray-700">
-
             <button
                 id="btnCerrarSesion"
                 class="w-full bg-red-500 hover:bg-red-600 text-center py-3 rounded-lg font-bold transition"
             >
-
                 Cerrar Sesión
-
             </button>
-
         </div>
 
     </aside>
@@ -146,59 +85,32 @@
 
         <!-- Header -->
         <div class="mb-8 flex justify-between items-center">
-
             <div>
-
-                <h2 class="text-3xl font-bold text-gray-800">
-
-                    Presolicitudes de Mantenimiento
-
-                </h2>
-
-                <p class="text-gray-500 mt-1">
-
-                    Crea y gestiona solicitudes de órdenes de servicio
-
-                </p>
-
+                <h2 class="text-3xl font-bold text-gray-800">Presolicitudes de Mantenimiento</h2>
+                <p class="text-gray-500 mt-1">Crea y gestiona solicitudes de órdenes de servicio</p>
             </div>
-
             <button
                 id="btnNuevaPresolicitud"
                 class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-lg transition"
             >
-
                 ➕ Nueva Presolicitud
-
             </button>
-
         </div>
 
         <!-- Filtros -->
         <div class="bg-white rounded-xl shadow p-6 mb-6">
-
             <div class="flex gap-4 flex-wrap">
-
-                <select
-                    id="filtroEstado"
-                    class="border border-gray-300 rounded-lg px-4 py-2"
-                >
-
+                <select id="filtroEstado" class="border border-gray-300 rounded-lg px-4 py-2">
                     <option value="">Todos los estados</option>
                     <option value="draft">Borradores</option>
                     <option value="convertida">Convertidas</option>
-
                 </select>
-
             </div>
-
         </div>
 
         <!-- Lista de Presolicitudes -->
         <div class="grid gap-6">
-
             <div id="contenedorPresolicitudes"></div>
-
         </div>
 
     </main>
@@ -206,211 +118,99 @@
 </div>
 
 <!-- Modal: Nueva Presolicitud -->
-<div
-    id="modalPresolicitud"
-    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
->
+<div id="modalPresolicitud" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 
     <div class="bg-white rounded-xl shadow-2xl p-8 max-w-3xl w-full mx-4 max-h-screen overflow-y-auto">
 
-        <!-- Encabezado -->
         <div class="flex justify-between items-center mb-6">
-
-            <h3 class="text-2xl font-bold text-gray-800">
-
-                Nueva Presolicitud
-
-            </h3>
-
-            <button
-                id="btnCerrarModal"
-                class="text-gray-500 hover:text-gray-700 text-2xl"
-            >
-
-                ✕
-
-            </button>
-
+            <h3 class="text-2xl font-bold text-gray-800">Nueva Presolicitud</h3>
+            <button id="btnCerrarModal" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
         </div>
 
-        <!-- Formulario -->
         <form id="formPresolicitud" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <!-- Folio (solo lectura) -->
             <div>
-
-                <label class="block mb-2 font-bold text-gray-700">
-
-                    Folio
-
-                </label>
-
-                <input
-                    type="text"
-                    id="folioPresolicitud"
-                    readonly
-                    class="w-full border border-gray-300 rounded-lg p-3 bg-gray-100"
-                >
-
+                <label class="block mb-2 font-bold text-gray-700">Folio</label>
+                <input type="text" id="folioPresolicitud" readonly class="w-full border border-gray-300 rounded-lg p-3 bg-gray-100">
             </div>
 
-            <!-- Área -->
             <div>
-
-                <label class="block mb-2 font-bold text-gray-700">
-
-                    Área <span class="text-red-500">*</span>
-
-                </label>
-
-                <input
-                    type="text"
-                    id="areaPresolicitud"
-                    placeholder="Ej: Producción"
-                    required
-                    class="w-full border border-gray-300 rounded-lg p-3"
-                >
-
+                <label class="block mb-2 font-bold text-gray-700">Área <span class="text-red-500">*</span></label>
+                <input type="text" id="areaPresolicitud" placeholder="Ej: Producción" required class="w-full border border-gray-300 rounded-lg p-3">
             </div>
 
-            <!-- Equipo -->
             <div>
-
-                <label class="block mb-2 font-bold text-gray-700">
-
-                    Equipo <span class="text-red-500">*</span>
-
-                </label>
-
-                <input
-                    type="text"
-                    id="equipoPresolicitud"
-                    placeholder="Ej: Bomba 01"
-                    required
-                    class="w-full border border-gray-300 rounded-lg p-3"
-                >
-
+                <label class="block mb-2 font-bold text-gray-700">Equipo <span class="text-red-500">*</span></label>
+                <input type="text" id="equipoPresolicitud" placeholder="Ej: Bomba 01" required class="w-full border border-gray-300 rounded-lg p-3">
             </div>
 
-            <!-- Kilometraje -->
             <div>
-
-                <label class="block mb-2 font-bold text-gray-700">
-
-                    Kilometraje/Horómetro
-
-                </label>
-
-                <input
-                    type="number"
-                    id="kilometrajePresolicitud"
-                    class="w-full border border-gray-300 rounded-lg p-3"
-                >
-
+                <label class="block mb-2 font-bold text-gray-700">Kilometraje/Horómetro</label>
+                <input type="number" id="kilometrajePresolicitud" class="w-full border border-gray-300 rounded-lg p-3">
             </div>
 
-            <!-- Descripción -->
             <div class="md:col-span-2">
-
-                <label class="block mb-2 font-bold text-gray-700">
-
-                    Descripción del Problema <span class="text-red-500">*</span>
-
-                </label>
-
-                <textarea
-                    id="descripcionPresolicitud"
-                    rows="4"
-                    placeholder="Describe el problema o necesidad de mantenimiento"
-                    required
-                    class="w-full border border-gray-300 rounded-lg p-3"
-                ></textarea>
-
+                <label class="block mb-2 font-bold text-gray-700">Descripción del Problema <span class="text-red-500">*</span></label>
+                <textarea id="descripcionPresolicitud" rows="4" placeholder="Describe el problema o necesidad de mantenimiento" required class="w-full border border-gray-300 rounded-lg p-3"></textarea>
             </div>
 
-            <!-- Botones -->
             <div class="md:col-span-2 flex gap-4">
-
-                <button
-                    type="submit"
-                    class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-lg transition"
-                >
-
+                <button type="submit" class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-lg transition">
                     Guardar Presolicitud
-
                 </button>
-
-                <button
-                    type="button"
-                    id="btnCancelarModal"
-                    class="flex-1 bg-gray-300 hover:bg-gray-400 text-black font-bold px-6 py-3 rounded-lg transition"
-                >
-
+                <button type="button" id="btnCancelarModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-black font-bold px-6 py-3 rounded-lg transition">
                     Cancelar
-
                 </button>
-
             </div>
 
         </form>
 
-        <!-- Mensaje -->
-        <div
-            id="mensajePresolicitud"
-            class="mt-4 text-center font-bold"
-        ></div>
+        <div id="mensajePresolicitud" class="mt-4 text-center font-bold"></div>
 
     </div>
 
 </div>
 
 <!-- Modal: Ver Detalles y Convertir -->
-<div
-    id="modalDetalles"
-    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
->
+<div id="modalDetalles" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 
     <div class="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full mx-4">
 
-        <!-- Encabezado -->
         <div class="flex justify-between items-center mb-6">
-
-            <h3 class="text-2xl font-bold text-gray-800">
-
-                Detalles de Presolicitud
-
-            </h3>
-
-            <button
-                id="btnCerrarDetalles"
-                class="text-gray-500 hover:text-gray-700 text-2xl"
-            >
-
-                ✕
-
-            </button>
-
+            <h3 class="text-2xl font-bold text-gray-800">Detalles de Presolicitud</h3>
+            <button id="btnCerrarDetalles" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
         </div>
 
-        <!-- Contenido -->
-        <div id="contenidoDetalles" class="space-y-4">
+        <div id="contenidoDetalles" class="space-y-4"></div>
 
-            <!-- Se llena dinámicamente -->
-
-        </div>
-
-        <!-- Botones de acción -->
-        <div id="botonesAccion" class="mt-6 flex gap-4">
-
-            <!-- Se llena dinámicamente -->
-
-        </div>
+        <div id="botonesAccion" class="mt-6 flex gap-4"></div>
 
     </div>
 
 </div>
 
 <script type="module" src="../js/presolicitudes.js"></script>
+
+<script type="module">
+    // Mostrar info del usuario en sidebar
+    const sesion = localStorage.getItem('sesion');
+    if (sesion) {
+        const datos = JSON.parse(sesion);
+        const nombreEl = document.getElementById('nombreUsuario');
+        const rolEl = document.getElementById('rolUsuario');
+        if (nombreEl) nombreEl.textContent = datos.nombre || datos.usuario;
+        if (rolEl) {
+            const rolTexto = datos.rol === 'admin' ? 'Administrador' :
+                             datos.rol === 'jefe_planta' ? 'Jefe de Planta' : datos.rol;
+            rolEl.textContent = rolTexto;
+        }
+        // Mostrar menú admin si aplica
+        if (datos.rol === 'admin') {
+            const menuAdmin = document.getElementById('menuAdmin');
+            if (menuAdmin) menuAdmin.classList.remove('hidden');
+        }
+    }
+</script>
 
 </body>
 

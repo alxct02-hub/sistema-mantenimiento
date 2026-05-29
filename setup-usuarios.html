@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Usuarios - Sistema Mantenimiento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen p-6">
+
+    <div class="max-w-4xl mx-auto">
+
+        <!-- HEADER -->
+        <div class="flex items-center gap-4 mb-8">
+            <img src="./img/logo.png" alt="Logo" class="w-16 h-16 object-contain bg-white rounded-lg p-1">
+            <div>
+                <h1 class="text-3xl font-bold">Configuración de Usuarios</h1>
+                <p class="text-gray-400">Crear los 8 usuarios del sistema en Firestore</p>
+            </div>
+        </div>
+
+        <!-- AVISO -->
+        <div class="bg-yellow-500 text-black rounded-xl p-4 mb-6 font-semibold">
+            ⚠️ Esta página solo debe usarse una vez para configurar los usuarios iniciales del sistema.
+            Después de ejecutar la configuración, guarda las credenciales y elimina o protege esta página.
+        </div>
+
+        <!-- TABLA DE USUARIOS -->
+        <div class="bg-gray-800 rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Usuarios a crear (8 en total)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-gray-400 border-b border-gray-700">
+                            <th class="text-left py-2 pr-4">ID Doc.</th>
+                            <th class="text-left py-2 pr-4">Usuario</th>
+                            <th class="text-left py-2 pr-4">Contraseña</th>
+                            <th class="text-left py-2 pr-4">Nombre</th>
+                            <th class="text-left py-2 pr-4">Rol</th>
+                            <th class="text-left py-2">ID Técnico</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaUsuarios" class="divide-y divide-gray-700">
+                        <!-- Se llena por JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- BOTÓN EJECUTAR -->
+        <div class="flex gap-4 mb-6">
+            <button
+                id="btnCrearUsuarios"
+                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-8 py-4 rounded-xl text-lg transition"
+            >
+                🚀 Crear / Actualizar Usuarios en Firestore
+            </button>
+            <button
+                onclick="window.location.href='./login.html'"
+                class="bg-gray-600 hover:bg-gray-500 text-white font-bold px-6 py-4 rounded-xl transition"
+            >
+                Ir al Login
+            </button>
+        </div>
+
+        <!-- LOG DE RESULTADOS -->
+        <div id="logResultados" class="bg-gray-800 rounded-xl p-6 hidden">
+            <h2 class="text-xl font-bold mb-4">Resultados</h2>
+            <div id="listaResultados" class="space-y-2 font-mono text-sm"></div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import {
+            doc,
+            setDoc,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // ======================================
+        // USUARIOS A CREAR
+        // ======================================
+
+        const USUARIOS = [
+            {
+                id: 'admin01',
+                usuario: 'admin',
+                nombre: 'Administrador',
+                password: 'Admin2024!',
+                rol: 'admin',
+                estado: 'activo',
+                tecnicoId: null
+            },
+            {
+                id: 'jefe01',
+                usuario: 'jefe_planta1',
+                nombre: 'Jefe de Planta 1',
+                password: 'Jefe2024#1',
+                rol: 'jefe_planta',
+                estado: 'activo',
+                tecnicoId: null
+            },
+            {
+                id: 'jefe02',
+                usuario: 'jefe_planta2',
+                nombre: 'Jefe de Planta 2',
+                password: 'Jefe2024#2',
+                rol: 'jefe_planta',
+                estado: 'activo',
+                tecnicoId: null
+            },
+            {
+                id: 'jefe03',
+                usuario: 'jefe_planta3',
+                nombre: 'Jefe de Planta 3',
+                password: 'Jefe2024#3',
+                rol: 'jefe_planta',
+                estado: 'activo',
+                tecnicoId: null
+            },
+            {
+                id: 'tec01',
+                usuario: 'tecnico1',
+                nombre: 'Técnico 1',
+                password: 'Tec2024#1',
+                rol: 'tecnico',
+                estado: 'activo',
+                tecnicoId: 'TEC-001'
+            },
+            {
+                id: 'tec02',
+                usuario: 'tecnico2',
+                nombre: 'Técnico 2',
+                password: 'Tec2024#2',
+                rol: 'tecnico',
+                estado: 'activo',
+                tecnicoId: 'TEC-002'
+            },
+            {
+                id: 'tec03',
+                usuario: 'tecnico3',
+                nombre: 'Técnico 3',
+                password: 'Tec2024#3',
+                rol: 'tecnico',
+                estado: 'activo',
+                tecnicoId: 'TEC-003'
+            },
+            {
+                id: 'tec04',
+                usuario: 'tecnico4',
+                nombre: 'Técnico 4',
+                password: 'Tec2024#4',
+                rol: 'tecnico',
+                estado: 'activo',
+                tecnicoId: 'TEC-004'
+            }
+        ];
+
+        // ======================================
+        // LLENAR TABLA
+        // ======================================
+
+        const tbody = document.getElementById('tablaUsuarios');
+
+        USUARIOS.forEach(u => {
+            const colorRol =
+                u.rol === 'admin' ? 'text-red-400' :
+                u.rol === 'jefe_planta' ? 'text-yellow-400' :
+                'text-blue-400';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="py-2 pr-4 text-gray-400">${u.id}</td>
+                <td class="py-2 pr-4 font-bold">${u.usuario}</td>
+                <td class="py-2 pr-4 font-mono text-green-400">${u.password}</td>
+                <td class="py-2 pr-4">${u.nombre}</td>
+                <td class="py-2 pr-4 font-bold ${colorRol}">${u.rol}</td>
+                <td class="py-2 text-gray-400">${u.tecnicoId || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // ======================================
+        // CREAR USUARIOS
+        // ======================================
+
+        document.getElementById('btnCrearUsuarios').addEventListener('click', async () => {
+
+            const btn = document.getElementById('btnCrearUsuarios');
+            btn.disabled = true;
+            btn.textContent = 'Creando usuarios...';
+
+            const logDiv = document.getElementById('logResultados');
+            const lista = document.getElementById('listaResultados');
+            logDiv.classList.remove('hidden');
+            lista.innerHTML = '';
+
+            let creados = 0;
+            let actualizados = 0;
+            let errores = 0;
+
+            for (const usuario of USUARIOS) {
+
+                try {
+
+                    const ref = doc(db, 'usuarios', usuario.id);
+                    const existe = await getDoc(ref);
+
+                    const datos = {
+                        usuario: usuario.usuario,
+                        nombre: usuario.nombre,
+                        password: usuario.password,
+                        rol: usuario.rol,
+                        estado: usuario.estado
+                    };
+
+                    if (usuario.tecnicoId) {
+                        datos.tecnicoId = usuario.tecnicoId;
+                    }
+
+                    await setDoc(ref, datos, { merge: true });
+
+                    const accion = existe.exists() ? 'actualizado' : 'creado';
+                    if (!existe.exists()) creados++;
+                    else actualizados++;
+
+                    const item = document.createElement('div');
+                    item.className = 'text-green-400';
+                    item.textContent = `✅ ${usuario.usuario} (${usuario.rol}) — ${accion}`;
+                    lista.appendChild(item);
+
+                } catch (error) {
+                    errores++;
+                    const item = document.createElement('div');
+                    item.className = 'text-red-400';
+                    item.textContent = `❌ Error con ${usuario.usuario}: ${error.message}`;
+                    lista.appendChild(item);
+                }
+
+            }
+
+            const resumen = document.createElement('div');
+            resumen.className = 'mt-4 pt-4 border-t border-gray-600 font-bold text-lg';
+            resumen.innerHTML = `
+                <span class="text-green-400">${creados} creados</span> •
+                <span class="text-yellow-400">${actualizados} actualizados</span> •
+                <span class="text-red-400">${errores} errores</span>
+            `;
+            lista.appendChild(resumen);
+
+            if (errores === 0) {
+                const ir = document.createElement('div');
+                ir.className = 'mt-4';
+                ir.innerHTML = `
+                    <a href="./login.html" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-lg inline-block transition">
+                        ✓ Ir al Login →
+                    </a>
+                `;
+                lista.appendChild(ir);
+            }
+
+            btn.disabled = false;
+            btn.textContent = '🚀 Crear / Actualizar Usuarios en Firestore';
+
+        });
+
+    </script>
+
+</body>
+
+</html>

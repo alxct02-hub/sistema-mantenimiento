@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Órdenes - Sistema Mantenimiento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-gray-900 text-white flex flex-col">
+
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-4">
+                <img src="../img/logo.png" alt="Logo" class="w-16 h-16 object-contain bg-white rounded-lg p-1">
+                <div>
+                    <h1 class="font-bold text-lg">Sistema Mantenimiento</h1>
+                    <p class="text-gray-400 text-sm">Concretera del Sureste</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 pt-4">
+            <div class="bg-gray-800 rounded-lg p-3">
+                <p id="nombreUsuario" class="font-bold text-yellow-400 text-sm"></p>
+                <p id="rolUsuario" class="text-gray-400 text-xs mt-1"></p>
+            </div>
+        </div>
+
+        <nav class="flex-1 p-4">
+            <ul class="space-y-3">
+                <li>
+                    <a href="./presolicitudes.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">
+                        📝 Mis Solicitudes
+                    </a>
+                </li>
+                <li>
+                    <a href="./mis-ordenes.html" class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold">
+                        📋 Estado de mis Órdenes
+                    </a>
+                </li>
+                <li id="menuAdmin" class="hidden">
+                    <a href="./dashboard.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">
+                        📊 Dashboard
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="p-4 border-t border-gray-700">
+            <button id="btnCerrarSesion" class="w-full bg-red-500 hover:bg-red-600 text-center py-3 rounded-lg font-bold transition">
+                Cerrar Sesión
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Contenido -->
+    <main class="flex-1 p-8">
+
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Estado de mis Órdenes</h2>
+            <p class="text-gray-500 mt-1">Órdenes generadas a partir de tus presolicitudes</p>
+        </div>
+
+        <!-- Filtro estado -->
+        <div class="bg-white rounded-xl shadow p-4 mb-6">
+            <div class="flex gap-4 flex-wrap items-center">
+                <label class="font-semibold text-gray-700">Filtrar por estado:</label>
+                <select id="filtroEstado" class="border border-gray-300 rounded-lg px-4 py-2">
+                    <option value="">Todos</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En proceso">En proceso</option>
+                    <option value="Completada">Completada</option>
+                </select>
+                <button id="btnRecargar" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition font-semibold">
+                    🔄 Actualizar
+                </button>
+            </div>
+        </div>
+
+        <!-- Contenedor órdenes -->
+        <div id="contenedorOrdenes">
+            <div class="text-center py-10 text-gray-400">Cargando órdenes...</div>
+        </div>
+
+    </main>
+
+</div>
+
+<script type="module">
+    import { db } from '../js/firebase-config.js';
+    import {
+        collection,
+        getDocs,
+        query,
+        where,
+        orderBy
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ======================================
+    // VERIFICAR SESIÓN
+    // ======================================
+
+    const sesionGuardada = localStorage.getItem('sesion');
+    const tokenGuardado = localStorage.getItem('token');
+
+    if (!sesionGuardada || !tokenGuardado) {
+        window.location.href = '../login.html';
+    }
+
+    const sesion = sesionGuardada ? JSON.parse(sesionGuardada) : null;
+
+    if (!sesion || (sesion.rol !== 'jefe_planta' && sesion.rol !== 'admin')) {
+        window.location.href = '../login.html';
+    }
+
+    // ======================================
+    // INFO USUARIO
+    // ======================================
+
+    const nombreEl = document.getElementById('nombreUsuario');
+    const rolEl = document.getElementById('rolUsuario');
+    if (nombreEl) nombreEl.textContent = sesion.nombre || sesion.usuario;
+    if (rolEl) rolEl.textContent = sesion.rol === 'admin' ? 'Administrador' : 'Jefe de Planta';
+
+    if (sesion.rol === 'admin') {
+        const menuAdmin = document.getElementById('menuAdmin');
+        if (menuAdmin) menuAdmin.classList.remove('hidden');
+    }
+
+    // ======================================
+    // CERRAR SESIÓN
+    // ======================================
+
+    document.getElementById('btnCerrarSesion').addEventListener('click', () => {
+        localStorage.removeItem('sesion');
+        localStorage.removeItem('token');
+        window.location.href = '../login.html';
+    });
+
+    // ======================================
+    // CARGAR ÓRDENES
+    // ======================================
+
+    const contenedor = document.getElementById('contenedorOrdenes');
+    const filtroEstado = document.getElementById('filtroEstado');
+
+    async function cargarOrdenes() {
+
+        contenedor.innerHTML = `<div class="text-center py-10 text-gray-400">Cargando órdenes...</div>`;
+
+        try {
+
+            // Obtener las presolicitudes del usuario actual
+            const presolicitudesSnap = await getDocs(
+                query(
+                    collection(db, 'presolicitudes'),
+                    where('creadoPor', '==', sesion.usuario),
+                    where('estado', '==', 'convertida')
+                )
+            );
+
+            if (presolicitudesSnap.empty) {
+                contenedor.innerHTML = `
+                    <div class="bg-white rounded-xl shadow p-10 text-center">
+                        <p class="text-gray-400 text-lg">Aún no tienes presolicitudes convertidas a órdenes</p>
+                        <a href="./presolicitudes.html" class="mt-4 inline-block text-yellow-600 font-bold hover:underline">→ Crear una presolicitud</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Recolectar los folios de las órdenes generadas
+            const foliosOrdenes = [];
+            presolicitudesSnap.forEach(doc => {
+                const data = doc.data();
+                if (data.folioOrden) foliosOrdenes.push(data.folioOrden);
+            });
+
+            if (foliosOrdenes.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="bg-white rounded-xl shadow p-10 text-center">
+                        <p class="text-gray-400 text-lg">No hay órdenes generadas aún</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Obtener todas las órdenes
+            const ordenesSnap = await getDocs(collection(db, 'ordenes'));
+            const filtro = filtroEstado.value;
+
+            contenedor.innerHTML = '';
+            let hayResultados = false;
+
+            ordenesSnap.forEach(docSnap => {
+                const orden = docSnap.data();
+
+                if (!foliosOrdenes.includes(orden.folio)) return;
+                if (filtro && orden.estado !== filtro) return;
+
+                hayResultados = true;
+
+                const colorEstado =
+                    orden.estado === 'Pendiente' ? 'bg-yellow-100 text-yellow-700 border-yellow-300' :
+                    orden.estado === 'En proceso' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                    'bg-green-100 text-green-700 border-green-300';
+
+                const iconoEstado =
+                    orden.estado === 'Pendiente' ? '⏳' :
+                    orden.estado === 'En proceso' ? '🔧' :
+                    '✅';
+
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow p-6 mb-4';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">${orden.folio}</h3>
+                            <p class="text-gray-500 text-sm">${orden.fecha || '-'}</p>
+                        </div>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold border ${colorEstado}">
+                            ${iconoEstado} ${orden.estado}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase font-semibold mb-1">Área</p>
+                            <p class="font-semibold">${orden.area || '-'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase font-semibold mb-1">Equipo</p>
+                            <p class="font-semibold">${orden.equipo || '-'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase font-semibold mb-1">Técnico asignado</p>
+                            <p class="font-semibold">${orden.tecnico || '<span class="text-gray-400 italic">Sin asignar</span>'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase font-semibold mb-1">Prioridad</p>
+                            <p class="font-semibold ${orden.prioridad === 'Alta' ? 'text-red-600' : orden.prioridad === 'Media' ? 'text-yellow-600' : 'text-green-600'}">${orden.prioridad || '-'}</p>
+                        </div>
+                    </div>
+
+                    ${orden.descripcion ? `
+                        <div class="mt-4 bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Descripción</p>
+                            <p class="text-sm text-gray-700">${orden.descripcion}</p>
+                        </div>
+                    ` : ''}
+
+                    ${orden.horaInicio || orden.horaFin ? `
+                        <div class="mt-3 grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-xs text-gray-500">Hora inicio</p>
+                                <p>${orden.horaInicio || '-'}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Hora fin</p>
+                                <p>${orden.horaFin || '-'}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${orden.observaciones ? `
+                        <div class="mt-3 bg-blue-50 rounded-lg p-3 text-sm">
+                            <p class="text-xs text-blue-600 uppercase font-semibold mb-1">Observaciones del técnico</p>
+                            <p class="text-gray-700">${orden.observaciones}</p>
+                        </div>
+                    ` : ''}
+                `;
+
+                contenedor.appendChild(card);
+            });
+
+            if (!hayResultados) {
+                contenedor.innerHTML = `
+                    <div class="bg-white rounded-xl shadow p-10 text-center">
+                        <p class="text-gray-400 text-lg">No hay órdenes con el filtro seleccionado</p>
+                    </div>
+                `;
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            contenedor.innerHTML = `
+                <div class="bg-white rounded-xl shadow p-8 text-center">
+                    <p class="text-red-500">Error al cargar órdenes. Intenta de nuevo.</p>
+                </div>
+            `;
+        }
+    }
+
+    filtroEstado.addEventListener('change', cargarOrdenes);
+    document.getElementById('btnRecargar').addEventListener('click', cargarOrdenes);
+
+    cargarOrdenes();
+
+</script>
+
+</body>
+
+</html>

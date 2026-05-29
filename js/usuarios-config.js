@@ -1,82 +1,92 @@
 // ======================================
-// GUÍA DE USUARIOS
+// CONFIGURACIÓN DE USUARIOS DEL SISTEMA
 // ======================================
 
 /*
   ESTRUCTURA DE USUARIOS EN FIRESTORE
   
   Colección: usuarios
-  
-  Documentos necesarios:
-  
-  1. ADMINISTRADOR
-     ID: admin01
-     - usuario: "admin"
-     - nombre: "Administrador"
-     - password: "tu_contraseña_segura"
-     - rol: "admin"
-     - estado: "activo"
-     - Acceso: Panel completo, crear órdenes, asignar técnicos
-  
-  2. COORDINADOR
-     ID: coord01
-     - usuario: "coordinador"
-     - nombre: "Coordinador de Mantenimiento"
-     - password: "tu_contraseña_segura"
-     - rol: "coordinador"
-     - estado: "activo"
-     - Acceso: Crear órdenes, asignar técnicos, presolicitudes
-  
-  3. JEFE DE PLANTA
-     ID: jefe01
-     - usuario: "jefe_planta"
-     - nombre: "Jefe de Planta"
-     - password: "tu_contraseña_segura"
-     - rol: "jefe_planta"
-     - estado: "activo"
-     - Acceso: Crear presolicitudes, convertir a órdenes
-  
-  TÉCNICOS:
-  - No tienen login en el sistema
-  - Reciben órdenes asignadas
-  - Acceden a través de la app técnico (sin autenticación)
-  
-  NUEVO FLUJO PARA JEFES DE PLANTA:
-  
-  1. Jefe de planta entra al sistema con sus credenciales
-  2. Ve la opción "Presolicitudes" en el menú
-  3. Crea una presolicitud con información de la orden
-  4. La presolicitud se guarda como "borrador"
-  5. Luego puede ver sus presolicitudes
-  6. Selecciona una presolicitud y elige "Convertir a Orden"
-  7. Se genera automáticamente la orden de servicio
-  8. La presolicitud cambia a estado "convertida"
+  Total: 8 usuarios
+
+  ROLES Y ACCESOS:
+  - admin:       Acceso total al sistema
+  - jefe_planta: Crear presolicitudes + ver estado de sus órdenes
+  - tecnico:     Solo app técnico (ver y trabajar órdenes de servicio)
 */
 
-export const USUARIOS = {
-  admin: {
+export const USUARIOS_SETUP = [
+  {
+    id: 'admin01',
     usuario: 'admin',
-    password: 'admin123',
     nombre: 'Administrador',
-    rol: 'admin'
+    password: 'Admin2024!',
+    rol: 'admin',
+    estado: 'activo'
   },
-  coordinador: {
-    usuario: 'coordinador',
-    password: 'coordinador123',
-    nombre: 'Coordinador de Mantenimiento',
-    rol: 'coordinador'
+  {
+    id: 'jefe01',
+    usuario: 'jefe_planta1',
+    nombre: 'Jefe de Planta 1',
+    password: 'Jefe2024#1',
+    rol: 'jefe_planta',
+    estado: 'activo'
   },
-  jefe_planta: {
-    usuario: 'jefe_planta',
-    password: 'jefe123',
-    nombre: 'Jefe de Planta',
-    rol: 'jefe_planta'
+  {
+    id: 'jefe02',
+    usuario: 'jefe_planta2',
+    nombre: 'Jefe de Planta 2',
+    password: 'Jefe2024#2',
+    rol: 'jefe_planta',
+    estado: 'activo'
+  },
+  {
+    id: 'jefe03',
+    usuario: 'jefe_planta3',
+    nombre: 'Jefe de Planta 3',
+    password: 'Jefe2024#3',
+    rol: 'jefe_planta',
+    estado: 'activo'
+  },
+  {
+    id: 'tec01',
+    usuario: 'tecnico1',
+    nombre: 'Técnico 1',
+    password: 'Tec2024#1',
+    rol: 'tecnico',
+    tecnicoId: 'TEC-001',
+    estado: 'activo'
+  },
+  {
+    id: 'tec02',
+    usuario: 'tecnico2',
+    nombre: 'Técnico 2',
+    password: 'Tec2024#2',
+    rol: 'tecnico',
+    tecnicoId: 'TEC-002',
+    estado: 'activo'
+  },
+  {
+    id: 'tec03',
+    usuario: 'tecnico3',
+    nombre: 'Técnico 3',
+    password: 'Tec2024#3',
+    rol: 'tecnico',
+    tecnicoId: 'TEC-003',
+    estado: 'activo'
+  },
+  {
+    id: 'tec04',
+    usuario: 'tecnico4',
+    nombre: 'Técnico 4',
+    password: 'Tec2024#4',
+    rol: 'tecnico',
+    tecnicoId: 'TEC-004',
+    estado: 'activo'
   }
-};
+];
 
 export const ROLES = {
   ADMIN: 'admin',
-  COORDINADOR: 'coordinador',
   JEFE_PLANTA: 'jefe_planta',
   TECNICO: 'tecnico'
 };
