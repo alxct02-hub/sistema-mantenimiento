@@ -1,8 +1,10 @@
 import { db } from './firebase-config.js';
+import { registrarEvento } from './bitacora-utils.js';
 
 import {
     collection,
     getDocs,
+    getDoc,
     doc,
     updateDoc,
     query,
@@ -15,7 +17,7 @@ import {
 // ======================================
 
 const sesionGuardada = localStorage.getItem('sesion');
-const tokenGuardado = localStorage.getItem('token');
+const tokenGuardado  = localStorage.getItem('token');
 
 if (!sesionGuardada || !tokenGuardado) {
     window.location.href = '../login.html';
@@ -33,16 +35,12 @@ if (!sesionActual || sesionActual.rol !== 'tecnico') {
 // MOSTRAR INFO DEL TÉCNICO
 // ======================================
 
-const infoTecnico = document.getElementById('infoTecnico');
+const infoTecnico    = document.getElementById('infoTecnico');
 const nombreTecnicoEl = document.getElementById('nombreTecnico');
-const idTecnicoEl = document.getElementById('idTecnico');
+const idTecnicoEl    = document.getElementById('idTecnico');
 
-if (nombreTecnicoEl) {
-    nombreTecnicoEl.textContent = sesionActual.nombre;
-}
-if (idTecnicoEl) {
-    idTecnicoEl.textContent = sesionActual.tecnicoId || 'Sin ID';
-}
+if (nombreTecnicoEl) nombreTecnicoEl.textContent = sesionActual.nombre;
+if (idTecnicoEl)     idTecnicoEl.textContent     = sesionActual.tecnicoId || 'Sin ID';
 
 // ======================================
 // API IMGBB
@@ -80,9 +78,7 @@ cargarOrdenes();
 // ======================================
 
 async function cargarOrdenes() {
-
     try {
-
         contenedor.innerHTML = `
             <div class="text-center py-8 text-gray-500">
                 <p class="text-lg">Cargando órdenes...</p>
@@ -90,47 +86,31 @@ async function cargarOrdenes() {
         `;
 
         const snapshot = await getDocs(collection(db, 'ordenes'));
-
         contenedor.innerHTML = '';
-
         let hayOrdenes = false;
 
         snapshot.forEach((documento) => {
-
             const orden = documento.data();
-            const id = documento.id;
+            const id    = documento.id;
 
-            if (orden.estado === 'Completada') {
-                return;
-            }
+            if (orden.estado === 'Completada') return;
 
             hayOrdenes = true;
 
             let colorPrioridad = '';
-
-            if (orden.prioridad === 'Alta') {
-                colorPrioridad = 'text-red-600';
-            } else if (orden.prioridad === 'Media') {
-                colorPrioridad = 'text-yellow-600';
-            } else {
-                colorPrioridad = 'text-green-600';
-            }
+            if (orden.prioridad === 'Alta')        colorPrioridad = 'text-red-600';
+            else if (orden.prioridad === 'Media')  colorPrioridad = 'text-yellow-600';
+            else                                   colorPrioridad = 'text-green-600';
 
             let colorEstado = '';
-            let esOrdenMia = orden.tecnico === sesionActual.nombre || orden.tecnicoId === sesionActual.tecnicoId;
+            const esOrdenMia = orden.tecnico === sesionActual.nombre || orden.tecnicoId === sesionActual.tecnicoId;
 
-            if (orden.estado === 'Pendiente') {
-                colorEstado = 'bg-yellow-100 text-yellow-700';
-            } else if (orden.estado === 'En proceso') {
-                colorEstado = 'bg-blue-100 text-blue-700';
-            } else {
-                colorEstado = 'bg-green-100 text-green-700';
-            }
+            if (orden.estado === 'Pendiente')      colorEstado = 'bg-yellow-100 text-yellow-700';
+            else if (orden.estado === 'En proceso') colorEstado = 'bg-blue-100 text-blue-700';
+            else                                   colorEstado = 'bg-green-100 text-green-700';
 
             const card = document.createElement('div');
-
             card.className = `bg-white rounded-xl shadow p-5 ${esOrdenMia ? 'border-l-4 border-blue-500' : ''}`;
-
             card.innerHTML = `
                 <!-- HEADER -->
                 <div class="flex justify-between items-start mb-4">
@@ -211,7 +191,6 @@ async function cargarOrdenes() {
             `;
 
             contenedor.appendChild(card);
-
         });
 
         if (!hayOrdenes) {
@@ -230,27 +209,35 @@ async function cargarOrdenes() {
             </div>
         `;
     }
-
 }
 
 // ======================================
-// INICIAR ORDEN (identifica al técnico automáticamente)
+// INICIAR ORDEN
 // ======================================
 
-window.iniciarOrden = async function (id) {
-
+window.iniciarOrden = async function(id) {
     try {
-
         const horaInicio = new Date().toLocaleString('es-MX');
-        const ordenRef = doc(db, 'ordenes', id);
+        const ordenRef   = doc(db, 'ordenes', id);
+
+        // Obtener folio para la bitácora
+        const ordenSnap  = await getDoc(ordenRef);
+        const folio      = ordenSnap.exists() ? (ordenSnap.data().folio || id) : id;
 
         await updateDoc(ordenRef, {
-            estado: 'En proceso',
+            estado:         'En proceso',
             horaInicio,
-            tecnico: sesionActual.nombre,
-            tecnicoId: sesionActual.tecnicoId || '',
+            tecnico:        sesionActual.nombre,
+            tecnicoId:      sesionActual.tecnicoId || '',
             tecnicoUsuario: sesionActual.usuario
         });
+
+        // Registrar en bitácora
+        await registrarEvento(
+            'orden_iniciada',
+            `Orden ${folio} iniciada por ${sesionActual.nombre} (${sesionActual.tecnicoId || 'Sin ID'})`,
+            { folio }
+        );
 
         alert(`✅ Orden iniciada\nTécnico: ${sesionActual.nombre} (${sesionActual.tecnicoId || 'Sin ID'})`);
         cargarOrdenes();
@@ -259,49 +246,52 @@ window.iniciarOrden = async function (id) {
         console.error(error);
         alert('❌ Error al iniciar la orden');
     }
-
 };
 
 // ======================================
 // FINALIZAR ORDEN
 // ======================================
 
-window.finalizarOrden = async function (id) {
-
+window.finalizarOrden = async function(id) {
     try {
-
         const observaciones = document.getElementById(`obs-${id}`).value;
-        const archivo = document.getElementById(`file-${id}`).files[0];
-
-        let imagenURL = '';
+        const archivo       = document.getElementById(`file-${id}`).files[0];
+        let   imagenURL     = '';
 
         if (archivo) {
-
             const formData = new FormData();
             formData.append('image', archivo);
-
             const response = await fetch(
                 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
                 { method: 'POST', body: formData }
             );
-
             const data = await response.json();
-            imagenURL = data.data.url;
-
+            imagenURL  = data.data.url;
         }
 
-        const horaFin = new Date().toLocaleString('es-MX');
+        const horaFin  = new Date().toLocaleString('es-MX');
         const ordenRef = doc(db, 'ordenes', id);
 
+        // Obtener folio para la bitácora
+        const ordenSnap = await getDoc(ordenRef);
+        const folio     = ordenSnap.exists() ? (ordenSnap.data().folio || id) : id;
+
         await updateDoc(ordenRef, {
-            estado: 'Completada',
+            estado:         'Completada',
             horaFin,
             observaciones,
-            evidencia: imagenURL,
-            tecnico: sesionActual.nombre,
-            tecnicoId: sesionActual.tecnicoId || '',
+            evidencia:      imagenURL,
+            tecnico:        sesionActual.nombre,
+            tecnicoId:      sesionActual.tecnicoId || '',
             tecnicoUsuario: sesionActual.usuario
         });
+
+        // Registrar en bitácora
+        await registrarEvento(
+            'orden_completada',
+            `Orden ${folio} completada por ${sesionActual.nombre} (${sesionActual.tecnicoId || 'Sin ID'})`,
+            { folio }
+        );
 
         alert('✅ Orden finalizada correctamente');
         cargarOrdenes();
@@ -310,5 +300,4 @@ window.finalizarOrden = async function (id) {
         console.error(error);
         alert('❌ Error al finalizar la orden');
     }
-
 };

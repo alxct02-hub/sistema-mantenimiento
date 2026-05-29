@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora de Actividad - Sistema Mantenimiento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-gray-900 text-white flex flex-col">
+
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-4">
+                <img src="../img/logo.png" alt="Logo" class="w-16 h-16 object-contain bg-white rounded-lg p-1">
+                <div>
+                    <h1 class="font-bold text-lg">Sistema Mantenimiento</h1>
+                    <p class="text-gray-400 text-sm">Concretera del Sureste</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 p-4">
+            <ul class="space-y-3">
+                <li>
+                    <a href="./dashboard.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">📊 Dashboard</a>
+                </li>
+                <li>
+                    <a href="./nueva-orden.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">🛠 Nueva Orden</a>
+                </li>
+                <li>
+                    <a href="./historial.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">📁 Historial</a>
+                </li>
+                <li>
+                    <a href="./tecnicos.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">👷 Técnicos</a>
+                </li>
+                <li>
+                    <a href="./reportes.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">📑 Reportes</a>
+                </li>
+                <li>
+                    <a href="./usuarios.html" class="block hover:bg-gray-700 px-4 py-3 rounded-lg transition">👥 Usuarios</a>
+                </li>
+                <li>
+                    <a href="./bitacora.html" class="block bg-yellow-500 text-black px-4 py-3 rounded-lg font-bold">📋 Bitácora</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="p-4 border-t border-gray-700">
+            <button id="btnCerrarSesion" class="w-full bg-red-500 hover:bg-red-600 text-center py-3 rounded-lg font-bold transition">
+                Cerrar Sesión
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="flex-1 p-8">
+
+        <!-- HEADER -->
+        <div class="mb-6 flex justify-between items-start flex-wrap gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">📋 Bitácora de Actividad</h2>
+                <p class="text-gray-500 mt-1">Registro automático de todas las acciones del sistema</p>
+            </div>
+            <button
+                id="btnLimpiarFiltros"
+                class="text-sm text-gray-500 hover:text-gray-700 underline transition"
+            >
+                Limpiar filtros
+            </button>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="bg-white rounded-xl shadow p-4 mb-6 flex gap-3 flex-wrap items-center">
+
+            <!-- Tipo de evento -->
+            <select id="filtroTipo" class="border border-gray-300 rounded-lg px-4 py-2 text-sm min-w-[180px]">
+                <option value="">Todos los eventos</option>
+                <optgroup label="Órdenes">
+                    <option value="orden_creada">🛠 Orden creada</option>
+                    <option value="orden_iniciada">▶️ Orden iniciada</option>
+                    <option value="orden_completada">✅ Orden completada</option>
+                </optgroup>
+                <optgroup label="Presolicitudes">
+                    <option value="presolicitud_creada">📝 Presolicitud creada</option>
+                    <option value="presolicitud_convertida">🔄 Presolicitud convertida</option>
+                    <option value="presolicitud_eliminada">🗑 Presolicitud eliminada</option>
+                </optgroup>
+                <optgroup label="Usuarios">
+                    <option value="usuario_creado">👤 Usuario creado</option>
+                    <option value="usuario_editado">✏️ Usuario editado</option>
+                    <option value="usuario_activado">🔓 Usuario activado</option>
+                    <option value="usuario_desactivado">🔒 Usuario desactivado</option>
+                    <option value="nombre_actualizado">📛 Nombre actualizado</option>
+                </optgroup>
+                <optgroup label="Sesión">
+                    <option value="sesion_iniciada">🔑 Inicio de sesión</option>
+                </optgroup>
+            </select>
+
+            <!-- Período -->
+            <select id="filtroPeriodo" class="border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                <option value="7">Últimos 7 días</option>
+                <option value="30" selected>Últimos 30 días</option>
+                <option value="90">Últimos 90 días</option>
+                <option value="0">Todo el historial</option>
+            </select>
+
+            <!-- Usuario -->
+            <input
+                type="text"
+                id="filtroUsuario"
+                placeholder="Buscar por usuario..."
+                class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-44"
+            >
+
+            <button
+                id="btnBuscar"
+                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-5 py-2 rounded-lg text-sm transition"
+            >
+                Buscar
+            </button>
+
+        </div>
+
+        <!-- CONTADOR -->
+        <div id="contadorEventos" class="text-sm text-gray-500 mb-3 ml-1"></div>
+
+        <!-- LÍNEA DE TIEMPO -->
+        <div id="contenedorBitacora" class="space-y-3">
+            <div class="bg-white rounded-xl shadow p-10 text-center text-gray-400">
+                Cargando bitácora...
+            </div>
+        </div>
+
+        <!-- BOTÓN CARGAR MÁS -->
+        <div class="text-center mt-6">
+            <button
+                id="btnCargarMas"
+                class="hidden bg-white hover:bg-gray-50 border border-gray-300 text-gray-600 font-semibold px-6 py-3 rounded-xl shadow transition"
+            >
+                Cargar más eventos
+            </button>
+        </div>
+
+    </main>
+
+</div>
+
+<script type="module" src="../js/bitacora-page.js"></script>
+
+</body>
+</html>

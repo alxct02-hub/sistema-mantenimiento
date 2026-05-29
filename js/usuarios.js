@@ -1,4 +1,5 @@
 import { db } from './firebase-config.js';
+import { registrarEvento } from './bitacora-utils.js';
 import {
     collection,
     getDocs,
@@ -276,6 +277,14 @@ window.guardarNombreInline = async function(id) {
         const idx = todosLosUsuarios.findIndex(u => u.id === id);
         if (idx !== -1) todosLosUsuarios[idx].nombre = nuevoNombre;
 
+        // Bitácora
+        const usuarioObj = todosLosUsuarios.find(u => u.id === id);
+        await registrarEvento(
+            'nombre_actualizado',
+            `Nombre de "${usuarioObj?.usuario || id}" actualizado a "${nuevoNombre}"`,
+            { objetivo: usuarioObj?.usuario || id }
+        );
+
         // Mostrar badge de éxito brevemente, luego volver al texto
         celda.innerHTML = `
             <div class="flex items-center gap-2">
@@ -449,14 +458,19 @@ formUsuario.addEventListener('submit', async function(e) {
             else datos.tecnicoId = null;
 
             await updateDoc(doc(db, 'usuarios', id), datos);
+
+            // Bitácora
+            await registrarEvento(
+                'usuario_editado',
+                `Usuario "${usuario}" actualizado — Rol: ${rol}, Estado: ${estado}`,
+                { objetivo: usuario }
+            );
+
             mostrarMensaje('✅ Usuario actualizado correctamente', 'success');
 
         } else {
             // CREAR nuevo usuario
-            // Verificar si el nombre de usuario ya existe
-            const snapshot = await getDocs(
-                query(collection(db, 'usuarios'))
-            );
+            const snapshot = await getDocs(query(collection(db, 'usuarios')));
             const yaExiste = snapshot.docs.some(d => d.data().usuario === usuario);
 
             if (yaExiste) {
@@ -471,6 +485,14 @@ formUsuario.addEventListener('submit', async function(e) {
             if (rol === 'tecnico' && tecnicoId) datos.tecnicoId = tecnicoId;
 
             await setDoc(doc(db, 'usuarios', docId), datos);
+
+            // Bitácora
+            await registrarEvento(
+                'usuario_creado',
+                `Usuario "${usuario}" creado — Nombre: ${nombre}, Rol: ${rol}`,
+                { objetivo: usuario }
+            );
+
             mostrarMensaje('✅ Usuario creado correctamente', 'success');
         }
 
@@ -521,6 +543,16 @@ window.toggleEstado = function(id, estadoActual) {
     btnNuevo.addEventListener('click', async () => {
         try {
             await updateDoc(doc(db, 'usuarios', id), { estado: nuevoEstado });
+
+            // Bitácora
+            const tipoEvento = nuevoEstado === 'activo' ? 'usuario_activado' : 'usuario_desactivado';
+            const accion     = nuevoEstado === 'activo' ? 'activado' : 'desactivado';
+            await registrarEvento(
+                tipoEvento,
+                `Usuario "${usuario?.usuario || id}" (${usuario?.nombre || ''}) ${accion}`,
+                { objetivo: usuario?.usuario || id }
+            );
+
             modalConfirmar.classList.add('hidden');
             cargarUsuarios();
         } catch (err) {
